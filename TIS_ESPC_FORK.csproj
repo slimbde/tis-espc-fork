@@ -141,9 +141,6 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\Auth\SQLiteMembershipProvider.cs" />
-    <Compile Include="Models\Auth\SQLitePersonalizationProvider.cs" />
-    <Compile Include="Models\Auth\SQLiteProfileProvider.cs" />
     <Compile Include="Models\Auth\SQLiteRoleProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -162,6 +159,8 @@
   <ItemGroup>
     <Content Include="App_Data\auth.db3" />
     <None Include="packages.config" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <None Include="Properties\PublishProfiles\FTPProfile.pubxml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
