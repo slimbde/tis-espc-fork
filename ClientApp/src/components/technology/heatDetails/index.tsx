@@ -11,6 +11,7 @@ import HeatEvents from "./heatEvents";
 import Corrections from "./corrections";
 import Chart from "./chart";
 import Params from "./params";
+import { setFluid } from "components/extra/SetFluid";
 
 
 type Route = {
@@ -38,13 +39,6 @@ export const HeatDetails: React.FC = () => {
 
 
   const toggle = (tab: React.SetStateAction<string>) => activeTab !== tab && setActiveTab(tab)
-
-  /** expanding basic layout container to fit all the params */
-  const setFluid = (set: boolean = false) => {
-    const root = document.getElementsByClassName("root-wrapper")
-    set && root.length > 0 && (root[0].classList.add("container-fluid"))
-    !set && root.length > 0 && (root[0].classList.remove("container-fluid"))
-  }
 
 
   return <div className="details-wrapper">

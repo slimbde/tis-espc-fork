@@ -2,14 +2,15 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { useEffect, useState } from 'react';
 import { Home } from "components/home";
 import { Redirect, Route, Switch } from "react-router-dom";
-import { TPA } from "components/overview/tpa";
-import { Technology } from "components/technology";
+//import { TPA } from "components/overview/tpa";
+//import { Technology } from "components/technology";
 import { NotAuthorized } from "components/notAuthorized";
-import { Diagnostic } from "components/diagnostic";
+//import { Diagnostic } from "components/diagnostic";
 import { Admin } from "components/admin";
-import { Dispatcher } from "components/overview/dispatcher";
+//import { Dispatcher } from "components/overview/dispatcher";
 import aHandler from "models/handlers/DbHandlers/AuthDbHandler"
 import Layout from "components/layout";
+import { VMExplorer } from "components/admin/vm";
 
 
 type AppState = {
@@ -67,7 +68,8 @@ const App: React.FC = () => {
 
   const adminRoutes = [
     ...programmerRoutes,
-    //<Route path="/admin" component={Admin} key="admin" />
+    <Route path="/admin" component={Admin} key="admin" />,
+    <Route path="/hpe" component={VMExplorer} key="hpe" />
   ]
 
 

@@ -82,13 +82,14 @@ class NavMenu extends Component<NavProps> {
 
               {this.state.userRoleRating > 3 &&
                 <UncontrolledDropdown nav inNavbar>
-                  <DropdownToggle nav className={location.indexOf("/admin") > -1 ? "active" : ""}>Администрирование</DropdownToggle>
+                  <DropdownToggle nav className={location.indexOf("/admin") > -1 || location.indexOf("/hpe") > -1 ? "active" : ""}>Администрирование</DropdownToggle>
                   <DropdownMenu right>
                     <DropdownItem><NavLink tag={Link} to="/admin">Администрирование пользователей</NavLink></DropdownItem>
                     <DropdownItem divider />
-                    <DropdownItem><NavLink tag="a" href="https://10.2.59.20/">HPE VM Explorer</NavLink></DropdownItem>
-                    <DropdownItem><NavLink tag="a" href="https://10.2.59.24/ui/#/login">VMware Host Client (10.2.59.24)</NavLink></DropdownItem>
-                    <DropdownItem><NavLink tag="a" href="https://10.2.59.23/ui/#/login">VMware Host Client (10.2.59.23)</NavLink></DropdownItem>
+                    <DropdownItem><NavLink tag={Link} to="/hpe">HPE VM Explorer</NavLink></DropdownItem>
+                    <DropdownItem><NavLink tag={Link} to={{ pathname: "https://10.2.19.201/ui/#/login" }} target="_blank">Гипервизор МНЛЗ</NavLink></DropdownItem>
+                    <DropdownItem><NavLink tag={Link} to={{ pathname: "https://10.2.19.200/ui/#/login" }} target="_blank">Гипервизор АКП-2</NavLink></DropdownItem>
+                    <DropdownItem><NavLink tag={Link} to={{ pathname: "https://10.2.19.202/ui/#/login" }} target="_blank">Гипервизор АКП-2</NavLink></DropdownItem>
                   </DropdownMenu>
                 </UncontrolledDropdown>}
 
