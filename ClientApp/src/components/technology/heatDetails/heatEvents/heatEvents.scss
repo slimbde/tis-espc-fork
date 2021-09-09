@@ -1,0 +1,19 @@
+@import "variables.scss";
+
+.events-wrapper {
+  position: relative;
+
+  table {
+    tbody {
+      display: block;
+      max-height: 55vh;
+      overflow-y: scroll;
+    }
+
+    thead tr,
+    tbody tr {
+      display: grid;
+      grid-template-columns: 150px 1fr;
+    }
+  }
+}

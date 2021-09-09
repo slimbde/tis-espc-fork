@@ -1,0 +1,24 @@
+.home-info {
+  display: none;
+  color: gray;
+  font-size: smaller;
+  margin-top: 1rem;
+
+  &.visible {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.photo-wrapper {
+  margin-bottom: 1rem;
+  display: flex;
+  height: 250px;
+
+  .banner {
+    flex-grow: 1;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-image: url("./banner.jpg");
+  }
+}

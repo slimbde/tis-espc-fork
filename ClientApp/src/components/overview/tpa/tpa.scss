@@ -1,0 +1,138 @@
+@import "variables.scss";
+
+.tpa-wrapper {
+  position: relative;
+  display: grid;
+  grid-template-columns: 0.5fr 0.5fr 1.05fr;
+  grid-template-rows: 70px 0.5fr 1fr;
+  grid-template-areas:
+    "title title title"
+    "report controls table"
+    "chart chart table";
+  grid-gap: 1rem;
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: gray;
+
+  h2 {
+    text-transform: uppercase;
+    font-weight: 300;
+    font-size: 1.5rem;
+    color: black;
+  }
+
+  .title {
+    grid-area: title;
+  }
+
+  .report {
+    grid-area: report;
+  }
+
+  .controls {
+    position: relative;
+    grid-area: controls;
+    display: flex;
+    flex-flow: column;
+    align-items: flex-start;
+    margin-right: 1rem;
+
+    .input-group {
+      display: flex;
+      flex-flow: column;
+      margin-top: 0.5rem;
+
+      label {
+        color: black;
+        margin-bottom: 0.1rem;
+        font-size: 0.7rem;
+      }
+
+      input {
+        width: 100%;
+      }
+    }
+
+    button {
+      margin-top: 1rem;
+      align-self: flex-end;
+    }
+
+    #loading {
+      top: inherit;
+      bottom: -15px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+  }
+
+  table {
+    grid-area: table;
+    background-color: white;
+    margin-bottom: 0;
+    border: 0;
+
+    tr {
+      display: grid;
+      grid-template-columns: 1fr 1fr 2fr 2fr 1.5fr;
+      grid-template-rows: auto;
+      border-right: 0;
+
+      &.strand-1 {
+        background-color: lighten(slategray, 48%);
+      }
+      &.strand-2 {
+        background-color: lighten(orange, 45%);
+      }
+      &.strand-3 {
+        background-color: lighten(yellow, 45%);
+      }
+      &.strand-4 {
+        background-color: lighten(lightgreen, 20%);
+      }
+      &.strand-5 {
+        background-color: lighten(violet, 27%);
+      }
+    }
+
+    td,
+    th {
+      padding: 0.2rem 0.5rem;
+    }
+
+    td + td {
+      border-left: 1px solid whitesmoke;
+    }
+
+    th {
+      background-color: #e9ecef;
+      text-transform: uppercase;
+      font-weight: 400;
+      font-size: 0.8rem;
+      border-top: 0;
+    }
+
+    tbody {
+      display: block;
+      max-height: 60vh;
+      overflow-y: scroll;
+      margin-bottom: 0;
+    }
+
+    thead tr {
+      display: grid;
+      grid-template-columns: 1fr 1fr 2fr 2fr 1.5fr 1rem;
+    }
+  }
+
+  #chart-container {
+    grid-area: chart;
+  }
+
+  #alert {
+    position: absolute;
+    right: 1rem;
+    margin-top: 2rem;
+    font-size: 1rem;
+  }
+}

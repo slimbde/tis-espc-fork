@@ -1,0 +1,88 @@
+@import "variables.scss";
+
+.admin-wrapper {
+  position: relative;
+  display: grid;
+  grid-template-columns: 270px 0.8fr;
+  grid-template-rows: repeat(3, 60px) 1fr;
+  grid-template-areas:
+    "title title"
+    "role table"
+    "input table"
+    "none table";
+  grid-column-gap: 3rem;
+
+  .alert {
+    position: absolute;
+    right: 1rem;
+    margin-top: 2rem;
+  }
+
+  label {
+    margin-bottom: 0.1rem;
+    font-size: 0.7rem;
+    color: gray;
+    text-transform: uppercase;
+  }
+
+  .title {
+    grid-area: title;
+  }
+
+  .role {
+    grid-area: role;
+  }
+
+  .input {
+    grid-area: input;
+  }
+
+  table {
+    grid-area: table;
+    font-size: 0.9rem;
+    background-color: white;
+    margin-bottom: 0;
+    border: 0;
+
+    p {
+      margin-bottom: 0;
+    }
+
+    tr {
+      display: grid;
+      grid-template-columns: 2.5rem 1fr 2rem;
+      grid-template-rows: auto;
+      border-right: 0;
+    }
+
+    td,
+    th {
+      padding: 0.2rem 0.5rem;
+    }
+
+    td:first-child {
+      background-color: #e9ecef;
+      color: gray;
+    }
+
+    td + td {
+      border-left: 1px solid whitesmoke;
+    }
+
+    th {
+      background-color: #e9ecef;
+      color: gray;
+      text-transform: uppercase;
+      font-weight: 400;
+      font-size: 0.8rem;
+      border-top: 0;
+    }
+
+    tbody {
+      display: block;
+      max-height: 55vh;
+      overflow-y: scroll;
+      margin-bottom: 0;
+    }
+  }
+}

@@ -1,0 +1,95 @@
+@import "../../variables.scss";
+$bg: darken($primary, 30%);
+$bg-active: darken($primary, 20%);
+
+main {
+  display: grid;
+  grid-template-rows: 1fr 40px;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.container-fluid {
+  max-width: 1400px !important;
+}
+
+.root-wrapper {
+  margin: 0 auto;
+  transition: all 0.1s;
+
+  .jumbotron {
+    overflow-y: hidden;
+    margin-top: -10px;
+    padding: 2rem 2rem;
+    margin-bottom: 0;
+    overflow-x: hidden;
+  }
+}
+
+nav {
+  padding: 0;
+  height: 100%;
+
+  & > div {
+    height: 100%;
+
+    & > div {
+      height: 100%;
+    }
+  }
+
+  ul {
+    height: 100%;
+
+    .dropdown-menu {
+      background-color: $bg !important;
+      margin: 0;
+
+      button {
+        padding: 0;
+
+        &:hover {
+          background-color: $bg-active;
+        }
+      }
+
+      .dropdown-divider {
+        height: 0;
+        overflow: hidden;
+        border-top: 1px solid $bg-active;
+      }
+    }
+
+    .nav-link {
+      display: flex;
+      height: 100%;
+      align-items: center;
+      padding: 0.5rem 1rem !important;
+      color: darkgray !important;
+
+      &:hover {
+        color: white !important;
+      }
+
+      &.active {
+        color: white !important;
+        background-color: $bg-active;
+      }
+    }
+  }
+}
+
+.navbar {
+  padding: 0 !important;
+  background-color: $bg !important;
+  box-shadow: 0 0 5px gray;
+}
+
+.footer {
+  text-transform: uppercase;
+  padding: 0 1rem;
+  display: flex;
+  align-items: center;
+  font-size: 0.8rem;
+  color: gray;
+}

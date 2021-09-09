@@ -1,0 +1,11 @@
+.strands-wrapper {
+  position: relative;
+
+  table {
+    thead tr,
+    tbody tr {
+      display: grid;
+      grid-template-columns: 350px repeat(5, 1fr);
+    }
+  }
+}

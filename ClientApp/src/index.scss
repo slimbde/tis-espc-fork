@@ -1,0 +1,77 @@
+@import "./variables.scss";
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+body {
+  height: 100%;
+}
+
+#root {
+  display: grid;
+  height: 100%;
+  grid-template-rows: 50px 1fr;
+  grid-template-areas: "header" "main";
+}
+
+a,
+.a-like {
+  color: darken($admin-color, 20%) !important;
+  cursor: pointer;
+  text-decoration: unset !important;
+
+  &:hover {
+    color: darken($admin-color, 30%) !important;
+    text-shadow: 0 0 3px lightblue;
+  }
+}
+
+.display-5 {
+  font-size: 2rem;
+  line-height: 2.5rem;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  color: black;
+  font-weight: 100;
+}
+
+h3,
+h4 {
+  font-weight: 100 !important;
+}
+
+.table-sm a {
+  color: $primary;
+
+  &:hover {
+    color: darken($primary, 20%);
+  }
+}
+
+#loading {
+  position: absolute;
+  height: 60px;
+  width: 60px;
+  top: -15px;
+}
+
+#alert {
+  opacity: 0;
+}
+
+.no-data {
+  color: gray;
+  text-transform: uppercase;
+  padding: 0.5rem;
+}
+
+button {
+  z-index: 0;
+}

@@ -1,0 +1,38 @@
+.not-authorized {
+  height: 100vh;
+  background-color: whitesmoke;
+  display: grid;
+  grid-template-columns: 1fr 0.7fr 1fr;
+  grid-template-rows: repeat(3, 1fr);
+
+  .title {
+    grid-column: 2/3;
+    grid-row: 1/2;
+    display: flex;
+    flex-flow: column;
+    justify-content: flex-end;
+    align-items: center;
+    font-size: 1.6rem;
+  }
+
+  span {
+    position: relative;
+    grid-column: 2/3;
+    grid-row: 2/3;
+    text-align: justify;
+    font-size: 0.9rem;
+    color: gray;
+    display: flex;
+    flex-flow: column;
+
+    hr {
+      margin-bottom: 0.5rem;
+    }
+
+    #loading {
+      position: relative;
+      align-self: flex-end;
+      margin-top: -43px;
+    }
+  }
+}

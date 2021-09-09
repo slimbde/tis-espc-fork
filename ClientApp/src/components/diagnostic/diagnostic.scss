@@ -1,0 +1,74 @@
+@import "variables.scss";
+
+.diagnostic-wrapper {
+  position: relative;
+  display: grid;
+  grid-column-gap: 2rem;
+  grid-template-columns: 1.04fr 0.5fr 1fr;
+  grid-template-rows: 70px 1fr;
+  grid-template-areas: "title title title" "localhost service controls";
+  font-weight: 400;
+  color: gray;
+
+  #alert {
+    position: absolute;
+    right: 1rem;
+    margin-top: 2rem;
+    font-size: 1rem;
+  }
+
+  h2 {
+    text-transform: uppercase;
+    font-weight: 300;
+    font-size: 1.5rem;
+    color: black;
+  }
+
+  .title {
+    grid-area: title;
+  }
+
+  table {
+    background-color: white;
+    font-size: 0.9rem;
+
+    thead {
+      background-color: #e9ecef;
+      text-transform: uppercase;
+      font-weight: 500;
+      border-top: 0;
+    }
+
+    td:first-child {
+      background-color: #e9ecef !important;
+    }
+
+    th,
+    td {
+      padding: 0.2rem 1rem;
+      font-weight: inherit;
+    }
+  }
+
+  .localhost {
+    grid-area: localhost;
+  }
+
+  .service {
+    grid-area: service;
+
+    .ok {
+      background-color: rgb(226, 255, 183);
+      color: green;
+    }
+
+    .fail {
+      background-color: rgb(255, 211, 195);
+      color: red;
+    }
+  }
+
+  .controls {
+    grid-area: controls;
+  }
+}
