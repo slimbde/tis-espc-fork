@@ -1,0 +1,83 @@
+@import "variables.scss";
+
+.journal-wrapper {
+  position: relative;
+  display: flex;
+  flex-flow: column nowrap;
+  font-weight: 400;
+  color: gray;
+
+  #alert {
+    position: absolute;
+    right: 0;
+    font-size: 1rem;
+    z-index: 10;
+  }
+
+  .title {
+    margin-bottom: 0;
+  }
+
+  .subtitle {
+    display: flex;
+    justify-content: space-between;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  .btn {
+    z-index: 0 !important;
+  }
+
+  .controls {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    .navigation {
+      display: grid;
+      grid-template-columns: 0.5fr 1.5fr 1.5fr 2fr 2fr;
+      grid-template-rows: 0.5fr 1fr;
+      grid-template-areas:
+        "reset-title from-title to-title operation-title heat-title"
+        "reset from to operation heat";
+
+      .input-group {
+        flex-wrap: nowrap;
+        .form-control:first-child {
+          width: 140px;
+        }
+        .form-control:last-child {
+          width: 90px;
+        }
+      }
+
+      span {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+      }
+    }
+  }
+
+  table {
+    background-color: white;
+    font-size: 0.9rem;
+
+    thead {
+      background-color: #e9ecef;
+      text-transform: uppercase;
+      font-weight: 500;
+      border-top: 0;
+    }
+
+    td:first-child {
+      background-color: #e9ecef !important;
+    }
+
+    th,
+    td {
+      padding: 0.2rem 1rem;
+      font-weight: inherit;
+    }
+  }
+}

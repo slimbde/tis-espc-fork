@@ -4,7 +4,7 @@
   position: relative;
   display: grid;
   grid-column-gap: 2rem;
-  grid-template-columns: 1.04fr 0.5fr 1fr;
+  grid-template-columns: 1.5fr 1fr 1fr;
   grid-template-rows: 70px 1fr;
   grid-template-areas: "title title title" "localhost service controls";
   font-weight: 400;
@@ -12,9 +12,9 @@
 
   #alert {
     position: absolute;
-    right: 1rem;
-    margin-top: 2rem;
+    right: 0;
     font-size: 1rem;
+    z-index: 10;
   }
 
   h2 {
@@ -51,11 +51,19 @@
   }
 
   .localhost {
+    position: relative;
+    display: flex;
+    flex-flow: column;
     grid-area: localhost;
+
+    #loading {
+      top: 1rem;
+    }
   }
 
   .service {
     grid-area: service;
+    position: relative;
 
     .ok {
       background-color: rgb(226, 255, 183);
@@ -65,6 +73,10 @@
     .fail {
       background-color: rgb(255, 211, 195);
       color: red;
+    }
+
+    #loading {
+      top: 1rem;
     }
   }
 

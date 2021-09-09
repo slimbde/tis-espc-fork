@@ -72,6 +72,7 @@
       <HintPath>packages\System.Data.SQLite.Linq.1.0.115.0\lib\net45\System.Data.SQLite.Linq.dll</HintPath>
     </Reference>
     <Reference Include="System.Drawing" />
+    <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -138,10 +139,14 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AuthController.cs" />
+    <Compile Include="Controllers\DiagnosticController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Auth\SQLiteRoleProvider.cs" />
+    <Compile Include="Models\Diagnostics\HardwareMetrics.cs" />
+    <Compile Include="Models\Diagnostics\ServiceStatusProvider.cs" />
+    <Compile Include="Models\Diagnostics\SpecificImpersonate.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

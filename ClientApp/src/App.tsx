@@ -5,7 +5,7 @@ import { Redirect, Route, Switch } from "react-router-dom";
 //import { TPA } from "components/overview/tpa";
 //import { Technology } from "components/technology";
 import { NotAuthorized } from "components/notAuthorized";
-//import { Diagnostic } from "components/diagnostic";
+import { Diagnostic } from "components/diagnostic";
 import { Admin } from "components/admin";
 //import { Dispatcher } from "components/overview/dispatcher";
 import aHandler from "models/handlers/DbHandlers/AuthDbHandler"
@@ -63,7 +63,7 @@ const App: React.FC = () => {
 
   const programmerRoutes = [
     ...technologistRoutes,
-    //<Route path="/diagnostic" component={Diagnostic} key="diagnostic" />
+    <Route path="/diagnostic" component={Diagnostic} key="diagnostic" />
   ]
 
   const adminRoutes = [

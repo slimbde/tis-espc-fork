@@ -76,7 +76,8 @@ class NavMenu extends Component<NavProps> {
                 <UncontrolledDropdown nav inNavbar>
                   <DropdownToggle nav className={location.indexOf("/diagnostic") > -1 ? "active" : ""}>Диагностика</DropdownToggle>
                   <DropdownMenu right>
-                    <DropdownItem><NavLink tag={Link} to="/diagnostic">Состояние сервисов</NavLink></DropdownItem>
+                    <DropdownItem><NavLink tag={Link} to="/diagnostic/services">Состояние сервисов</NavLink></DropdownItem>
+                    <DropdownItem><NavLink tag={Link} to="/diagnostic/operator">Журнал действий оператора</NavLink></DropdownItem>
                   </DropdownMenu>
                 </UncontrolledDropdown>}
 
