@@ -1,32 +1,63 @@
 import "./journal.scss"
-import { Alert, Button, ButtonGroup } from "reactstrap"
 import { useState } from "react"
+import { Alert, Button, ButtonGroup, Table } from "reactstrap"
 import { Controls } from "components/diagnostic/Journal/Controls"
-import { Filter } from "models/types/Diagnostic/Operators/Filter"
+import { OperatorFilter } from "models/types/Diagnostic/Operators/OperatorFilter"
+import { AreaId } from "models/types/Diagnostic/Operators/AreaId"
+import { EventPriorityProvider } from "models/types/Diagnostic/Operators/EventPrioritySet"
+import { OperatorInfo } from "models/types/Diagnostic/Operators/OperatorInfo"
+import dHandler from "models/handlers/DiagnosticHandler"
+import { blinkAlert } from "components/extra/Alert"
+import { Loading } from "components/extra/Loading"
+import NoData from "components/extra/NoData"
+import moment from "moment"
 
 
 type State = {
-  areaId: number
+  areaId: keyof AreaId
+  loading: boolean
+  operatorInfo: OperatorInfo[]
 }
 
 
 export const Journal: React.FC = () => {
 
   const [state, setState] = useState<State>({
-    areaId: 600,
+    areaId: "CCM_DIAG",
+    loading: false,
+    operatorInfo: [],
   })
 
 
-  const getAreaName = (AREA_ID: number) => {
+  const getAreaName = (AREA_ID: string) => {
     switch (AREA_ID) {
-      case 600: return "АКП-2"
-      case 800: return "ВКД"
-      case 1100: return "МНЛЗ-2"
+      case "LF_DIAG": return "АКП-2"
+      case "VOD_DIAG": return "ВКД"
+      case "CCM_DIAG": return "МНЛЗ-2"
     }
   }
 
-  const applyFilter = (filter: Filter) => {
-    console.log(filter)
+  const applyFilter = async (filter: OperatorFilter) => {
+    const eventPrioritySet = EventPriorityProvider(state.areaId)
+
+    switch (filter.operation) {
+      case "buttons": filter.eventPriority = eventPrioritySet.prioBtn; break;
+      case "hmi_sets": filter.eventPriority = eventPrioritySet.prioHmiSets; break;
+      case "hmi_cmds": filter.eventPriority = eventPrioritySet.prioHmiCmds; break;
+      case "airpump_msg": filter.eventPriority = eventPrioritySet.prioAirpump as string; break;
+    }
+
+    filter.areaId = state.areaId
+
+    try {
+      setState({ ...state, loading: true })
+      const operatorInfo = await dHandler.GetListForAsync(filter)
+      setState({ ...state, operatorInfo, loading: false })
+    } catch (error) {
+      console.log(error)
+      blinkAlert(error as string, false)
+      setState({ ...state, loading: false })
+    }
   }
 
 
@@ -36,13 +67,38 @@ export const Journal: React.FC = () => {
     <div className="subtitle">
       Отчеты из системы протоколирования
       <ButtonGroup size="sm">
-        <Button color="info" outline active={state.areaId === 600} onClick={() => setState({ ...state, areaId: 600 })}>АКП-2</Button>
-        <Button color="info" outline active={state.areaId === 800} onClick={() => setState({ ...state, areaId: 800 })}>ВКД</Button>
-        <Button color="info" outline active={state.areaId === 1100} onClick={() => setState({ ...state, areaId: 1100 })}>МНЛЗ-2</Button>
+        {/* Сервер MoreIntelligence недоступен. Поэтому, LF_DIAG и VOD_DIAG также недоступны (10.2.19.36 нет пинга) */}
+        {/*<Button color="info" outline active={state.areaId === "LF_DIAG"} onClick={() => setState({ ...state, areaId: "LF_DIAG" })}>АКП-2</Button>
+        <Button color="info" outline active={state.areaId === "VOD_DIAG"} onClick={() => setState({ ...state, areaId: "VOD_DIAG" })}>ВКД</Button>*/}
+        <Button color="info" outline active={state.areaId === "CCM_DIAG"} onClick={() => setState({ ...state, areaId: "CCM_DIAG" })}>МНЛЗ-2</Button>
       </ButtonGroup>
     </div>
     <div className="controls">
-      <Controls {...{ applyFilter }} />
+      {state.loading && <Loading />}
+      <Controls {...{ applyFilter, areaId: state.areaId, loading: state.loading }} />
     </div>
+    {!state.loading && state.operatorInfo.length > 0 && <Table hover>
+      <thead>
+        <tr>
+          <th>Дата</th>
+          <th>Время</th>
+          <th>Действие / Параметр</th>
+          <th>Было</th>
+          <th>Стало</th>
+        </tr>
+      </thead>
+      <tbody>
+        {state.operatorInfo.map(oi =>
+          <tr key={`${oi.EventStamp}${oi.Comment}`}>
+            <td>{moment(oi.EventStamp, "DD.MM.YYYY").format("DD.MM.YYYY")}</td>
+            <td>{moment(oi.EventStamp, "DD.MM.YYYY HH:mm:ss").format("HH:mm:ss")}</td>
+            <td>{oi.Comment}</td>
+            <td>{oi.OldValue}</td>
+            <td>{oi.NewValue}</td>
+          </tr>
+        )}
+      </tbody>
+    </Table>}
+    {!state.loading && state.operatorInfo.length === 0 && <NoData />}
   </div>
 }

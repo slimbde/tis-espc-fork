@@ -1,8 +1,5 @@
 import { Param } from "models/types/Param"
-import { Sample } from "models/types/Sample"
-import HeatDbHandler from "./HeatDbHandler"
 import ParamDbHandler from "./ParamDbHandler"
-import SampleDbHandler from "./SampleDbHandler"
 
 
 /**
@@ -39,13 +36,9 @@ export interface IDbHandler<T> {
 
 
 
-const hHandler = new HeatDbHandler()
-const samHandler = new SampleDbHandler() as IDbHandler<Sample>
 const parHandler = new ParamDbHandler() as IDbHandler<Param>
 
 
 export {
-  hHandler,
-  samHandler,
   parHandler,
 }

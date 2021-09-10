@@ -1,6 +1,6 @@
 import "./services.scss"
-import { Alert, Button, Table } from "reactstrap"
 import dHandler from "models/handlers/DiagnosticHandler"
+import { Alert, Button, Table } from "reactstrap"
 import { blinkAlert } from "components/extra/Alert"
 import { useEffect, useState } from "react"
 import { ServiceInfo } from "models/types/Diagnostic/ServiceInfo"

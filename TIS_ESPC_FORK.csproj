@@ -147,6 +147,9 @@
     <Compile Include="Models\Diagnostics\HardwareMetrics.cs" />
     <Compile Include="Models\Diagnostics\ServiceStatusProvider.cs" />
     <Compile Include="Models\Diagnostics\SpecificImpersonate.cs" />
+    <Compile Include="Models\DTOs\OperatorInfo.cs" />
+    <Compile Include="Models\Repositories\IRepository.cs" />
+    <Compile Include="Models\Repositories\OperatorRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

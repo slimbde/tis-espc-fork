@@ -1,12 +1,15 @@
 import moment from "moment"
 import { useState } from "react"
-import { Filter } from "models/types/Diagnostic/Operators/Filter"
+import { FilterOperation, OperatorFilter } from "models/types/Diagnostic/Operators/OperatorFilter"
 import { Button, Input, InputGroup, InputGroupAddon } from "reactstrap"
 import { blinkAlert } from "components/extra/Alert"
+import { AreaId } from "models/types/Diagnostic/Operators/AreaId"
 
 
 type Props = {
-  applyFilter: (filter: Filter) => void
+  applyFilter: (filter: OperatorFilter) => void
+  areaId: keyof AreaId
+  loading: boolean
 }
 
 
@@ -15,56 +18,71 @@ type State = {
   timeFrom: string
   dateTo: string
   timeTo: string
-  operation: string
-  heatId: string
+  operation: keyof FilterOperation
+  comment: string
 }
 
 
 
 export const Controls: React.FC<Props> = ({
   applyFilter,
+  areaId,
+  loading,
 }) => {
 
   const [state, setState] = useState<State>({
-    dateFrom: moment().format("YYYY-MM-DD"),
+    dateFrom: moment().subtract(1, "day").format("YYYY-MM-DD"),
     dateTo: moment().format("YYYY-MM-DD"),
     timeFrom: "07:30",
     timeTo: "19:30",
-    operation: "Нажатие кнопок на пультах",
-    heatId: "",
+    operation: "buttons",
+    comment: "",
   })
+
+
+  const getAreaOptions = () => {
+    const options = [
+      <option key="1" value="buttons">Нажатие кнопок на пультах</option>,
+      <option key="2" value="hmi_cmds">Команды ЧМИ</option>,
+      <option key="3" value="hmi_sets">Изменение уставок на ЧМИ</option>,
+    ]
+
+    if (areaId === "CCM_DIAG")
+      options.push(<option key="4" value="airpump_msg">Компрессорная</option>)
+
+    return options
+  }
 
 
   const dateFromChange = (e: React.ChangeEvent<HTMLInputElement>) => setState({ ...state, dateFrom: e.target.value })
   const timeFromChange = (e: React.ChangeEvent<HTMLInputElement>) => setState({ ...state, timeFrom: e.target.value })
   const dateToChange = (e: React.ChangeEvent<HTMLInputElement>) => setState({ ...state, dateTo: e.target.value })
   const timeToChange = (e: React.ChangeEvent<HTMLInputElement>) => setState({ ...state, timeTo: e.target.value })
-  const operationChange = (e: React.ChangeEvent<HTMLInputElement>) => setState({ ...state, operation: e.target.value })
-  const heatChange = (e: React.ChangeEvent<HTMLInputElement>) => setState({ ...state, heatId: e.target.value })
+  const operationChange = (e: React.ChangeEvent<HTMLInputElement>) => setState({ ...state, operation: e.target.value as keyof FilterOperation })
+  const commentChange = (e: React.ChangeEvent<HTMLInputElement>) => setState({ ...state, comment: e.target.value })
 
   const reset = () => setState({
     dateFrom: moment().format("YYYY-MM-DD"),
     dateTo: moment().format("YYYY-MM-DD"),
     timeFrom: "07:30",
     timeTo: "19:30",
-    operation: "Нажатие кнопок на пультах",
-    heatId: "",
+    operation: "buttons",
+    comment: "",
   })
 
   const checkFilter = () => {
-    if (state.heatId !== "") {
-      applyFilter({ operation: state.operation, heatId: state.heatId })
-      return
-    }
-
     const from = `${state.dateFrom} ${state.timeFrom}:00`
     const to = `${state.dateTo} ${state.timeTo}:00`
     if (moment(from) > moment(to)) {
       blinkAlert("Неверно задан интервал", false)
       return
     }
+    if (moment(to).diff(moment(from), "days") > 30) {
+      blinkAlert("Интервал болeе 30 сут. слишком велик", false)
+      return
+    }
 
-    applyFilter({ operation: state.operation, from, to })
+    applyFilter({ operation: state.operation, from, to, comment: state.comment })
   }
 
 
@@ -73,7 +91,7 @@ export const Controls: React.FC<Props> = ({
     <span style={{ gridArea: "from-title" }}>Начало:</span>
     <span style={{ gridArea: "to-title" }}>Окончание:</span>
     <span style={{ gridArea: "operation-title" }}>Операция:</span>
-    <span style={{ gridArea: "heat-title" }}>Плавка:</span>
+    <span style={{ gridArea: "heat-title" }}>Комментарий:</span>
 
     <Button
       style={{ gridArea: "reset", borderTopRightRadius: "0", borderBottomRightRadius: "0" }}
@@ -118,25 +136,20 @@ export const Controls: React.FC<Props> = ({
       type="select"
       onChange={e => operationChange(e)}
       value={state.operation}
-    >
-      <option>Нажатие кнопок на пультах</option>
-      <option>Команды ЧМИ</option>
-      <option>Изменение уставок на ЧМИ</option>
-      <option>Компрессорная</option>
-    </Input>
+    >{getAreaOptions()}</Input>
 
     <InputGroup style={{ gridArea: "heat" }}>
       <Input
         style={{ borderTopLeftRadius: "0", borderBottomLeftRadius: "0" }}
         bsSize="sm"
-        type="number"
-        placeholder="Номер плавки..."
-        onChange={e => heatChange(e)}
-        value={state.heatId}
+        type="text"
+        placeholder="..."
+        onChange={e => commentChange(e)}
+        value={state.comment}
       />
       <InputGroupAddon addonType="append">
-        <Button size="sm" color="primary" outline onClick={checkFilter}>Поиск</Button>
-        <Button size="sm" color="success" outline onClick={() => ({})}>Excel</Button>
+        <Button size="sm" disabled={loading} color="primary" outline onClick={checkFilter}>Поиск</Button>
+        <Button size="sm" disabled={loading} color="success" outline onClick={() => ({})}>Excel</Button>
       </InputGroupAddon>
     </InputGroup>
   </div >
