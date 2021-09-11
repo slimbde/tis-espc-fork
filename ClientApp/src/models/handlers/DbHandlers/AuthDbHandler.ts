@@ -1,4 +1,4 @@
-import backendHost from "../backendHost"
+import backendHost from "./backendHost"
 
 class AuthDbHandler {
   private static instance: AuthDbHandler

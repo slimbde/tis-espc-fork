@@ -69,6 +69,7 @@ nav {
 
       &:hover {
         color: white !important;
+        background-color: $bg-active;
       }
 
       &.active {
@@ -83,6 +84,20 @@ nav {
   padding: 0 !important;
   background-color: $bg !important;
   box-shadow: 0 0 5px gray;
+
+  .programmer {
+    color: $manager-color !important;
+    &:hover {
+      color: lighten($manager-color, 20%) !important;
+    }
+  }
+
+  .admin {
+    color: lighten($admin-color, 10%) !important;
+    &:hover {
+      color: lighten($admin-color, 20%) !important;
+    }
+  }
 }
 
 .footer {

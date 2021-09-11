@@ -5,11 +5,22 @@ import { ServiceInfo } from "models/types/Diagnostic/ServiceInfo"
 import backendHost from "./backendHost"
 
 
-export default class DiagnosticHandler {
-  protected static backend = backendHost
-  protected static api = "Diagnostic"
+class DiagnosticHandler {
+  protected backend = backendHost
+  protected api = "Diagnostic"
 
-  static async GetServiceStatusAsync(): Promise<ServiceInfo> {
+  private static instance: DiagnosticHandler
+  private constructor() { }
+
+  static GetInstance() {
+    if (!this.instance)
+      this.instance = new DiagnosticHandler()
+
+    return this.instance
+  }
+
+
+  async GetServiceStatusAsync(): Promise<ServiceInfo> {
     const resp = await fetch(`${this.backend}/${this.api}/GetServiceStatus`, {
       credentials: "include"
     })
@@ -20,7 +31,7 @@ export default class DiagnosticHandler {
     return await resp.json()
   }
 
-  static async GetServerStatusAsync(): Promise<ServerInfo> {
+  async GetServerStatusAsync(): Promise<ServerInfo> {
     const resp = await fetch(`${this.backend}/${this.api}/GetServerStatus`, {
       credentials: "include"
     })
@@ -31,7 +42,7 @@ export default class DiagnosticHandler {
     return await resp.json()
   }
 
-  static async GetListForAsync(filter: OperatorFilter): Promise<OperatorInfo[]> {
+  async GetListForAsync(filter: OperatorFilter): Promise<OperatorInfo[]> {
     const resp = await fetch(`${this.backend}/${this.api}/ReadForAsync`, {
       method: "POST",
       headers: {
@@ -48,3 +59,5 @@ export default class DiagnosticHandler {
     return await resp.json()
   }
 }
+
+export default DiagnosticHandler.GetInstance()

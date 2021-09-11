@@ -139,6 +139,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AuthController.cs" />
+    <Compile Include="Controllers\ProductionController.cs" />
     <Compile Include="Controllers\DiagnosticController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -147,8 +148,13 @@
     <Compile Include="Models\Diagnostics\HardwareMetrics.cs" />
     <Compile Include="Models\Diagnostics\ServiceStatusProvider.cs" />
     <Compile Include="Models\Diagnostics\SpecificImpersonate.cs" />
-    <Compile Include="Models\DTOs\OperatorInfo.cs" />
+    <Compile Include="Models\DTOs\Production\HeatEvent.cs" />
+    <Compile Include="Models\DTOs\Production\LFHeat.cs" />
+    <Compile Include="Models\DTOs\Operator\OperatorFilter.cs" />
+    <Compile Include="Models\DTOs\Operator\OperatorInfo.cs" />
+    <Compile Include="Models\DTOs\Production\ProductionFilter.cs" />
     <Compile Include="Models\Repositories\IRepository.cs" />
+    <Compile Include="Models\Repositories\ProductionRepository.cs" />
     <Compile Include="Models\Repositories\OperatorRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

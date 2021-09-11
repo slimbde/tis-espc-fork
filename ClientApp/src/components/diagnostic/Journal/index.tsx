@@ -3,10 +3,10 @@ import { useState } from "react"
 import { Alert, Button, ButtonGroup, Table } from "reactstrap"
 import { Controls } from "components/diagnostic/Journal/Controls"
 import { OperatorFilter } from "models/types/Diagnostic/Operators/OperatorFilter"
-import { AreaId } from "models/types/Diagnostic/Operators/AreaId"
+import { AreaId, getAreaName } from "models/types/AreaId"
 import { EventPriorityProvider } from "models/types/Diagnostic/Operators/EventPrioritySet"
 import { OperatorInfo } from "models/types/Diagnostic/Operators/OperatorInfo"
-import dHandler from "models/handlers/DiagnosticHandler"
+import dHandler from "models/handlers/DbHandlers/DiagnosticHandler"
 import { blinkAlert } from "components/extra/Alert"
 import { Loading } from "components/extra/Loading"
 import NoData from "components/extra/NoData"
@@ -14,7 +14,7 @@ import moment from "moment"
 
 
 type State = {
-  areaId: keyof AreaId
+  areaId: AreaId
   loading: boolean
   operatorInfo: OperatorInfo[]
 }
@@ -23,19 +23,10 @@ type State = {
 export const Journal: React.FC = () => {
 
   const [state, setState] = useState<State>({
-    areaId: "CCM_DIAG",
+    areaId: AreaId.CCM_DIAG,
     loading: false,
     operatorInfo: [],
   })
-
-
-  const getAreaName = (AREA_ID: string) => {
-    switch (AREA_ID) {
-      case "LF_DIAG": return "АКП-2"
-      case "VOD_DIAG": return "ВКД"
-      case "CCM_DIAG": return "МНЛЗ-2"
-    }
-  }
 
   const applyFilter = async (filter: OperatorFilter) => {
     const eventPrioritySet = EventPriorityProvider(state.areaId)
@@ -47,7 +38,7 @@ export const Journal: React.FC = () => {
       case "airpump_msg": filter.eventPriority = eventPrioritySet.prioAirpump as string; break;
     }
 
-    filter.areaId = state.areaId
+    filter.areaId = (AreaId as any)[state.areaId]
 
     try {
       setState({ ...state, loading: true })
@@ -70,7 +61,7 @@ export const Journal: React.FC = () => {
         {/* Сервер MoreIntelligence недоступен. Поэтому, LF_DIAG и VOD_DIAG также недоступны (10.2.19.36 нет пинга) */}
         {/*<Button color="info" outline active={state.areaId === "LF_DIAG"} onClick={() => setState({ ...state, areaId: "LF_DIAG" })}>АКП-2</Button>
         <Button color="info" outline active={state.areaId === "VOD_DIAG"} onClick={() => setState({ ...state, areaId: "VOD_DIAG" })}>ВКД</Button>*/}
-        <Button color="info" outline active={state.areaId === "CCM_DIAG"} onClick={() => setState({ ...state, areaId: "CCM_DIAG" })}>МНЛЗ-2</Button>
+        <Button color="info" outline active={state.areaId === AreaId.CCM_DIAG} onClick={() => setState({ ...state, areaId: AreaId.CCM_DIAG })}>МНЛЗ-2</Button>
       </ButtonGroup>
     </div>
     <div className="controls">

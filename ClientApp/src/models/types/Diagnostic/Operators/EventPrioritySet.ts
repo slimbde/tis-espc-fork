@@ -1,4 +1,4 @@
-import { AreaId } from "./AreaId"
+import { AreaId } from "../../AreaId"
 
 export type EventPrioritySet = {
   prioBtn: string         // Кнопки на пультах
@@ -27,10 +27,10 @@ const VODPrioritySet: EventPrioritySet = {
 }
 
 
-export const EventPriorityProvider = (areaId: keyof AreaId) => {
+export const EventPriorityProvider = (areaId: AreaId) => {
   switch (areaId) {
-    case "CCM_DIAG": return CCMPrioritySet
-    case "LF_DIAG": return LFPrioritySet
-    case "VOD_DIAG": return VODPrioritySet
+    case AreaId.CCM_DIAG: return CCMPrioritySet
+    case AreaId.LF_DIAG: return LFPrioritySet
+    case AreaId.VOD_DIAG: return VODPrioritySet
   }
 }

@@ -8,7 +8,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
-using TIS_ESPC_FORK.Models.DTOs;
+using TIS_ESPC_FORK.Models.DTOs.Operator;
 
 namespace TIS_ESPC_FORK.Models.Repositories
 {
@@ -22,8 +22,6 @@ namespace TIS_ESPC_FORK.Models.Repositories
             conStrings["VOD_DIAG"] = ConfigurationManager.ConnectionStrings["VOD_DIAG"].ConnectionString;
         }
 
-
-        public Task<int> Delete(OperatorInfo obj) => throw new NotImplementedException();
 
         public async Task<IEnumerable<OperatorInfo>> ListFor(object filter)
         {
@@ -54,9 +52,5 @@ namespace TIS_ESPC_FORK.Models.Repositories
 
             throw new Exception("The filter isn't an OperatorFilter instance");
         }
-
-        public Task<int> Post(OperatorInfo obj) => throw new NotImplementedException();
-
-        public Task<int> Put(OperatorInfo obj) => throw new NotImplementedException();
     }
 }

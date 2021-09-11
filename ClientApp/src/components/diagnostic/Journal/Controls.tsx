@@ -3,12 +3,13 @@ import { useState } from "react"
 import { FilterOperation, OperatorFilter } from "models/types/Diagnostic/Operators/OperatorFilter"
 import { Button, Input, InputGroup, InputGroupAddon } from "reactstrap"
 import { blinkAlert } from "components/extra/Alert"
-import { AreaId } from "models/types/Diagnostic/Operators/AreaId"
+import { AreaId } from "models/types/AreaId"
+import { useRouteMatch } from "react-router-dom"
 
 
 type Props = {
   applyFilter: (filter: OperatorFilter) => void
-  areaId: keyof AreaId
+  areaId: AreaId
   loading: boolean
 }
 
@@ -30,11 +31,15 @@ export const Controls: React.FC<Props> = ({
   loading,
 }) => {
 
+  const match = useRouteMatch<{ FROM: string, TO: string }>()
+  const from = match.params.FROM && moment(match.params.FROM)
+  const to = match.params.TO && moment(match.params.TO)
+
   const [state, setState] = useState<State>({
-    dateFrom: moment().subtract(1, "day").format("YYYY-MM-DD"),
-    dateTo: moment().format("YYYY-MM-DD"),
-    timeFrom: "07:30",
-    timeTo: "19:30",
+    dateFrom: from ? from.format("YYYY-MM-DD") : moment().subtract(1, "day").format("YYYY-MM-DD"),
+    dateTo: to ? to.format("YYYY-MM-DD") : moment().format("YYYY-MM-DD"),
+    timeFrom: from ? from.format("HH:mm") : "07:30",
+    timeTo: to ? to.format("HH:mm") : "19:30",
     operation: "buttons",
     comment: "",
   })
@@ -47,7 +52,7 @@ export const Controls: React.FC<Props> = ({
       <option key="3" value="hmi_sets">Изменение уставок на ЧМИ</option>,
     ]
 
-    if (areaId === "CCM_DIAG")
+    if (areaId === AreaId.CCM_DIAG)
       options.push(<option key="4" value="airpump_msg">Компрессорная</option>)
 
     return options

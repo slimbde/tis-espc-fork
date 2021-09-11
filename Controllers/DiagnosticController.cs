@@ -4,19 +4,18 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Web.Http;
 using TIS_ESPC_FORK.Models.Diagnostics;
-using TIS_ESPC_FORK.Models.DTOs;
+using TIS_ESPC_FORK.Models.DTOs.Operator;
 using TIS_ESPC_FORK.Models.Repositories;
 
 namespace TIS_ESPC_FORK.Controllers
 {
-    [Authorize(Roles = "Администратор,Программист")]
     public class DiagnosticController : ApiController
     {
         static readonly IRepository<OperatorInfo> oRepo = new OperatorRepository();
 
 
-
         [HttpGet]
+        [Authorize(Roles = "Администратор,Программист")]
         [Route("api/Diagnostic/GetServiceStatus")]
         public async Task<IHttpActionResult> GetServiceStatus()
         {
@@ -36,6 +35,7 @@ namespace TIS_ESPC_FORK.Controllers
 
 
         [HttpGet]
+        [Authorize(Roles = "Администратор,Программист")]
         [Route("api/Diagnostic/GetServerStatus")]
         public async Task<IHttpActionResult> GetServerStatus()
         {
@@ -47,6 +47,7 @@ namespace TIS_ESPC_FORK.Controllers
 
 
         [HttpPost]
+        [Authorize(Roles = "Администратор,Программист,Технолог")]
         [Route("api/Diagnostic/ReadForAsync")]
         public async Task<IHttpActionResult> ReadForAsync()
         {

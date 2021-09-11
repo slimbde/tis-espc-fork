@@ -49,32 +49,41 @@ class NavMenu extends Component<NavProps> {
               <span className="flex-grow-1">&nbsp;</span>
 
               <UncontrolledDropdown nav inNavbar>
-                <DropdownToggle nav className={location.indexOf("/overview") > -1 || location.indexOf("/tpa") > -1 || location.indexOf("/dispatcher") > -1 ? "active" : ""}>Обзор</DropdownToggle>
+                <DropdownToggle nav className={location.indexOf("/overview") > -1 ? "active" : ""}>Обзор</DropdownToggle>
                 <DropdownMenu right>
-                  <DropdownItem><NavLink tag={Link} to="/dispatcher">Обзор ОНРС ККЦ</NavLink></DropdownItem>
-                  <DropdownItem><NavLink tag={Link} to="/tpa">МНЛЗ-5. Простои ТПА</NavLink></DropdownItem>
+                  <DropdownItem><NavLink tag={Link} to="/overview/arms">Мониторинг АРМ</NavLink></DropdownItem>
+                  <DropdownItem><NavLink tag={Link} to="/overview/compressor">Компрессорная</NavLink></DropdownItem>
                 </DropdownMenu>
               </UncontrolledDropdown>,
 
               <UncontrolledDropdown nav inNavbar>
-                <DropdownToggle nav >Ресурсы</DropdownToggle>
+                <DropdownToggle nav className={location.indexOf("/agregates") > -1 ? "active" : ""}> Агрегаты</DropdownToggle>
                 <DropdownMenu right>
-                  <DropdownItem><NavLink tag={"a"} href="http://chmk-web02.chmk.mechelgroup.ru/kkc/">Веб-сервер АСИС «ККЦ-Прокат»</NavLink></DropdownItem>
-                  <DropdownItem><NavLink tag={"a"} href="http://10.2.59.136/">Веб-сервер More Intelligence</NavLink></DropdownItem>
+                  <DropdownItem><NavLink tag={Link} to="/agregates/staple">Основные</NavLink></DropdownItem>
+                  <DropdownItem><NavLink tag={Link} to="/agregates/dries">Сушка</NavLink></DropdownItem>
+                  <DropdownItem><NavLink tag={Link} to="/agregates/molding">Разливка</NavLink></DropdownItem>
+                </DropdownMenu>
+              </UncontrolledDropdown>
+
+              <UncontrolledDropdown nav inNavbar>
+                <DropdownToggle nav>Ресурсы</DropdownToggle>
+                <DropdownMenu right>
+                  <DropdownItem><NavLink tag={Link} to={{ pathname: "http://10.2.19.215" }} target="_blank">Старый веб-сервер</NavLink></DropdownItem>
+                  <DropdownItem><NavLink tag={Link} to={{ pathname: "http://10.2.19.223/espc6temp/app/main/index.php" }} target="_blank">Учет сыпучих материалов и ферросплавов</NavLink></DropdownItem>
                 </DropdownMenu>
               </UncontrolledDropdown>
 
               {this.state.userRoleRating > 1 &&
                 <UncontrolledDropdown nav inNavbar>
-                  <DropdownToggle nav className={location.indexOf("/tech-params") > -1 ? "active" : ""}>Технология</DropdownToggle>
+                  <DropdownToggle nav className={location.indexOf("/technology") > -1 ? "active" : ""}>Технология</DropdownToggle>
                   <DropdownMenu right>
-                    <DropdownItem><NavLink tag={Link} to="/tech-params">МНЛЗ-5. Корректив параметров</NavLink></DropdownItem>
+                    <DropdownItem><NavLink tag={Link} to="/technology/production">Производство</NavLink></DropdownItem>
                   </DropdownMenu>
                 </UncontrolledDropdown>}
 
               {this.state.userRoleRating > 2 &&
                 <UncontrolledDropdown nav inNavbar>
-                  <DropdownToggle nav className={location.indexOf("/diagnostic") > -1 ? "active" : ""}>Диагностика</DropdownToggle>
+                  <DropdownToggle nav className={location.indexOf("/diagnostic") > -1 ? "active programmer" : "programmer"}>Диагностика</DropdownToggle>
                   <DropdownMenu right>
                     <DropdownItem><NavLink tag={Link} to="/diagnostic/services">Состояние сервисов</NavLink></DropdownItem>
                     <DropdownItem><NavLink tag={Link} to="/diagnostic/operator">Журнал действий оператора</NavLink></DropdownItem>
@@ -83,11 +92,11 @@ class NavMenu extends Component<NavProps> {
 
               {this.state.userRoleRating > 3 &&
                 <UncontrolledDropdown nav inNavbar>
-                  <DropdownToggle nav className={location.indexOf("/admin") > -1 || location.indexOf("/hpe") > -1 ? "active" : ""}>Администрирование</DropdownToggle>
+                  <DropdownToggle nav className={location.indexOf("/admin") > -1 ? "active admin" : "admin"}>Администрирование</DropdownToggle>
                   <DropdownMenu right>
-                    <DropdownItem><NavLink tag={Link} to="/admin">Администрирование пользователей</NavLink></DropdownItem>
+                    <DropdownItem><NavLink tag={Link} exact to="/admin">Администрирование пользователей</NavLink></DropdownItem>
                     <DropdownItem divider />
-                    <DropdownItem><NavLink tag={Link} to="/hpe">HPE VM Explorer</NavLink></DropdownItem>
+                    <DropdownItem><NavLink tag={Link} to="/admin/hpe">HPE VM Explorer</NavLink></DropdownItem>
                     <DropdownItem><NavLink tag={Link} to={{ pathname: "https://10.2.19.201/ui/#/login" }} target="_blank">Гипервизор МНЛЗ</NavLink></DropdownItem>
                     <DropdownItem><NavLink tag={Link} to={{ pathname: "https://10.2.19.200/ui/#/login" }} target="_blank">Гипервизор АКП-2</NavLink></DropdownItem>
                     <DropdownItem><NavLink tag={Link} to={{ pathname: "https://10.2.19.202/ui/#/login" }} target="_blank">Гипервизор АКП-2</NavLink></DropdownItem>

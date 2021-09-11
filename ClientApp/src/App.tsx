@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Home } from "components/home";
 import { Redirect, Route, Switch } from "react-router-dom";
 //import { TPA } from "components/overview/tpa";
-//import { Technology } from "components/technology";
+import { Production } from "components/technology/production";
 import { NotAuthorized } from "components/notAuthorized";
 import { Diagnostic } from "components/diagnostic";
 import { Admin } from "components/admin";
@@ -58,7 +58,7 @@ const App: React.FC = () => {
 
   const technologistRoutes = [
     ...userRoutes,
-    //<Route path="/tech-params" component={Technology} key="technology" />
+    <Route path="/technology/production" component={Production} key="production" />
   ]
 
   const programmerRoutes = [
@@ -68,8 +68,8 @@ const App: React.FC = () => {
 
   const adminRoutes = [
     ...programmerRoutes,
-    <Route path="/admin" component={Admin} key="admin" />,
-    <Route path="/hpe" component={VMExplorer} key="hpe" />
+    <Route path="/admin/hpe" component={VMExplorer} key="hpe" />,
+    <Route exact path="/admin" component={Admin} key="admin" />,
   ]
 
 
