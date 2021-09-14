@@ -141,6 +141,7 @@
     <Compile Include="Controllers\AuthController.cs" />
     <Compile Include="Controllers\ProductionController.cs" />
     <Compile Include="Controllers\DiagnosticController.cs" />
+    <Compile Include="Controllers\ScreenshotsController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

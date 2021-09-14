@@ -2,15 +2,16 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { useEffect, useState } from 'react';
 import { Home } from "components/home";
 import { Redirect, Route, Switch } from "react-router-dom";
-//import { TPA } from "components/overview/tpa";
 import { Production } from "components/technology/production";
 import { NotAuthorized } from "components/notAuthorized";
 import { Diagnostic } from "components/diagnostic";
 import { Admin } from "components/admin";
-//import { Dispatcher } from "components/overview/dispatcher";
-import aHandler from "models/handlers/DbHandlers/AuthDbHandler"
 import Layout from "components/layout";
 import { VMExplorer } from "components/admin/vm";
+import { ARMOverview } from "components/overview/arms";
+import aHandler from "models/handlers/DbHandlers/AuthDbHandler"
+import { ARM } from "components/overview/arms/ARM";
+
 
 
 type AppState = {
@@ -52,8 +53,8 @@ const App: React.FC = () => {
 
   const userRoutes = [
     <Route exact path="/home" component={Home} key="home" />,
-    //<Route exact path="/tpa" component={TPA} key="tpa" />,
-    //<Route exact path="/dispatcher" component={Dispatcher} key="dispatcher" />
+    <Route exact path="/overview/arms" component={ARMOverview} key="arms-overview" />,
+    <Route exact path="/overview/:ARM_ID" component={ARM} key="arm-overview" />,
   ]
 
   const technologistRoutes = [

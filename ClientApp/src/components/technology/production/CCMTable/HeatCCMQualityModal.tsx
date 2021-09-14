@@ -49,7 +49,7 @@ export const HeatCCMQualityModal: React.FC<Props> = ({
             </thead>
             <tbody>
               {processes.map(e =>
-                <tr style={{ backgroundColor: `${+e.PROD_COUNTER % 2 == 0 ? "whitesmoke" : "white"}` }} key={`${e.LABEL}${e.PROD_COUNTER}`}>
+                <tr style={{ backgroundColor: `${+e.PROD_COUNTER % 2 === 0 ? "whitesmoke" : "white"}` }} key={`${e.LABEL}${e.PROD_COUNTER}`}>
                   <td>{e.PROD_COUNTER}</td>
                   <td>{e.LABEL}</td>
                   <td>{e.UNIT}</td>
@@ -67,5 +67,5 @@ export const HeatCCMQualityModal: React.FC<Props> = ({
           </Table>}
       </ModalBody>
     </Modal>
-  </div>
+  </div >
 }
