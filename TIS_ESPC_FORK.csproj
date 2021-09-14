@@ -148,8 +148,10 @@
     <Compile Include="Models\Diagnostics\HardwareMetrics.cs" />
     <Compile Include="Models\Diagnostics\ServiceStatusProvider.cs" />
     <Compile Include="Models\Diagnostics\SpecificImpersonate.cs" />
+    <Compile Include="Models\DTOs\Production\HeatCCMProcess.cs" />
+    <Compile Include="Models\DTOs\Production\HeatCCMQuality.cs" />
     <Compile Include="Models\DTOs\Production\HeatEvent.cs" />
-    <Compile Include="Models\DTOs\Production\LFHeat.cs" />
+    <Compile Include="Models\DTOs\Production\HeatVODProcess.cs" />
     <Compile Include="Models\DTOs\Operator\OperatorFilter.cs" />
     <Compile Include="Models\DTOs\Operator\OperatorInfo.cs" />
     <Compile Include="Models\DTOs\Production\ProductionFilter.cs" />

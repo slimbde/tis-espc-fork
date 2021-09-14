@@ -1,0 +1,90 @@
+.CCM {
+  tr {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.2fr repeat(3, 1fr) 1.2fr 1fr 1.2fr repeat(3, 1fr);
+  }
+}
+
+.ccm-heat-process-modal {
+  .modal-body {
+    overflow-y: visible;
+
+    tbody {
+      display: block;
+      max-height: 50vh;
+      overflow-y: scroll;
+    }
+
+    th {
+      font-size: 0.8rem;
+      background-color: whitesmoke;
+      border-bottom: 1px solid lightgray;
+    }
+
+    th,
+    td {
+      padding: 0.2rem 0.7rem !important;
+      overflow: hidden;
+    }
+
+    th + th {
+      border-left: 1px solid lightgray;
+    }
+
+    td + td {
+      border-left: 1px solid whitesmoke;
+    }
+
+    thead tr {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr 1fr 1fr 1fr 3fr 1fr 2.5fr 3.5fr 1.2fr 1.2fr 1.2fr 1.55fr;
+    }
+
+    tbody tr {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr 1fr 1fr 1fr 3fr 1fr 2.5fr 3.5fr 1.2fr 1.2fr 1.2fr 1.2fr;
+    }
+  }
+}
+
+.ccm-heat-quality-modal {
+  .modal-body {
+    overflow-y: visible;
+
+    tbody {
+      display: block;
+      max-height: 50vh;
+      overflow-y: scroll;
+    }
+
+    th {
+      font-size: 0.8rem;
+      background-color: lightgray;
+      border-bottom: 1px solid darkgray;
+    }
+
+    th,
+    td {
+      padding: 0.2rem 0.5rem !important;
+      overflow: hidden;
+    }
+
+    th + th {
+      border-left: 1px solid darkgray;
+    }
+
+    td + td {
+      border-left: 1px solid lightgray;
+    }
+
+    thead tr {
+      display: grid;
+      grid-template-columns: 1fr 6fr 1.2fr 1.5fr 1.5fr 4fr 1.5fr 1.5fr 1.5fr 1.5fr 1.9fr;
+    }
+
+    tr {
+      display: grid;
+      grid-template-columns: 1fr 6fr 1.2fr 1.5fr 1.5fr 4fr 1.5fr 1.5fr 1.5fr 1.5fr 1.5fr;
+    }
+  }
+}

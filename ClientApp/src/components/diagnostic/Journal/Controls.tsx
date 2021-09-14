@@ -9,7 +9,7 @@ import { useRouteMatch } from "react-router-dom"
 
 type Props = {
   applyFilter: (filter: OperatorFilter) => void
-  areaId: AreaId
+  areaId: AreaId,
   loading: boolean
 }
 
@@ -31,7 +31,7 @@ export const Controls: React.FC<Props> = ({
   loading,
 }) => {
 
-  const match = useRouteMatch<{ FROM: string, TO: string }>()
+  const match = useRouteMatch<{ AREAID: string, FROM: string, TO: string }>()
   const from = match.params.FROM && moment(match.params.FROM)
   const to = match.params.TO && moment(match.params.TO)
 
@@ -87,7 +87,7 @@ export const Controls: React.FC<Props> = ({
       return
     }
 
-    applyFilter({ operation: state.operation, from, to, comment: state.comment })
+    applyFilter({ operation: state.operation, from, to, comment: state.comment, areaId: (AreaId as any)[areaId] })
   }
 
 

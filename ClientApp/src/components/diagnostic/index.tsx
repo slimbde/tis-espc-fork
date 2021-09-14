@@ -12,7 +12,7 @@ export const Diagnostic: React.FC = () => {
     <Switch>
       <Route exact path={`/diagnostic/services`} component={Services} />
       <Route exact path={`/diagnostic/operator`} component={Journal} />
-      <Route exact path={`/diagnostic/operator/:FROM/:TO`} component={Journal} />
+      <Route exact path={`/diagnostic/operator/:AREAID/:FROM/:TO`} component={Journal} />
     </Switch>
   </div>
 }

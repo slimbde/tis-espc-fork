@@ -69,7 +69,7 @@ const Controls: React.FC<Props> = ({
       <span>Агрегат:</span>
       <ButtonGroup size="sm">
         <Button outline color="info" active={areaId === AreaId.LF_DIAG} onClick={() => areaIdChange(AreaId.LF_DIAG)}>АКП-2</Button>
-        <Button outline color="info" active={areaId === AreaId.VOD_DIAG} onClick={() => areaIdChange(AreaId.VOD_DIAG)}>Вакууматор</Button>
+        <Button outline color="info" active={areaId === AreaId.VOD_DIAG} onClick={() => areaIdChange(AreaId.VOD_DIAG)}>ВАКУУМАТОР</Button>
         <Button outline color="info" active={areaId === AreaId.CCM_DIAG} onClick={() => areaIdChange(AreaId.CCM_DIAG)}>МНЛЗ-2</Button>
       </ButtonGroup>
     </div>

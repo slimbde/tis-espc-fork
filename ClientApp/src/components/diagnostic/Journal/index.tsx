@@ -11,6 +11,7 @@ import { blinkAlert } from "components/extra/Alert"
 import { Loading } from "components/extra/Loading"
 import NoData from "components/extra/NoData"
 import moment from "moment"
+import { useRouteMatch } from "react-router-dom"
 
 
 type State = {
@@ -21,9 +22,10 @@ type State = {
 
 
 export const Journal: React.FC = () => {
+  const match = useRouteMatch<{ AREAID: string, FROM: string, TO: string }>()
 
   const [state, setState] = useState<State>({
-    areaId: AreaId.CCM_DIAG,
+    areaId: +match.params.AREAID || AreaId.CCM_DIAG,
     loading: false,
     operatorInfo: [],
   })
@@ -37,8 +39,6 @@ export const Journal: React.FC = () => {
       case "hmi_cmds": filter.eventPriority = eventPrioritySet.prioHmiCmds; break;
       case "airpump_msg": filter.eventPriority = eventPrioritySet.prioAirpump as string; break;
     }
-
-    filter.areaId = (AreaId as any)[state.areaId]
 
     try {
       setState({ ...state, loading: true })
@@ -58,9 +58,8 @@ export const Journal: React.FC = () => {
     <div className="subtitle">
       Отчеты из системы протоколирования
       <ButtonGroup size="sm">
-        {/* Сервер MoreIntelligence недоступен. Поэтому, LF_DIAG и VOD_DIAG также недоступны (10.2.19.36 нет пинга) */}
-        {/*<Button color="info" outline active={state.areaId === "LF_DIAG"} onClick={() => setState({ ...state, areaId: "LF_DIAG" })}>АКП-2</Button>
-        <Button color="info" outline active={state.areaId === "VOD_DIAG"} onClick={() => setState({ ...state, areaId: "VOD_DIAG" })}>ВКД</Button>*/}
+        <Button color="info" outline active={state.areaId === AreaId.LF_DIAG} onClick={() => setState({ ...state, areaId: AreaId.LF_DIAG })}>АКП-2</Button>
+        <Button color="info" outline active={state.areaId === AreaId.VOD_DIAG} onClick={() => setState({ ...state, areaId: AreaId.VOD_DIAG })}>ВКД</Button>
         <Button color="info" outline active={state.areaId === AreaId.CCM_DIAG} onClick={() => setState({ ...state, areaId: AreaId.CCM_DIAG })}>МНЛЗ-2</Button>
       </ButtonGroup>
     </div>
@@ -80,9 +79,9 @@ export const Journal: React.FC = () => {
       </thead>
       <tbody>
         {state.operatorInfo.map(oi =>
-          <tr key={`${oi.EventStamp}${oi.Comment}`}>
-            <td>{moment(oi.EventStamp, "DD.MM.YYYY").format("DD.MM.YYYY")}</td>
-            <td>{moment(oi.EventStamp, "DD.MM.YYYY HH:mm:ss").format("HH:mm:ss")}</td>
+          <tr key={`${oi.EventStamp}${oi.Comment}${oi.OldValue}${oi.NewValue}`}>
+            <td>{moment(oi.EventStamp).format("DD.MM.YYYY")}</td>
+            <td>{moment(oi.EventStamp).format("HH:mm:ss")}</td>
             <td>{oi.Comment}</td>
             <td>{oi.OldValue}</td>
             <td>{oi.NewValue}</td>

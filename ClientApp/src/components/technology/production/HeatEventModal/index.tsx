@@ -30,22 +30,20 @@ export const HeatEventModal: React.FC<Props> = ({
       .catch(console.log)
   }
 
-  return <div className="heat-event-wrapper">
-    <Modal isOpen={isOpen} onOpened={getEvents} toggle={toggle} fade={false} unmountOnClose={true}>
-      <ModalHeader toggle={toggle}>События плавки {heatId}</ModalHeader>
-      <ModalBody>
-        {events &&
-          <Table hover>
-            <tbody>
-              {events.map(e =>
-                <tr key={`${e.TIME_POINT}${e.TEXT}`}>
-                  <td>{e.TIME_POINT}</td>
-                  <td>{e.TEXT}</td>
-                </tr>
-              )}
-            </tbody>
-          </Table>}
-      </ModalBody>
-    </Modal>
-  </div>
+  return <Modal isOpen={isOpen} onOpened={getEvents} toggle={toggle} fade={false} unmountOnClose={true}>
+    <ModalHeader toggle={toggle}>События плавки {heatId}</ModalHeader>
+    <ModalBody>
+      {events &&
+        <Table hover>
+          <tbody>
+            {events.map(e =>
+              <tr key={`${e.TIME_POINT}${e.TEXT}`}>
+                <td>{e.TIME_POINT}</td>
+                <td>{e.TEXT}</td>
+              </tr>
+            )}
+          </tbody>
+        </Table>}
+    </ModalBody>
+  </Modal>
 }

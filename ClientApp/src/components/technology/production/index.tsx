@@ -14,6 +14,8 @@ import { blinkAlert } from "components/extra/Alert"
 import { ProductionFilter } from "models/types/Production/ProductionFilter"
 import { VODHeat } from "models/types/Production/VODHeat"
 import { CCMHeat } from "models/types/Production/CCMHeat"
+import { VODTable } from "./VODTable"
+import { CCMTable } from "./CCMTable"
 
 
 type State = {
@@ -84,7 +86,7 @@ export const Production: React.FC = () => {
 
     fetchState({ bDate, eDate, areaId: state.areaId })
     // eslint-disable-next-line
-  }, [state.shift, state.datePoint])
+  }, [state.shift, state.datePoint, state.areaId])
 
   const calculatePoints = (shift: number, datePoint: string) => {
     const bDate1 = `${moment(datePoint).subtract(1, "day").toISOString(true).slice(0, 10)} 19:30`
@@ -139,12 +141,31 @@ export const Production: React.FC = () => {
 
     <div className="main">
       <div className="subtitle">{state.title}</div>
-      {state.areaId === AreaId.LF_DIAG && <LFTable {...{
-        shift: state.shift,
-        heatDate: state.datePoint,
-        heats: state.heats as LFHeat[],
-        areaId: state.areaId
-      }} />}
+
+      {state.areaId === AreaId.LF_DIAG &&
+        <LFTable {...{
+          shift: state.shift,
+          heatDate: state.datePoint,
+          heats: state.heats as LFHeat[],
+          areaId: state.areaId
+        }} />}
+
+      {state.areaId === AreaId.VOD_DIAG &&
+        <VODTable {...{
+          shift: state.shift,
+          heatDate: state.datePoint,
+          heats: state.heats as VODHeat[],
+          areaId: state.areaId
+        }} />}
+
+      {state.areaId === AreaId.CCM_DIAG &&
+        <CCMTable {...{
+          shift: state.shift,
+          heatDate: state.datePoint,
+          heats: state.heats as CCMHeat[],
+          areaId: state.areaId
+        }} />}
+
       {state.heats.length === 0 && state.title !== "" && <NoData />}
       {state.loading && <Loading />}
     </div>

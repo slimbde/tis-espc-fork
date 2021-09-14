@@ -43,7 +43,7 @@ class DiagnosticHandler {
   }
 
   async GetListForAsync(filter: OperatorFilter): Promise<OperatorInfo[]> {
-    const resp = await fetch(`${this.backend}/${this.api}/ReadForAsync`, {
+    const resp = await fetch(`${this.backend}/${this.api}/ReadOperatorActionsAsync`, {
       method: "POST",
       headers: {
         "Accept": "text/plain",

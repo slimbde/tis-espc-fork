@@ -17,9 +17,8 @@ namespace TIS_ESPC_FORK.Models.Repositories
         readonly static Dictionary<string, string> conStrings = new Dictionary<string, string>();
         public OperatorRepository()
         {
-            conStrings["CCM_DIAG"] = ConfigurationManager.ConnectionStrings["CCM_DIAG"].ConnectionString;
-            conStrings["LF_DIAG"] = ConfigurationManager.ConnectionStrings["LF_DIAG"].ConnectionString;
-            conStrings["VOD_DIAG"] = ConfigurationManager.ConnectionStrings["VOD_DIAG"].ConnectionString;
+            conStrings["CCM"] = ConfigurationManager.ConnectionStrings["sqlCCM"].ConnectionString;
+            conStrings["LFVOD"] = ConfigurationManager.ConnectionStrings["sqlLFVOD"].ConnectionString;
         }
 
 
@@ -28,10 +27,15 @@ namespace TIS_ESPC_FORK.Models.Repositories
             if (filter is OperatorFilter)
             {
                 OperatorFilter flt = filter as OperatorFilter;
-                using (DbConnection db = new SqlConnection(conStrings[flt.AreaId]))
+                
+                string conString = flt.AreaId == "CCM_DIAG"
+                    ? conStrings["CCM"]
+                    : conStrings["LFVOD"];
+
+                using (DbConnection db = new SqlConnection(conString))
                 {
-                    string stmt = @"SELECT DISTINCT 
-                                      [EventStamp] 
+                    string stmt = @"SELECT DISTINCT
+                                      CONVERT(varchar,[EventStamp],20) as EventStamp 
                                       ,[Comment] 
                                       ,[LimitString] as OldValue
                                       ,[ValueString] as NewValue                                

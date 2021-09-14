@@ -48,8 +48,8 @@ namespace TIS_ESPC_FORK.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Администратор,Программист,Технолог")]
-        [Route("api/Diagnostic/ReadForAsync")]
-        public async Task<IHttpActionResult> ReadForAsync()
+        [Route("api/Diagnostic/ReadOperatorActionsAsync")]
+        public async Task<IHttpActionResult> ReadOperatorActionsAsync()
         {
             try
             {

@@ -35,5 +35,32 @@ namespace TIS_ESPC_FORK.Controllers
             try { return Ok(await pRepo.HeatEventsFor(heatId, areaId)); }
             catch (Exception ex) { return BadRequest(ex.Message); }
         }
+
+
+        [HttpGet]
+        [Route("api/Production/GetHeatVODProcessesAsync")]
+        public async Task<IHttpActionResult> GetHeatVODProcessesAsync(string heatId)
+        {
+            try { return Ok(await pRepo.HeatVODProcessesFor(heatId)); }
+            catch (Exception ex) { return BadRequest(ex.Message); }
+        }
+
+
+        [HttpGet]
+        [Route("api/Production/GetHeatCCMProcessesAsync")]
+        public async Task<IHttpActionResult> GetHeatCCMProcessesAsync(string heatId)
+        {
+            try { return Ok(await pRepo.HeatCCMProcessesFor(heatId)); }
+            catch (Exception ex) { return BadRequest(ex.Message); }
+        }
+
+
+        [HttpGet]
+        [Route("api/Production/GetHeatCCMQualityAsync")]
+        public async Task<IHttpActionResult> GetHeatCCMQualityAsync(string heatId)
+        {
+            try { return Ok(await pRepo.HeatCCMQualityFor(heatId)); }
+            catch (Exception ex) { return BadRequest(ex.Message); }
+        }
     }
 }
