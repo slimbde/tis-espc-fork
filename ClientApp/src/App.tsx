@@ -11,6 +11,7 @@ import { VMExplorer } from "components/admin/vm";
 import { ARMOverview } from "components/overview/arms";
 import aHandler from "models/handlers/DbHandlers/AuthDbHandler"
 import { ARM } from "components/overview/arms/ARM";
+import { Compressor } from "components/overview/compressor";
 
 
 
@@ -54,6 +55,7 @@ const App: React.FC = () => {
   const userRoutes = [
     <Route exact path="/home" component={Home} key="home" />,
     <Route exact path="/overview/arms" component={ARMOverview} key="arms-overview" />,
+    <Route path="/overview/compressor" component={Compressor} key="compressor" />,
     <Route exact path="/overview/:ARM_ID" component={ARM} key="arm-overview" />,
   ]
 

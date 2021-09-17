@@ -2,7 +2,7 @@ import "./heatEventModal.scss"
 import { AreaId } from "models/types/AreaId"
 import React, { useState } from "react"
 import { Modal, ModalBody, ModalHeader, Table } from "reactstrap"
-import pHandler from "models/handlers/DbHandlers/ProductionHandler"
+import pHandler from "models/handlers/DbHandlers/ProductionDbHandler"
 import { HeatEvent } from "models/types/Production/HeatEvent"
 
 

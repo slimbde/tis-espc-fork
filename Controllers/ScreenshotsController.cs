@@ -5,14 +5,18 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
-
+using TIS_ESPC_FORK.Models.DTOs.Overview;
+using TIS_ESPC_FORK.Models.Repositories;
 
 namespace TIS_ESPC_FORK.Controllers
 {
     public class ScreenshotsController : ApiController
     {
+        static readonly IRepository<CompressorSensor> cRepo = new CompressorRepository();
+
         /// <summary>
         /// Receive screenshot end point. Stores data to the certain file
         /// </summary>
@@ -52,6 +56,11 @@ namespace TIS_ESPC_FORK.Controllers
 
 
         [HttpGet]
-        public string hello() => "Hello";
+        [Route("api/Screenshots/ReadCompressorAsync")]
+        public async Task<IHttpActionResult> ReadCompressorAsync()
+        {
+            try { return Ok(await cRepo.ListFor(null)); }
+            catch (Exception ex) { return BadRequest(ex.Message); }
+        }
     }
 }

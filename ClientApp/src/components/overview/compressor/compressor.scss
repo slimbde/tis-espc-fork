@@ -1,0 +1,13 @@
+.compressor-wrapper {
+  display: grid;
+
+  min-height: 740px;
+  min-width: 1110px;
+
+  #alert {
+    position: absolute;
+    right: 0;
+    font-size: 1rem;
+    z-index: 0;
+  }
+}

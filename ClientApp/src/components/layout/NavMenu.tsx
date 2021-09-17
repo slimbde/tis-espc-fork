@@ -52,7 +52,7 @@ class NavMenu extends Component<NavProps> {
                 <DropdownToggle nav className={location.indexOf("/overview") > -1 ? "active" : ""}>Обзор</DropdownToggle>
                 <DropdownMenu right>
                   <DropdownItem><NavLink tag={Link} to="/overview/arms">Мониторинг АРМ</NavLink></DropdownItem>
-                  <DropdownItem><NavLink tag={Link} to="/overview/compressor">Компрессорная</NavLink></DropdownItem>
+                  <DropdownItem><NavLink tag={Link} to="/overview/compressor/main">Компрессорная</NavLink></DropdownItem>
                 </DropdownMenu>
               </UncontrolledDropdown>,
 

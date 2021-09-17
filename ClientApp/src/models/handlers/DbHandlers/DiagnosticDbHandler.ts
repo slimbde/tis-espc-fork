@@ -5,16 +5,16 @@ import { ServiceInfo } from "models/types/Diagnostic/ServiceInfo"
 import backendHost from "./backendHost"
 
 
-class DiagnosticHandler {
+class DiagnosticDbHandler {
   protected backend = backendHost
   protected api = "Diagnostic"
 
-  private static instance: DiagnosticHandler
+  private static instance: DiagnosticDbHandler
   private constructor() { }
 
   static GetInstance() {
     if (!this.instance)
-      this.instance = new DiagnosticHandler()
+      this.instance = new DiagnosticDbHandler()
 
     return this.instance
   }
@@ -26,7 +26,7 @@ class DiagnosticHandler {
     })
 
     if (resp.status >= 400)
-      throw new Error(`[DiagnosticHandler GetServiceStatusAsync]: ${await resp.text()}`)
+      throw new Error(`[DiagnosticDbHandler GetServiceStatusAsync]: ${await resp.text()}`)
 
     return await resp.json()
   }
@@ -37,7 +37,7 @@ class DiagnosticHandler {
     })
 
     if (resp.status >= 400)
-      throw new Error(`[DiagnosticHandler GetServerStatusAsync]: ${await resp.text()}`)
+      throw new Error(`[DiagnosticDbHandler GetServerStatusAsync]: ${await resp.text()}`)
 
     return await resp.json()
   }
@@ -60,4 +60,4 @@ class DiagnosticHandler {
   }
 }
 
-export default DiagnosticHandler.GetInstance()
+export default DiagnosticDbHandler.GetInstance()

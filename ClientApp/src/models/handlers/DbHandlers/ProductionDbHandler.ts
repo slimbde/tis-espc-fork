@@ -9,16 +9,16 @@ import { VODHeat } from "models/types/Production/VODHeat"
 import backendHost from "./backendHost"
 
 
-export class ProductionHandler {
+export class ProductionDbHandler {
   protected backend = backendHost
   protected api = "Production"
 
-  private static instance: ProductionHandler
+  private static instance: ProductionDbHandler
   private constructor() { }
 
   static GetInstance() {
     if (!this.instance)
-      this.instance = new ProductionHandler()
+      this.instance = new ProductionDbHandler()
 
     return this.instance
   }
@@ -86,4 +86,4 @@ export class ProductionHandler {
   }
 }
 
-export default ProductionHandler.GetInstance()
+export default ProductionDbHandler.GetInstance()

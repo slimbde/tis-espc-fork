@@ -1,5 +1,5 @@
 import "./services.scss"
-import dHandler from "models/handlers/DbHandlers/DiagnosticHandler"
+import dHandler from "models/handlers/DbHandlers/DiagnosticDbHandler"
 import { Alert, Button, Table } from "reactstrap"
 import { blinkAlert } from "components/extra/Alert"
 import { useEffect, useState } from "react"

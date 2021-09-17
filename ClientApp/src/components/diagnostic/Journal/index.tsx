@@ -6,7 +6,7 @@ import { OperatorFilter } from "models/types/Diagnostic/Operators/OperatorFilter
 import { AreaId, getAreaName } from "models/types/AreaId"
 import { EventPriorityProvider } from "models/types/Diagnostic/Operators/EventPrioritySet"
 import { OperatorInfo } from "models/types/Diagnostic/Operators/OperatorInfo"
-import dHandler from "models/handlers/DbHandlers/DiagnosticHandler"
+import dHandler from "models/handlers/DbHandlers/DiagnosticDbHandler"
 import { blinkAlert } from "components/extra/Alert"
 import { Loading } from "components/extra/Loading"
 import NoData from "components/extra/NoData"

@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import { Modal, ModalBody, ModalHeader, Table } from "reactstrap"
-import pHandler from "models/handlers/DbHandlers/ProductionHandler"
+import pHandler from "models/handlers/DbHandlers/ProductionDbHandler"
 import { HeatCCMQuality } from "models/types/Production/HeatCCMQuality"
 
 
