@@ -14,11 +14,6 @@ export class MainCompressorSensorHandler implements ICompressorSensorHandler {
     "CMP_BS_C1_EMG_STOP",
     "CMP_BS_C2_EMG_STOP",
     "CMP_BS_C3_EMG_STOP",
-    "CMP_BS_Vityajka_1",
-    "CMP_BS_Vityajka_2",
-    "CMP_BS_Vityajka_3",
-    "CMP_BS_Vityajka_4",
-    "CMP_BS_Vityajka_5",
   ]
 
 

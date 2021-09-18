@@ -1,16 +1,25 @@
 import "./main.scss"
-import { useEffect } from "react"
+import { Dispatch, SetStateAction, useEffect } from "react"
 import cHandler from "models/handlers/DbHandlers/CompressorDbHandler"
 import { blinkAlert } from "components/extra/Alert"
 import { mHandler } from "models/handlers/Compressor/ICompressorSensorHandler"
+import { Link } from "react-router-dom"
 
 
-export const Main: React.FC = () => {
+type Props = {
+  setTitle: Dispatch<SetStateAction<string>>
+}
+
+
+
+export const Main: React.FC<Props> = ({ setTitle }) => {
 
   useEffect(() => {
+    setTitle("Компрессорная обзор")
     dispatch()
     const interval = setInterval(() => dispatch(), 5000)
     return () => clearInterval(interval)
+    // eslint-disable-next-line
   }, [])
 
 
@@ -26,6 +35,13 @@ export const Main: React.FC = () => {
 
 
   return <div className="main-wrapper">
+    <Link to="/overview/compressor/kipelectro" className="btn btn-outline-dark">Датчики КИП и электрика</Link>
+    <Link to="/overview/compressor/air" className="link-to-air btn btn-outline-dark">Сжатый воздух</Link>
+    <Link to="/overview/compressor/dryer" className="link-to-dryer btn btn-outline-dark">Осушитель</Link>
+    <Link to="/overview/compressor/details/1" className="link-to-details1 btn btn-outline-dark">Компрессор 1</Link>
+    <Link to="/overview/compressor/details/2" className="link-to-details2 btn btn-outline-dark">Компрессор 2</Link>
+    <Link to="/overview/compressor/details/3" className="link-to-details3 btn btn-outline-dark">Компрессор 3</Link>
+
     <div id="CMP_WS_T_neosush_vozd_3a" style={{ left: 5, top: 120 }}>23.46</div>
     <div id="CMP_WS_P_neosush_vozd_8a" style={{ left: 5, top: 188 }}>0.07</div>
     <div id="CMP_WS_Q_neosush_vozd_13a" style={{ left: 5, top: 255 }}>-7.95</div>

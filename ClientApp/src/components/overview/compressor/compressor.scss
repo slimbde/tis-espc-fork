@@ -1,8 +1,81 @@
 .compressor-wrapper {
   display: grid;
-
   min-height: 740px;
   min-width: 1110px;
+
+  a {
+    font-size: small;
+    text-transform: uppercase;
+    position: absolute;
+    padding: 0.2rem 0.5rem;
+    margin-left: 0.4rem;
+    top: 0.4rem;
+    color: black !important;
+    &:hover {
+      color: white !important;
+      text-shadow: 0 0 0 black !important;
+    }
+  }
+
+  .kip-wrapper div,
+  .main-wrapper div {
+    position: absolute;
+    font-size: 0.95rem;
+    line-height: 0.95rem;
+    font-weight: 600;
+    border-radius: 0;
+    padding: 1px 0.4rem;
+    transition: all 0.2s ease;
+  }
+
+  div.fault {
+    background-color: red;
+    color: yellow;
+    text-align: center;
+  }
+
+  div.warning {
+    background-color: yellow;
+    color: black;
+    text-align: center;
+  }
+
+  div.manual {
+    background-color: blanchedalmond;
+    text-align: center;
+    color: black;
+  }
+
+  div.auto,
+  div.load {
+    background-color: greenyellow;
+    text-align: center;
+    color: black;
+  }
+
+  div.remote {
+    background-color: lightblue;
+    color: black;
+    text-align: center;
+  }
+
+  div.local {
+    background-color: mistyrose;
+    color: black;
+    text-align: center;
+  }
+
+  div.stop {
+    background-color: gray;
+    text-align: center;
+    color: lightgray;
+  }
+
+  div.unload {
+    background-color: rgb(203, 241, 203);
+    text-align: center;
+    color: gray;
+  }
 
   #alert {
     position: absolute;
