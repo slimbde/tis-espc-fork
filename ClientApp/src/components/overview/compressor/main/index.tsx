@@ -2,7 +2,7 @@ import "./main.scss"
 import { Dispatch, SetStateAction, useEffect } from "react"
 import cHandler from "models/handlers/DbHandlers/CompressorDbHandler"
 import { blinkAlert } from "components/extra/Alert"
-import { mHandler } from "models/handlers/Compressor/ICompressorSensorHandler"
+import { mHandler } from "models/handlers/ISensorHandler"
 import { Link } from "react-router-dom"
 
 

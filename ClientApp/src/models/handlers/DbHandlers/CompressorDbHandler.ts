@@ -1,4 +1,4 @@
-import { CompressorSensor } from "models/types/Compressor/CompressorSensor"
+import { CompressorSensor } from "models/types/Sensors/Compressor/CompressorSensor"
 import backendHost from "./backendHost"
 
 

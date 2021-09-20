@@ -54,7 +54,7 @@ class NavMenu extends Component<NavProps> {
                   <DropdownItem><NavLink tag={Link} to="/overview/arms">Мониторинг АРМ</NavLink></DropdownItem>
                   <DropdownItem><NavLink tag={Link} to="/overview/compressor/main">Компрессорная</NavLink></DropdownItem>
                 </DropdownMenu>
-              </UncontrolledDropdown>,
+              </UncontrolledDropdown>
 
               <UncontrolledDropdown nav inNavbar>
                 <DropdownToggle nav className={location.indexOf("/agregates") > -1 ? "active" : ""}> Агрегаты</DropdownToggle>

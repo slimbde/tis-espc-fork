@@ -2,7 +2,7 @@ import "./details.scss"
 import { useEffect } from "react"
 import cHandler from "models/handlers/DbHandlers/CompressorDbHandler"
 import { blinkAlert } from "components/extra/Alert"
-import { mHandler } from "models/handlers/Compressor/ICompressorSensorHandler"
+import { mHandler } from "models/handlers/ISensorHandler"
 import { Link, useRouteMatch } from "react-router-dom"
 import { Dispatch, SetStateAction } from "react"
 
@@ -17,7 +17,7 @@ export const Details: React.FC<Props> = ({ setTitle }) => {
 
   useEffect(() => {
     setTitle(`Компрессорная. Компрессор ${match.params.ID}`)
-    //  dispatch()
+    dispatch()
     //  const interval = setInterval(() => dispatch(), 5000)
     //  return () => clearInterval(interval)
     // eslint-disable-next-line

@@ -40,14 +40,17 @@
     text-align: center;
   }
 
-  div.manual {
+  div.manual,
+  div.off {
     background-color: blanchedalmond;
     text-align: center;
     color: black;
   }
 
   div.auto,
-  div.load {
+  div.load,
+  div.ok,
+  div.on {
     background-color: greenyellow;
     text-align: center;
     color: black;

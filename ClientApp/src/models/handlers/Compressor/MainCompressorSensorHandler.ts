@@ -1,10 +1,11 @@
-import { CompressorSensor } from "models/types/Compressor/CompressorSensor";
-import { MainAnalogCompressorSensors, MainDiskrCompressorSensors } from "models/types/Compressor/MainSensors";
-import { ICompressorSensorHandler } from "./ICompressorSensorHandler";
+import { CompressorSensor } from "models/types/Sensors/Compressor/CompressorSensor";
+import { MainAnalogCompressorSensors, MainDiskrCompressorSensors } from "models/types/Sensors/Compressor/MainSensors";
+import { TCompressorSensorHandler } from "./TCompressorSensorHandler";
 
 
 
-export class MainCompressorSensorHandler implements ICompressorSensorHandler {
+
+export class MainCompressorSensorHandler extends TCompressorSensorHandler {
 
   private wrongBoundSensors = [
     "CMP_BS_Potok_kompr_1",
@@ -17,26 +18,20 @@ export class MainCompressorSensorHandler implements ICompressorSensorHandler {
   ]
 
 
-
-  Handle(sensors: CompressorSensor[]): void {
+  protected handleAnalogSensors(sensors: CompressorSensor[]): void {
     const analogSensors = sensors.filter(s => Object.keys(MainAnalogCompressorSensors).some(key => key === s.TagName))
-    const diskrSensors = sensors.filter(s => Object.keys(MainDiskrCompressorSensors).some(key => key === s.TagName))
 
-    this.handleAnalogSensors(analogSensors)
-    this.handleDiskrSensors(diskrSensors)
-  }
-
-
-  private handleAnalogSensors(sensors: CompressorSensor[]): void {
-    sensors.forEach(one => {
+    analogSensors.forEach(one => {
       const element = document.getElementById(one.TagName) as HTMLDivElement
       element && (element.textContent = `${Math.round(+one.ValueString * 100) / 100}`)
       element && (element.title = one.Description)
     })
   }
 
-  private handleDiskrSensors(sensors: CompressorSensor[]): void {
-    sensors.forEach(one => {
+  protected handleDiskrSensors(sensors: CompressorSensor[]): void {
+    const diskrSensors = sensors.filter(s => Object.keys(MainDiskrCompressorSensors).some(key => key === s.TagName))
+
+    diskrSensors.forEach(one => {
       const element = document.getElementById(one.TagName) as HTMLDivElement
 
       if (element) {
