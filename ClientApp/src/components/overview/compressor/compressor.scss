@@ -17,6 +17,7 @@
     }
   }
 
+  .air-wrapper div,
   .kip-wrapper div,
   .main-wrapper div {
     position: absolute;
@@ -32,19 +33,21 @@
     background-color: red;
     color: yellow;
     text-align: center;
+    opacity: 0;
   }
 
   div.warning {
     background-color: yellow;
     color: black;
     text-align: center;
+    opacity: 0;
   }
 
   div.manual,
   div.off {
     background-color: blanchedalmond;
     text-align: center;
-    color: black;
+    color: gray;
   }
 
   div.auto,
