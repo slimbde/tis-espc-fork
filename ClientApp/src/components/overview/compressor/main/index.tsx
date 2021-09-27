@@ -88,7 +88,7 @@ export const Main: React.FC<Props> = ({ setTitle }) => {
     <div id="CMP_BS_Des_Compressor_AUTO" className="auto" style={{ left: 307, top: 203, width: "79px", height: "17px" }}>Авто.реж.</div>
     <div id="CMP_BS_Des_Compressor_LOCAL" className="local" style={{ left: 307, top: 181, width: "79px", height: "17px" }}>Лок.реж.</div>
     <div id="CMP_BS_Des_Compressor_REMOTE" className="remote" style={{ left: 307, top: 181, width: "79px", height: "17px" }}>Дист.реж.</div>
-    <div id="CMP_BS_Des_Compressor_UNLOAD" className="unload" style={{ left: 307, top: 159, width: "79px", height: "17px" }}>Хол.ход.</div>
+    <div id="CMP_BS_Des_Compressor_UNLOAD" className="unload test" style={{ left: 307, top: 159, width: "79px", height: "17px" }}>Хол.ход.</div>
     <div id="CMP_BS_Des_Compressor_LOAD" className="load" style={{ left: 307, top: 159, width: "79px", height: "17px" }}>Нагрузка</div>
     <div id="CMP_BS_Des_Failure_compress_OUT" className="warning" style={{ left: 307, top: 137, width: "79px", height: "17px" }}>Warning</div>
     <div id="CMP_BS_Des_Warning_compress_OUT" className="fault" style={{ left: 307, top: 137, width: "79px", height: "17px" }}>Error</div>

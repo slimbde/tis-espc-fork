@@ -3,6 +3,9 @@ import { ISensorHandler } from "../ISensorHandler";
 
 
 export abstract class TCompressorSensorHandler implements ISensorHandler<CompressorSensor> {
+
+  Initialize(params: any): void { }
+
   Handle(sensors: CompressorSensor[]): void {
     this.handleAnalogSensors(sensors)
     this.handleDiskrSensors(sensors)

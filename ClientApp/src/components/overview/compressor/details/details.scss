@@ -5,4 +5,65 @@
   background-repeat: no-repeat;
   background-size: contain;
   height: 620px;
+
+  div.manual,
+  div.local,
+  div.load {
+    padding: 0.3rem 1.65rem;
+  }
+
+  div.auto {
+    padding: 0.3rem 1rem;
+  }
+
+  div.remote {
+    padding: 0.3rem 1.45rem;
+  }
+
+  div.unload {
+    padding: 0.3rem 1.74rem;
+  }
+
+  div.warning {
+    padding: 0.3rem 1.8rem;
+  }
+
+  div.stop {
+    padding: 0.3rem 2.45rem !important;
+  }
+
+  div.fault {
+    padding: 0.3rem 2.6rem !important;
+  }
+
+  div.fault1 {
+    padding: 0.3rem 1.5rem;
+    background-color: red;
+    color: yellow;
+  }
+
+  div.on {
+    background-color: greenyellow;
+  }
+
+  div.off {
+    background-color: rgb(255, 244, 227);
+  }
+
+  div.on,
+  div.off {
+    padding: 0.35rem 0;
+    width: 94px;
+    text-align: center;
+  }
+
+  div.ovl.on {
+    background-color: red;
+    color: yellow;
+  }
+
+  div.ovl.off {
+    background-color: greenyellow;
+    color: black;
+  }
 }
