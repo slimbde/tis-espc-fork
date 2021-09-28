@@ -37,41 +37,41 @@ export const KipElectro: React.FC<Props> = ({ setTitle }) => {
   return <div className="kip-wrapper">
     <Link to="/overview/compressor/main" className="btn btn-outline-dark">Назад</Link>
 
-    <div id="CMP_WS_T_neosush_vozd_3a" className="col1 _3a">23.46</div>
-    <div id="CMP_WS_T_osush_vozd_4a" className="col1 _4a">0.00</div>
-    <div id="CMP_WS_T_pram_voda_5a" className="col1 _5a">0.00</div>
-    <div id="CMP_WS_T_obr_voda_6a" className="col1 _6a">0.00</div>
-    <div id="CMP_WS_P_neosush_vozd_8a" className="col1 _8a">0.00</div>
-    <div id="CMP_WS_P_osush_vozd_9a" className="col1 _9a">0.00</div>
-    <div id="CMP_WS_P_pram_voda_10a" className="col1 _10a">0.00</div>
-    <div id="CMP_WS_P_obr_voda_11a" className="col1 _11a">0.00</div>
-    <div id="CMP_WS_Q_neosush_vozd_13a" className="col1 _13a">0.00</div>
-    <div id="CMP_WS_Q_osush_vozd_14a" className="col1 _14a">0.00</div>
-    <div id="CMP_WS_Q_pram_voda_12a" className="col1 _12a">0.00</div>
-    <div id="CMP_WS_T_osush_vozd_22a" className="col1 _22a">0.00</div>
-    <div id="CMP_WS_T_neosush_vozd_23a" className="col1 _23a">0.00</div>
-    <div id="CMP_WS_P_osush_vozd_25a" className="col1 _25a">0.00</div>
-    <div id="CMP_WS_P_neosush_vozd_26a" className="col1 _26a">0.00</div>
-    <div id="CMP_WS_Q_osush_vozd_27a" className="col1 _27a">0.00</div>
-    <div id="CMP_WS_Q_neosush_vozd_28a" className="col1 _28a">0.00</div>
+    <div id="CMP_WS_T_neosush_vozd_3a" className="col1 _3a">##.###</div>
+    <div id="CMP_WS_T_osush_vozd_4a" className="col1 _4a">##.###</div>
+    <div id="CMP_WS_T_pram_voda_5a" className="col1 _5a">##.###</div>
+    <div id="CMP_WS_T_obr_voda_6a" className="col1 _6a">##.###</div>
+    <div id="CMP_WS_P_neosush_vozd_8a" className="col1 _8a">##.###</div>
+    <div id="CMP_WS_P_osush_vozd_9a" className="col1 _9a">##.###</div>
+    <div id="CMP_WS_P_pram_voda_10a" className="col1 _10a">##.###</div>
+    <div id="CMP_WS_P_obr_voda_11a" className="col1 _11a">##.###</div>
+    <div id="CMP_WS_Q_neosush_vozd_13a" className="col1 _13a">##.###</div>
+    <div id="CMP_WS_Q_osush_vozd_14a" className="col1 _14a">##.###</div>
+    <div id="CMP_WS_Q_pram_voda_12a" className="col1 _12a">##.###</div>
+    <div id="CMP_WS_T_osush_vozd_22a" className="col1 _22a">##.###</div>
+    <div id="CMP_WS_T_neosush_vozd_23a" className="col1 _23a">##.###</div>
+    <div id="CMP_WS_P_osush_vozd_25a" className="col1 _25a">##.###</div>
+    <div id="CMP_WS_P_neosush_vozd_26a" className="col1 _26a">##.###</div>
+    <div id="CMP_WS_Q_osush_vozd_27a" className="col1 _27a">##.###</div>
+    <div id="CMP_WS_Q_neosush_vozd_28a" className="col1 _28a">##.###</div>
 
-    <div id="CMP_WS_T_neosush_vozd_3a_cur" className="col2 _3a">0.00</div>
-    <div id="CMP_WS_T_osush_vozd_4a_cur" className="col2 _4a">0.00</div>
-    <div id="CMP_WS_T_pram_voda_5a_cur" className="col2 _5a">0.00</div>
-    <div id="CMP_WS_T_obr_voda_6a_cur" className="col2 _6a">0.00</div>
-    <div id="CMP_WS_P_neosush_vozd_8a_cur" className="col2 _8a">0.00</div>
-    <div id="CMP_WS_P_osush_vozd_9a_cur" className="col2 _9a">0.00</div>
-    <div id="CMP_WS_P_pram_voda_10a_cur" className="col2 _10a">0.00</div>
-    <div id="CMP_WS_P_obr_voda_11a_cur" className="col2 _11a">0.00</div>
-    <div id="CMP_WS_Q_neosush_vozd_13a_cur" className="col2 _13a">0.00</div>
-    <div id="CMP_WS_Q_osush_vozd_14a_cur" className="col2 _14a">0.00</div>
-    <div id="CMP_WS_Q_pram_voda_12a_cur" className="col2 _12a">0.00</div>
-    <div id="CMP_WS_T_osush_vozd_22a_cur" className="col2 _22a">0.00</div>
-    <div id="CMP_WS_T_neosush_vozd_23a_cur" className="col2 _23a">0.00</div>
-    <div id="CMP_WS_P_osush_vozd_25a_cur" className="col2 _25a">0.00</div>
-    <div id="CMP_WS_P_neosush_vozd_26a_cur" className="col2 _26a">0.00</div>
-    <div id="CMP_WS_Q_osush_vozd_27a_cur" className="col2 _27a">0.00</div>
-    <div id="CMP_WS_Q_neosush_vozd_28a_cur" className="col2 _28a">0.00</div>
+    <div id="CMP_WS_T_neosush_vozd_3a_cur" className="col2 _3a">##.###</div>
+    <div id="CMP_WS_T_osush_vozd_4a_cur" className="col2 _4a">##.###</div>
+    <div id="CMP_WS_T_pram_voda_5a_cur" className="col2 _5a">##.###</div>
+    <div id="CMP_WS_T_obr_voda_6a_cur" className="col2 _6a">##.###</div>
+    <div id="CMP_WS_P_neosush_vozd_8a_cur" className="col2 _8a">##.###</div>
+    <div id="CMP_WS_P_osush_vozd_9a_cur" className="col2 _9a">##.###</div>
+    <div id="CMP_WS_P_pram_voda_10a_cur" className="col2 _10a">##.###</div>
+    <div id="CMP_WS_P_obr_voda_11a_cur" className="col2 _11a">##.###</div>
+    <div id="CMP_WS_Q_neosush_vozd_13a_cur" className="col2 _13a">##.###</div>
+    <div id="CMP_WS_Q_osush_vozd_14a_cur" className="col2 _14a">##.###</div>
+    <div id="CMP_WS_Q_pram_voda_12a_cur" className="col2 _12a">##.###</div>
+    <div id="CMP_WS_T_osush_vozd_22a_cur" className="col2 _22a">##.###</div>
+    <div id="CMP_WS_T_neosush_vozd_23a_cur" className="col2 _23a">##.###</div>
+    <div id="CMP_WS_P_osush_vozd_25a_cur" className="col2 _25a">##.###</div>
+    <div id="CMP_WS_P_neosush_vozd_26a_cur" className="col2 _26a">##.###</div>
+    <div id="CMP_WS_Q_osush_vozd_27a_cur" className="col2 _27a">##.###</div>
+    <div id="CMP_WS_Q_neosush_vozd_28a_cur" className="col2 _28a">##.###</div>
 
     <div id="COM_WS_CMP_PLC_WDOG" style={{ left: 110, top: 179 }}>0.00</div>
 
@@ -153,5 +153,5 @@ export const KipElectro: React.FC<Props> = ({ setTitle }) => {
     <div id="CMP_PLC_fault" className="fault" style={{ left: 118, top: 152, width: 52 }}>FAIL</div>
     <div id="CMP_BA_COMBOX_COMM_OK" className="ok" style={{ left: 118, top: 205, width: 52 }}>OK</div>
     <div id="CMP_BA_COMBOX_COMM_ERR" className="fault" style={{ left: 118, top: 205, width: 52 }}>FAIL</div>
-  </div>
+  </div >
 }

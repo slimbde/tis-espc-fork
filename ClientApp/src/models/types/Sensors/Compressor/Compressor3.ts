@@ -34,19 +34,6 @@ export enum Compressor3DiskrCompressorSensors {
   CMP_BS_C3_Compressor_LOAD,
   CMP_BS_C3_Failure_compress_OUT,
   CMP_BS_C3_Warning_compress_OUT,
-
-  CMP_BS_C3_Remote_STR_STP_,
-  CMP_BS_C3_Remote_STR_STP,
-  CMP_BS_C3_Remote_Load_Unload_,
-  CMP_BS_C3_Remote_Load_Unload,
-  CMP_BS_C3_Remote_change_pres_,
-  CMP_BS_C3_Remote_change_pres,
-  CMP_BS_C3_Overload_motor_,
-  CMP_BS_C3_Overload_motor,
-  CMP_BS_C3_KM_ON_,
-  CMP_BS_C3_KM_ON,
-  CMP_BS_C3_DD1_DD2_,
-  CMP_BS_C3_DD1_DD2,
 }
 
 export enum Compressor3OnOffCompressorSensors {

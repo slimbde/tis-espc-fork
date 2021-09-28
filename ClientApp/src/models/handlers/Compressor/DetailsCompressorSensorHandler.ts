@@ -63,7 +63,6 @@ export class DetailsCompressorSensorHandler extends TCompressorSensorHandler {
       element && (element.title = one.Description)
     })
 
-
     const onoffEnumToCollate = this.cNmumber === "1"
       ? Compressor1OnOffCompressorSensors
       : this.cNmumber === "2"

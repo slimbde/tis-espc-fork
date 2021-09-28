@@ -37,11 +37,11 @@ export const Air: React.FC<Props> = ({ setTitle }) => {
   return <div className="air-wrapper">
     <Link to="/overview/compressor/main" className="btn btn-outline-dark">Назад</Link>
 
-    <div id="CMP_WS_T_osush_vozd_22a" style={{ left: 10, top: 183 }}>23.46</div>
-    <div id="CMP_WS_P_osush_vozd_25a" style={{ left: 10, top: 262 }}>23.46</div>
-    <div id="CMP_WS_Q_osush_vozd_27a" style={{ left: 10, top: 342 }}>23.46</div>
-    <div id="CMP_WS_T_neosush_vozd_23a" style={{ left: 132, top: 184 }}>23.46</div>
-    <div id="CMP_WS_P_neosush_vozd_26a" style={{ left: 132, top: 263 }}>23.46</div>
-    <div id="CMP_WS_Q_neosush_vozd_28a" style={{ left: 132, top: 341 }}>23.46</div>
+    <div id="CMP_WS_T_osush_vozd_22a" style={{ left: 10, top: 183 }}>##.###</div>
+    <div id="CMP_WS_P_osush_vozd_25a" style={{ left: 10, top: 262 }}>##.###</div>
+    <div id="CMP_WS_Q_osush_vozd_27a" style={{ left: 10, top: 342 }}>##.###</div>
+    <div id="CMP_WS_T_neosush_vozd_23a" style={{ left: 132, top: 184 }}>##.###</div>
+    <div id="CMP_WS_P_neosush_vozd_26a" style={{ left: 132, top: 263 }}>##.###</div>
+    <div id="CMP_WS_Q_neosush_vozd_28a" style={{ left: 132, top: 341 }}>##.###</div>
   </div>
 }

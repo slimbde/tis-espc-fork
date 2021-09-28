@@ -5,4 +5,27 @@
   background-repeat: no-repeat;
   background-size: contain;
   height: 620px;
+
+  div.status {
+    width: 90px;
+    height: 20px;
+  }
+
+  div.v-valve {
+    background-image: url("./valve_v_on.png");
+    height: 41px;
+    width: 35px;
+  }
+
+  div.g-valve {
+    background-image: url("./valve_g_on.png");
+    height: 35px;
+    width: 41px;
+  }
+
+  div.off,
+  div.on {
+    height: 20px;
+    width: 63px;
+  }
 }

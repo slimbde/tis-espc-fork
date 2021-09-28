@@ -42,43 +42,43 @@ export const Main: React.FC<Props> = ({ setTitle }) => {
     <Link to="/overview/compressor/details/2" className="link-to-details2 btn btn-outline-dark">Компрессор 2</Link>
     <Link to="/overview/compressor/details/3" className="link-to-details3 btn btn-outline-dark">Компрессор 3</Link>
 
-    <div id="CMP_WS_T_neosush_vozd_3a" style={{ left: 5, top: 120 }}>23.46</div>
-    <div id="CMP_WS_P_neosush_vozd_8a" style={{ left: 5, top: 188 }}>0.07</div>
-    <div id="CMP_WS_Q_neosush_vozd_13a" style={{ left: 5, top: 255 }}>-7.95</div>
+    <div id="CMP_WS_T_neosush_vozd_3a" style={{ left: 5, top: 120 }}>##.###</div>
+    <div id="CMP_WS_P_neosush_vozd_8a" style={{ left: 5, top: 188 }}>##.###</div>
+    <div id="CMP_WS_Q_neosush_vozd_13a" style={{ left: 5, top: 255 }}>##.###</div>
 
-    <div id="CMP_WS_T_osush_vozd_4a" style={{ left: 125, top: 155 }}>24.16</div>
-    <div id="CMP_WS_P_osush_vozd_9a" style={{ left: 125, top: 222 }}>0.06</div>
-    <div id="CMP_WS_Q_osush_vozd_14a" style={{ left: 125, top: 290 }}>-1.62</div>
+    <div id="CMP_WS_T_osush_vozd_4a" style={{ left: 125, top: 155 }}>##.###</div>
+    <div id="CMP_WS_P_osush_vozd_9a" style={{ left: 125, top: 222 }}>##.###</div>
+    <div id="CMP_WS_Q_osush_vozd_14a" style={{ left: 125, top: 290 }}>##.###</div>
 
-    <div id="CMP_WS_ACT_PRES_AVG" style={{ left: 405, top: 15 }}>0.00</div>
+    <div id="CMP_WS_ACT_PRES_AVG" style={{ left: 405, top: 15 }}>##.###</div>
 
-    <div id="CMP_WS_C3_Act_pressure" style={{ left: 480, top: 65 }}>0.00</div>
-    <div id="CMP_WS_C3_Temp_of_air" style={{ left: 480, top: 89 }}>24.2</div>
-    <div id="CMP_WS_C3_Time_work" style={{ left: 492, top: 333 }}>40122</div>
-    <div id="CMP_WS_C3_Time_work_LOAD" style={{ left: 492, top: 357 }}>23446</div>
-    <div id="CMP_WS_C3_Temp_water" style={{ left: 610, top: 504 }}>38.8</div>
+    <div id="CMP_WS_C3_Act_pressure" style={{ left: 480, top: 65 }}>##.###</div>
+    <div id="CMP_WS_C3_Temp_of_air" style={{ left: 480, top: 89 }}>##.###</div>
+    <div id="CMP_WS_C3_Time_work" style={{ left: 492, top: 333 }}>##.###</div>
+    <div id="CMP_WS_C3_Time_work_LOAD" style={{ left: 492, top: 357 }}>##.###</div>
+    <div id="CMP_WS_C3_Temp_water" style={{ left: 610, top: 504 }}>##.###</div>
 
-    <div id="CMP_WS_C2_Act_pressure" style={{ left: 705, top: 65 }}>0.00</div>
-    <div id="CMP_WS_C2_Temp_of_air" style={{ left: 705, top: 89 }}>24.2</div>
-    <div id="CMP_WS_C2_Time_work" style={{ left: 707, top: 333 }}></div>
-    <div id="CMP_WS_C2_Time_work_LOAD" style={{ left: 707, top: 357 }}></div>
-    <div id="CMP_WS_C2_Temp_water" style={{ left: 823, top: 503 }}>28.0</div>
+    <div id="CMP_WS_C2_Act_pressure" style={{ left: 705, top: 65 }}>##.###</div>
+    <div id="CMP_WS_C2_Temp_of_air" style={{ left: 705, top: 89 }}>##.###</div>
+    <div id="CMP_WS_C2_Time_work" style={{ left: 707, top: 333 }}>##.###</div>
+    <div id="CMP_WS_C2_Time_work_LOAD" style={{ left: 707, top: 357 }}>##.###</div>
+    <div id="CMP_WS_C2_Temp_water" style={{ left: 823, top: 503 }}>##.###</div>
 
-    <div id="CMP_WS_C1_Act_pressure" style={{ left: 917, top: 65 }}>6.7</div>
-    <div id="CMP_WS_C1_Temp_of_air" style={{ left: 917, top: 89 }}>43.9</div>
-    <div id="CMP_WS_C1_Time_work" style={{ left: 921, top: 333 }}>47175</div>
-    <div id="CMP_WS_C1_Time_work_LOAD" style={{ left: 921, top: 358 }}>28922</div>
-    <div id="CMP_WS_C1_Temp_water" style={{ left: 913, top: 504 }}>28.0</div>
+    <div id="CMP_WS_C1_Act_pressure" style={{ left: 917, top: 65 }}>##.###</div>
+    <div id="CMP_WS_C1_Temp_of_air" style={{ left: 917, top: 89 }}>##.###</div>
+    <div id="CMP_WS_C1_Time_work" style={{ left: 921, top: 333 }}>##.###</div>
+    <div id="CMP_WS_C1_Time_work_LOAD" style={{ left: 921, top: 358 }}>##.###</div>
+    <div id="CMP_WS_C1_Temp_water" style={{ left: 913, top: 504 }}>##.###</div>
 
-    <div id="CMP_WS_Des_Pres_col_A" style={{ left: 297, top: 333 }}>0.00</div>
-    <div id="CMP_WS_Des_Pres_col_B" style={{ left: 297, top: 356 }}>0.00</div>
+    <div id="CMP_WS_Des_Pres_col_A" style={{ left: 297, top: 333 }}>##.###</div>
+    <div id="CMP_WS_Des_Pres_col_B" style={{ left: 297, top: 356 }}>##.###</div>
 
-    <div id="CMP_WS_T_obr_voda_6a" style={{ left: 155, top: 496 }}>26.66</div>
-    <div id="CMP_WS_P_obr_voda_11a" style={{ left: 235, top: 496 }}>1.63</div>
+    <div id="CMP_WS_T_obr_voda_6a" style={{ left: 155, top: 496 }}>##.###</div>
+    <div id="CMP_WS_P_obr_voda_11a" style={{ left: 235, top: 496 }}>##.###</div>
 
-    <div id="CMP_WS_T_pram_voda_5a" style={{ left: 165, top: 599 }}>26.97</div>
-    <div id="CMP_WS_P_pram_voda_10a" style={{ left: 245, top: 599 }}>3.11</div>
-    <div id="CMP_WS_Q_pram_voda_12a" style={{ left: 310, top: 599 }}>56.35</div>
+    <div id="CMP_WS_T_pram_voda_5a" style={{ left: 165, top: 599 }}>##.###</div>
+    <div id="CMP_WS_P_pram_voda_10a" style={{ left: 245, top: 599 }}>##.###</div>
+    <div id="CMP_WS_Q_pram_voda_12a" style={{ left: 310, top: 599 }}>##.###</div>
 
     <div id="CMP_BS_Des_LOW_IN_pressure" className="fault" style={{ left: 364, top: 74, width: "40px", height: "17px" }}>PSL</div>
     <div id="CMP_BS_Des_FAULT_pressurize" className="fault" style={{ left: 217, top: 248, width: "80px", height: "17px" }}>FAULT</div>
@@ -108,8 +108,8 @@ export const Main: React.FC<Props> = ({ setTitle }) => {
     <div id="CMP_BS_C3_Compressor_REMOTE" className="remote" style={{ left: 521, top: 194, width: "79px", height: "17px" }}>Дист.реж.</div>
     <div id="CMP_BS_C3_Compressor_UNLOAD" className="unload" style={{ left: 521, top: 171, width: "79px", height: "17px" }}>Хол.ход.</div>
     <div id="CMP_BS_C3_Compressor_LOAD" className="load" style={{ left: 521, top: 171, width: "79px", height: "17px" }}>Нагрузка</div>
-    <div id="CMP_BS_C3_Failure_compress_OUT" className="warning" style={{ left: 521, top: 149, width: "79px", height: "17px" }}>Warning</div>
-    <div id="CMP_BS_C3_Warning_compress_OUT" className="fault" style={{ left: 521, top: 149, width: "79px", height: "17px" }}>Error</div>
+    <div id="CMP_BS_C3_Failure_compress_OUT" className="warning" style={{ left: 521, top: 149, width: "79px", height: "17px" }}>Error</div>
+    <div id="CMP_BS_C3_Warning_compress_OUT" className="fault" style={{ left: 521, top: 149, width: "79px", height: "17px" }}>Warning</div>
 
     <div id="CMP_BS_C2_Compressor_STOP" className="stop" style={{ left: 644, top: 239, width: "80px", height: "17px" }}>Стоп</div>
     <div id="CMP_BS_C2_EMG_STOP" className="fault" style={{ left: 644, top: 217, width: "79px", height: "17px" }}>Авар.стоп</div>
