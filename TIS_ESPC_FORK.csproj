@@ -139,7 +139,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AuthController.cs" />
-    <Compile Include="Controllers\Filters.cs" />
+    <Compile Include="Controllers\AgregatesController.cs" />
     <Compile Include="Controllers\ProductionController.cs" />
     <Compile Include="Controllers\DiagnosticController.cs" />
     <Compile Include="Controllers\ScreenshotsController.cs" />
@@ -150,6 +150,10 @@
     <Compile Include="Models\Diagnostics\HardwareMetrics.cs" />
     <Compile Include="Models\Diagnostics\ServiceStatusProvider.cs" />
     <Compile Include="Models\Diagnostics\SpecificImpersonate.cs" />
+    <Compile Include="Models\DTOs\Agregates\Dryers\DryerHistory.cs" />
+    <Compile Include="Models\DTOs\Agregates\Dryers\DryerRuntime.cs" />
+    <Compile Include="Models\DTOs\Agregates\Dryers\DryerHistoryFilter.cs" />
+    <Compile Include="Models\DTOs\Agregates\Dryers\DryerRuntimeFilter.cs" />
     <Compile Include="Models\DTOs\Overview\CompressorSensor.cs" />
     <Compile Include="Models\DTOs\Production\HeatCCMProcess.cs" />
     <Compile Include="Models\DTOs\Production\HeatCCMQuality.cs" />
@@ -158,6 +162,8 @@
     <Compile Include="Models\DTOs\Operator\OperatorFilter.cs" />
     <Compile Include="Models\DTOs\Operator\OperatorInfo.cs" />
     <Compile Include="Models\DTOs\Production\ProductionFilter.cs" />
+    <Compile Include="Models\Repositories\DryerHistoryRepository.cs" />
+    <Compile Include="Models\Repositories\DryerRuntimeRepository.cs" />
     <Compile Include="Models\Repositories\CompressorRepository.cs" />
     <Compile Include="Models\Repositories\IRepository.cs" />
     <Compile Include="Models\Repositories\ProductionRepository.cs" />

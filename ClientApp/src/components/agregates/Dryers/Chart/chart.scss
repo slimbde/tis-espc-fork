@@ -1,0 +1,27 @@
+.chart-wrapper {
+  grid-area: content;
+  position: relative;
+
+  .form-inline {
+    display: flex;
+
+    .form-group {
+      display: flex;
+      padding: 0.5rem;
+
+      p img {
+        top: -10px !important;
+        margin-left: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+
+      label {
+        color: gray;
+        //font-size: small;
+        text-transform: uppercase;
+        margin-right: 0.4rem;
+      }
+    }
+  }
+}

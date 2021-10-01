@@ -9,11 +9,12 @@ using System.Threading.Tasks;
 using System.Web;
 using TIS_ESPC_FORK.Models.DTOs.Overview;
 
+
 namespace TIS_ESPC_FORK.Models.Repositories
 {
     public class CompressorRepository : IRepository<CompressorSensor>
     {
-        readonly static string conString = ConfigurationManager.ConnectionStrings["sqlCCMTIS"].ConnectionString;
+        readonly static string conString = ConfigurationManager.ConnectionStrings["sqlTIS"].ConnectionString;
 
         public async Task<IEnumerable<CompressorSensor>> ListFor(object filter)
         {

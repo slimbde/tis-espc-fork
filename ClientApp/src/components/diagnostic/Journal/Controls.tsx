@@ -3,7 +3,7 @@ import { useState } from "react"
 import { FilterOperation, OperatorFilter } from "models/types/Diagnostic/Operators/OperatorFilter"
 import { Button, Input, InputGroup, InputGroupAddon } from "reactstrap"
 import { blinkAlert } from "components/extra/Alert"
-import { AreaId } from "models/types/AreaId"
+import { AreaId } from "models/types/Production/AreaId"
 import { useRouteMatch } from "react-router-dom"
 
 

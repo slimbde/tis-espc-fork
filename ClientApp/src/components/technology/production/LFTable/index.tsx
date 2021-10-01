@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import moment from "moment";
 import { useState } from "react";
 import { HeatEventModal } from "../HeatEventModal";
-import { AreaId } from "models/types/AreaId";
+import { AreaId } from "models/types/Production/AreaId";
 
 type Props = {
   shift: number

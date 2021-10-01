@@ -1,0 +1,36 @@
+.dryer-summary-wrapper {
+  grid-area: content;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+
+  .summary-card {
+    display: flex;
+    flex-flow: column nowrap;
+    width: 32%;
+
+    .summary-card-title {
+      text-transform: uppercase;
+      font-size: small;
+      margin-top: 1rem;
+      border-bottom: 1px solid lightgray;
+      color: gray;
+    }
+
+    .summary-card-content {
+      background-color: white;
+      display: flex;
+      flex-flow: column nowrap;
+
+      .summary-card-tag {
+        padding: 0.2rem 1rem;
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .summary-card-tag + .summary-card-tag {
+        border-top: 1px solid whitesmoke;
+      }
+    }
+  }
+}

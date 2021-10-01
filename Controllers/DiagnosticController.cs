@@ -9,6 +9,7 @@ using TIS_ESPC_FORK.Models.Repositories;
 
 namespace TIS_ESPC_FORK.Controllers
 {
+    [Authorize(Roles = "Администратор,Программист,Технолог")]
     public class DiagnosticController : ApiController
     {
         static readonly IRepository<OperatorInfo> oRepo = new OperatorRepository();
@@ -47,7 +48,6 @@ namespace TIS_ESPC_FORK.Controllers
 
 
         [HttpPost]
-        [Authorize(Roles = "Администратор,Программист,Технолог")]
         [Route("api/Diagnostic/ReadOperatorActionsAsync")]
         public async Task<IHttpActionResult> ReadOperatorActionsAsync()
         {

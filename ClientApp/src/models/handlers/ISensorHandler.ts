@@ -1,9 +1,12 @@
 import { CompressorSensor } from "models/types/Sensors/Compressor/CompressorSensor"
-import { AirCompressorSensorHandler } from "./Compressor/AirCompressorSensorHandler"
-import { DetailsCompressorSensorHandler } from "./Compressor/DetailsCompressorSensorHandler"
-import { DryerCompressorSensorHandler } from "./Compressor/DryerCompressorSensorHandler"
-import { KipCompressorSensorHandler } from "./Compressor/KipCompressorSensorHandler"
-import { MainCompressorSensorHandler } from "./Compressor/MainCompressorSensorHandler"
+import { DryerRuntimeSensor } from "models/types/Sensors/Dryers/DryerRuntimeSensor"
+import { AirCompressorSensorHandler } from "./CompressorSensorHandlers/AirCompressorSensorHandler"
+import { DetailsCompressorSensorHandler } from "./CompressorSensorHandlers/DetailsCompressorSensorHandler"
+import { DryerCompressorSensorHandler } from "./CompressorSensorHandlers/DryerCompressorSensorHandler"
+import { KipCompressorSensorHandler } from "./CompressorSensorHandlers/KipCompressorSensorHandler"
+import { MainCompressorSensorHandler } from "./CompressorSensorHandlers/MainCompressorSensorHandler"
+import { DryerSummarySensorHandler } from "./DryerSensorHandlers/DryerSummarySensorHandler"
+
 
 
 export interface ISensorHandler<T> {
@@ -18,10 +21,14 @@ const aHandler = new AirCompressorSensorHandler() as ISensorHandler<CompressorSe
 const dHandler = new DetailsCompressorSensorHandler() as ISensorHandler<CompressorSensor>
 const dryHandler = new DryerCompressorSensorHandler() as ISensorHandler<CompressorSensor>
 
+const drHandler = new DryerSummarySensorHandler() as ISensorHandler<DryerRuntimeSensor>
+
 export {
   mHandler,
   kHandler,
   aHandler,
   dHandler,
   dryHandler,
+
+  drHandler,
 }

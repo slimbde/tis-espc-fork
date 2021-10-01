@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Collapse, Container, DropdownItem, DropdownMenu, DropdownToggle, Navbar, NavItem, NavLink, UncontrolledDropdown } from 'reactstrap';
 import { NavLink as Link, withRouter } from 'react-router-dom';
 import aHandler from "models/handlers/DbHandlers/AuthDbHandler"
+import { UserRole } from "models/types/Auth/UserRole";
 
 
 type NavProps = {
@@ -10,7 +11,7 @@ type NavProps = {
 
 type NavState = {
   collapsed: boolean
-  userRoleRating: number
+  userRole: UserRole
 }
 
 
@@ -18,20 +19,10 @@ class NavMenu extends Component<NavProps> {
 
   state: NavState = {
     collapsed: true,
-    userRoleRating: 0,
+    userRole: UserRole.Пользователь,
   }
 
-  componentDidMount() {
-    const role = aHandler.GetRoleFromStash()
-    if (role) {
-      switch (role) {
-        case "Пользователь": this.setState({ userRoleRating: 1 }); break
-        case "Технолог": this.setState({ userRoleRating: 2 }); break
-        case "Программист": this.setState({ userRoleRating: 3 }); break
-        case "Администратор": this.setState({ userRoleRating: 4 }); break
-      }
-    }
-  }
+  componentDidMount = () => this.setState({ userRole: aHandler.GetRoleFromStash() })
 
 
   render() {
@@ -60,8 +51,7 @@ class NavMenu extends Component<NavProps> {
                 <DropdownToggle nav className={location.indexOf("/agregates") > -1 ? "active" : ""}> Агрегаты</DropdownToggle>
                 <DropdownMenu right>
                   <DropdownItem><NavLink tag={Link} to="/agregates/staple">Основные</NavLink></DropdownItem>
-                  <DropdownItem><NavLink tag={Link} to="/agregates/dries">Сушка</NavLink></DropdownItem>
-                  <DropdownItem><NavLink tag={Link} to="/agregates/molding">Разливка</NavLink></DropdownItem>
+                  <DropdownItem><NavLink tag={Link} to="/agregates/dryers/2/summary">Сушка/Разогрев</NavLink></DropdownItem>
                 </DropdownMenu>
               </UncontrolledDropdown>
 
@@ -73,7 +63,7 @@ class NavMenu extends Component<NavProps> {
                 </DropdownMenu>
               </UncontrolledDropdown>
 
-              {this.state.userRoleRating > 1 &&
+              {this.state.userRole > UserRole.Пользователь &&
                 <UncontrolledDropdown nav inNavbar>
                   <DropdownToggle nav className={location.indexOf("/technology") > -1 ? "active" : ""}>Технология</DropdownToggle>
                   <DropdownMenu right>
@@ -81,7 +71,7 @@ class NavMenu extends Component<NavProps> {
                   </DropdownMenu>
                 </UncontrolledDropdown>}
 
-              {this.state.userRoleRating > 2 &&
+              {this.state.userRole > UserRole.Технолог &&
                 <UncontrolledDropdown nav inNavbar>
                   <DropdownToggle nav className={location.indexOf("/diagnostic") > -1 ? "active programmer" : "programmer"}>Диагностика</DropdownToggle>
                   <DropdownMenu right>
@@ -90,7 +80,7 @@ class NavMenu extends Component<NavProps> {
                   </DropdownMenu>
                 </UncontrolledDropdown>}
 
-              {this.state.userRoleRating > 3 &&
+              {this.state.userRole > UserRole.Программист &&
                 <UncontrolledDropdown nav inNavbar>
                   <DropdownToggle nav className={location.indexOf("/admin") > -1 ? "active admin" : "admin"}>Администрирование</DropdownToggle>
                   <DropdownMenu right>

@@ -1,4 +1,5 @@
 import aHandler from "models/handlers/DbHandlers/AuthDbHandler"
+import { UserRole } from "models/types/Auth/UserRole"
 import * as React from "react"
 
 
@@ -15,8 +16,9 @@ const Footer = () => {
     // eslint-disable-next-line
   }, [])
 
+
   return <div className="footer container">
-    {`${state.name.replace(/"/g, "").replace("\\", "")}: ${state.role}`}
+    {`${state.name.replace(/"/g, "").replace("\\", "")}: ${Object.values(UserRole)[state.role]}`}
   </div>
 }
 

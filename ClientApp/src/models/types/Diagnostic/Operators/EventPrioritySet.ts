@@ -1,4 +1,4 @@
-import { AreaId } from "../../AreaId"
+import { AreaId } from "../../Production/AreaId"
 
 export type EventPrioritySet = {
   prioBtn: string         // Кнопки на пультах

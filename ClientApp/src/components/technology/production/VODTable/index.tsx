@@ -5,7 +5,7 @@ import { Table } from "reactstrap";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { HeatEventModal } from "../HeatEventModal";
-import { AreaId } from "models/types/AreaId";
+import { AreaId } from "models/types/Production/AreaId";
 import { HeatVODProcessModal } from "./HeatVODProcessModal";
 
 type Props = {

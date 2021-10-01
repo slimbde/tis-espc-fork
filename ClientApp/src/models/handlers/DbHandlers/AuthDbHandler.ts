@@ -1,3 +1,4 @@
+import { UserRole } from "models/types/Auth/UserRole"
 import backendHost from "./backendHost"
 
 class AuthDbHandler {
@@ -79,17 +80,17 @@ class AuthDbHandler {
   }
 
 
-  GetRoleFromStash(): string {
+  GetRoleFromStash(): UserRole {
     const keyEncoded = btoa("userRole")
     const value = localStorage.getItem(keyEncoded)
     if (value) {
-      if (value === btoa(unescape(encodeURIComponent("Пользователь")))) return "Пользователь"
-      if (value === btoa(unescape(encodeURIComponent("Технолог")))) return "Технолог"
-      if (value === btoa(unescape(encodeURIComponent("Программист")))) return "Программист"
-      if (value === btoa(unescape(encodeURIComponent("Администратор")))) return "Администратор"
+      if (value === btoa(unescape(encodeURIComponent("Пользователь")))) return UserRole.Пользователь
+      if (value === btoa(unescape(encodeURIComponent("Технолог")))) return UserRole.Технолог
+      if (value === btoa(unescape(encodeURIComponent("Программист")))) return UserRole.Программист
+      if (value === btoa(unescape(encodeURIComponent("Администратор")))) return UserRole.Администратор
     }
 
-    return "Пользователь"
+    return UserRole.Пользователь
   }
 }
 

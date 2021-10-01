@@ -12,6 +12,7 @@ import { ARMOverview } from "components/overview/arms";
 import aHandler from "models/handlers/DbHandlers/AuthDbHandler"
 import { ARM } from "components/overview/arms/ARM";
 import { Compressor } from "components/overview/compressor";
+import { Dryers } from "components/agregates/Dryers";
 
 
 
@@ -61,7 +62,8 @@ const App: React.FC = () => {
 
   const technologistRoutes = [
     ...userRoutes,
-    <Route path="/technology/production" component={Production} key="production" />
+    <Route path="/technology/production" component={Production} key="production" />,
+    <Route path="/agregates/dryers/:ID/:VIEW" component={Dryers} key="dryer" />
   ]
 
   const programmerRoutes = [
