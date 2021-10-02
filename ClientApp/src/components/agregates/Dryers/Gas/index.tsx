@@ -132,7 +132,7 @@ export const DryerGas: React.FC = () => {
       })
   }
 
-  return <div className="chart-wrapper">
+  return <div className="gas-wrapper">
     {<Form inline>
       <FormGroup>
         <Label for="param">Интервал</Label>
