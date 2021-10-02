@@ -1,5 +1,8 @@
 
-const host = "http://10.2.19.193/"
+// to prevent authentication request when reaching images
+// I placed a virtual directory at the non-protected frontend instance on the server
+// And the virtual directory points to the images folder and no authentication needed
+const host = "http://10.2.19.193:82/"
 const ccmPath = "screen/img_ccm/"
 const akpPath = "screen/img_lf/"
 const vodPath = "screen/img_vod/"
