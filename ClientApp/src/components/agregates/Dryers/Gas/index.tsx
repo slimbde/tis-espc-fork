@@ -1,8 +1,8 @@
-import "./chart.scss"
+import "./gas.scss"
 import { useRef, useState } from "react"
 import { Button, Form, FormGroup, Input, Label } from "reactstrap"
 import { AgregateAreaId } from "models/types/Agregates/Dryers/AgregateAreaId"
-import { ChartParams } from "models/types/Agregates/Dryers/Chart/ChartParams"
+import { GasChartParams } from "models/types/Agregates/Dryers/Gas/GasChartParams"
 import { blinkAlert } from "components/extra/Alert"
 import { Loading } from "components/extra/Loading"
 import { useRouteMatch } from "react-router-dom"
@@ -14,7 +14,7 @@ import agrHandler from "models/handlers/DbHandlers/AgregatesDbHandler"
 
 type State = {
   areaId: AgregateAreaId
-  param: ChartParams
+  param: GasChartParams
   from: string
   to: string
   loading: boolean
@@ -23,7 +23,7 @@ type State = {
 
 
 
-export const DryerChart: React.FC = () => {
+export const DryerGas: React.FC = () => {
   const match = useRouteMatch<{ ID: string }>()
 
   const chartRef = useRef<HTMLDivElement>(null)
@@ -39,17 +39,28 @@ export const DryerChart: React.FC = () => {
     return AgregateAreaId.DryerHistory1
   }
 
+  const getFrom = (param: GasChartParams) => {
+    switch (param) {
+      case GasChartParams["По часам"]: return new Date().toISOString().slice(0, 10)
+      case GasChartParams["По дням"]: return moment().subtract(1, "month").format("YYYY-MM-DD")
+      case GasChartParams["По месяцам"]: return moment().subtract(10, "months").format("YYYY-MM-DD")
+    }
+  }
+
   const [state, setState] = useState<State>({
     areaId: getAreaId(match.params.ID),
-    param: Object.keys(ChartParams)[0] as ChartParams,
-    from: moment().subtract(1, "month").toISOString(true).slice(0, 10),
+    param: GasChartParams["По часам"],
+    from: (new Date()).toISOString().slice(0, 10),
     to: (new Date()).toISOString().slice(0, 10),
     loading: false,
   })
 
 
-
-  const paramChange = (e: React.ChangeEvent<HTMLInputElement>) => setState({ ...state, param: e.target.value as unknown as ChartParams })
+  const paramChange = (e: React.ChangeEvent<HTMLInputElement>) => setState({
+    ...state,
+    param: e.target.value as GasChartParams,
+    from: getFrom(e.target.value as GasChartParams)
+  })
   const fromChange = (e: React.ChangeEvent<HTMLInputElement>) => setState({ ...state, from: e.target.value })
   const toChange = (e: React.ChangeEvent<HTMLInputElement>) => setState({ ...state, to: e.target.value })
 
@@ -60,10 +71,12 @@ export const DryerChart: React.FC = () => {
 
     btnRef.current!.disabled = true
 
-    agrHandler.ReadDryerHistoryRealAsync({
+    agrHandler.ReadDryerGasHistoryAsync({
       areaId: state.areaId,
       from: state.from,
-      to: moment(state.to).add(1, "day").format("YYYY-MM-DD"),
+      to: state.param === GasChartParams["По часам"]
+        ? moment(state.to).add(1, "day").format("YYYY-MM-DD")
+        : state.to,
       param: state.param
     })
       .then(chartPoints => {
@@ -77,7 +90,9 @@ export const DryerChart: React.FC = () => {
             type: "datetime",
             tickInterval: 1,
             gridLineWidth: 1,
-            categories: chartPoints.map(pt => moment(pt.RevisionTime, "YYYY-MM-DD").format("DD.MM.YYYY")),
+            categories: state.param === GasChartParams["По часам"]
+              ? chartPoints.map(pt => moment(pt.RevisionTime).format("DD.MM.YYYY<br>HH:mm"))
+              : chartPoints.map(pt => moment(pt.RevisionTime, "YYYY-MM-DD").format("DD.MM.YYYY")),
             crosshair: true,
           },
           yAxis: {
@@ -99,8 +114,8 @@ export const DryerChart: React.FC = () => {
             type: "spline",
             lineWidth: 2,
             marker: { radius: 3 },
-            name: state.param,
-            data: chartPoints.map(pt => Math.round(pt.AVGValue * 100) / 100),
+            name: "Расход",
+            data: chartPoints.map(pt => pt.RealValue),
             color: "blue",
           }]
         })
@@ -120,9 +135,9 @@ export const DryerChart: React.FC = () => {
   return <div className="chart-wrapper">
     {<Form inline>
       <FormGroup>
-        <Label for="param">Параметр</Label>
-        <Input bsSize="sm" type="select" id="param" onChange={paramChange}>
-          {Object.keys(ChartParams).map(p => <option key={p} value={p}>{(ChartParams as any)[p]}</option>)}
+        <Label for="param">Интервал</Label>
+        <Input bsSize="sm" type="select" id="param" value={state.param} onChange={paramChange}>
+          {Object.keys(GasChartParams).map(p => <option key={p} value={(GasChartParams as any)[p]}>{p}</option>)}
         </Input>
       </FormGroup>
 
@@ -150,7 +165,7 @@ export const DryerChart: React.FC = () => {
 
       <FormGroup className="loading-group">
         <Button innerRef={btnRef} outline color="primary" size="sm" onClick={populateChart}>Построить</Button>
-        <p><Loading /></p>
+        {state.loading && <Loading />}
       </FormGroup>
     </Form>}
     <div id="chart" ref={chartRef}></div>

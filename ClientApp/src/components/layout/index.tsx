@@ -13,6 +13,7 @@ const Layout: React.FC<LayoutProps> = (props: LayoutProps) =>
   <>
     <NavMenu />
     <main>
+      <div id="shade"></div>
       <Container className="root-wrapper">{props.children}</Container>
       <Footer />
     </main>

@@ -7,6 +7,16 @@ main {
   grid-template-rows: 1fr 40px;
   height: 100%;
   overflow-y: auto;
+
+  #shade {
+    position: absolute;
+    background-color: gray;
+    opacity: 0.4;
+    height: 100%;
+    width: 100%;
+    z-index: 1;
+    visibility: hidden;
+  }
 }
 
 .container-fluid {

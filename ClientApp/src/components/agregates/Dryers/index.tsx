@@ -5,6 +5,8 @@ import { Alert, Button, ButtonGroup, Nav, NavItem, NavLink } from "reactstrap"
 import { NavLink as Link, Route, Switch, useHistory, useRouteMatch } from "react-router-dom"
 import { DryerSummary } from "./Summary"
 import { DryerChart } from "./Chart";
+import { DryerProtocol } from "./Protocol";
+import { DryerGas } from "./Gas";
 
 
 
@@ -122,6 +124,8 @@ export const Dryers: React.FC = () => {
     {state.activeTab && <Switch>
       <Route exact path="/agregates/dryers/:ID/summary" component={DryerSummary} />
       <Route exact path="/agregates/dryers/:ID/chart" component={DryerChart} />
+      <Route exact path="/agregates/dryers/:ID/protocol" component={DryerProtocol} />
+      <Route exact path="/agregates/dryers/:ID/gas" component={DryerGas} />
     </Switch>}
   </div>
 }

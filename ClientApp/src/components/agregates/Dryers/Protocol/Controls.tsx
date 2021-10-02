@@ -1,15 +1,15 @@
 import moment from "moment"
 import { useState } from "react"
-import { FilterOperation, OperatorFilter } from "models/types/Diagnostic/Operators/OperatorFilter"
-import { Button, Input, InputGroup, InputGroupAddon } from "reactstrap"
+import { Button, Input, InputGroup } from "reactstrap"
 import { blinkAlert } from "components/extra/Alert"
-import { AreaId } from "models/types/Production/AreaId"
-import { useRouteMatch } from "react-router-dom"
+import { AgregateAreaId } from "models/types/Agregates/Dryers/AgregateAreaId"
+import { ProtocolFilter } from "models/types/Agregates/Dryers/Protocol/ProtocolFilter"
+import { Loading } from "components/extra/Loading"
 
 
 type Props = {
-  applyFilter: (filter: OperatorFilter) => void
-  areaId: AreaId,
+  applyFilter: (filter: ProtocolFilter) => void
+  areaId: AgregateAreaId,
   loading: boolean
 }
 
@@ -19,8 +19,6 @@ type State = {
   timeFrom: string
   dateTo: string
   timeTo: string
-  operation: keyof FilterOperation
-  comment: string
 }
 
 
@@ -31,48 +29,24 @@ export const Controls: React.FC<Props> = ({
   loading,
 }) => {
 
-  const match = useRouteMatch<{ AREAID: string, FROM: string, TO: string }>()
-  const from = match.params.FROM && moment(match.params.FROM)
-  const to = match.params.TO && moment(match.params.TO)
-
   const [state, setState] = useState<State>({
-    dateFrom: from ? from.format("YYYY-MM-DD") : moment().format("YYYY-MM-DD"),
-    dateTo: to ? to.format("YYYY-MM-DD") : moment().format("YYYY-MM-DD"),
-    timeFrom: from ? from.format("HH:mm") : "07:30",
-    timeTo: to ? to.format("HH:mm") : "19:30",
-    operation: "buttons",
-    comment: "",
+    dateFrom: moment().format("YYYY-MM-DD"),
+    dateTo: moment().format("YYYY-MM-DD"),
+    timeFrom: "07:30",
+    timeTo: "19:30",
   })
-
-
-  const getAreaOptions = () => {
-    const options = [
-      <option key="1" value="buttons">Нажатие кнопок на пультах</option>,
-      <option key="2" value="hmi_cmds">Команды ЧМИ</option>,
-      <option key="3" value="hmi_sets">Изменение уставок на ЧМИ</option>,
-    ]
-
-    if (areaId === AreaId.CCM_DIAG)
-      options.push(<option key="4" value="airpump_msg">Компрессорная</option>)
-
-    return options
-  }
 
 
   const dateFromChange = (e: React.ChangeEvent<HTMLInputElement>) => setState({ ...state, dateFrom: e.target.value })
   const timeFromChange = (e: React.ChangeEvent<HTMLInputElement>) => setState({ ...state, timeFrom: e.target.value })
   const dateToChange = (e: React.ChangeEvent<HTMLInputElement>) => setState({ ...state, dateTo: e.target.value })
   const timeToChange = (e: React.ChangeEvent<HTMLInputElement>) => setState({ ...state, timeTo: e.target.value })
-  const operationChange = (e: React.ChangeEvent<HTMLInputElement>) => setState({ ...state, operation: e.target.value as keyof FilterOperation })
-  const commentChange = (e: React.ChangeEvent<HTMLInputElement>) => setState({ ...state, comment: e.target.value })
 
   const reset = () => setState({
     dateFrom: moment().format("YYYY-MM-DD"),
     dateTo: moment().format("YYYY-MM-DD"),
     timeFrom: "07:30",
     timeTo: "19:30",
-    operation: "buttons",
-    comment: "",
   })
 
   const checkFilter = () => {
@@ -87,7 +61,7 @@ export const Controls: React.FC<Props> = ({
       return
     }
 
-    applyFilter({ operation: state.operation, from, to, comment: state.comment, areaId: (AreaId as any)[areaId] })
+    applyFilter({ areaId, from, to })
   }
 
 
@@ -95,8 +69,6 @@ export const Controls: React.FC<Props> = ({
   return <div className="navigation">
     <span style={{ gridArea: "from-title" }}>Начало:</span>
     <span style={{ gridArea: "to-title" }}>Окончание:</span>
-    <span style={{ gridArea: "operation-title" }}>Операция:</span>
-    <span style={{ gridArea: "heat-title" }}>Комментарий:</span>
 
     <Button
       style={{ gridArea: "reset", borderTopRightRadius: "0", borderBottomRightRadius: "0" }}
@@ -104,6 +76,7 @@ export const Controls: React.FC<Props> = ({
       outline
       onClick={reset}
     >Сброс</Button>
+
     <InputGroup size="sm" style={{ gridArea: "from" }}>
       <Input
         style={{ borderTopLeftRadius: "0", borderBottomLeftRadius: "0", borderLeft: "0" }}
@@ -135,26 +108,16 @@ export const Controls: React.FC<Props> = ({
       />
     </InputGroup>
 
-    <Input
-      bsSize="sm"
-      style={{ borderTopLeftRadius: "0", borderBottomLeftRadius: "0", borderTopRightRadius: "0", borderBottomRightRadius: "0", borderRight: "0", gridArea: "operation" }}
-      type="select"
-      onChange={e => operationChange(e)}
-      value={state.operation}
-    >{getAreaOptions()}</Input>
+    <Button
+      size="sm"
+      className="search-btn"
+      disabled={loading}
+      color="primary"
+      outline onClick={checkFilter}
+    >Поиск</Button>
 
-    <InputGroup style={{ gridArea: "heat" }}>
-      <Input
-        style={{ borderTopLeftRadius: "0", borderBottomLeftRadius: "0" }}
-        bsSize="sm"
-        type="text"
-        placeholder="..."
-        onChange={e => commentChange(e)}
-        value={state.comment}
-      />
-      <InputGroupAddon addonType="append">
-        <Button size="sm" disabled={loading} color="primary" outline onClick={checkFilter}>Поиск</Button>
-      </InputGroupAddon>
-    </InputGroup>
+    <p className="note">Ввиду большого числа записей поиск может длиться до 1мин</p>
+
+    {loading && <Loading />}
   </div >
 }

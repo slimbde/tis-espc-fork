@@ -13,7 +13,9 @@ namespace TIS_ESPC_FORK.Controllers
     public class AgregatesController : ApiController
     {
         static readonly IRepository<DryerRuntime> drRepo = new DryerRuntimeRepository();
-        static readonly IRepository<DryerHistory> dhRepo = new DryerHistoryRepository();
+        static readonly IRepository<DryerHistoryReal> dhrRepo = new DryerHistoryRealRepository();
+        static readonly IRepository<DryerHistoryBool> dhbRepo = new DryerHistoryBoolRepository();
+        static readonly IRepository<DryerGas> dgRepo = new DryerGasRepository();
 
 
 
@@ -30,13 +32,41 @@ namespace TIS_ESPC_FORK.Controllers
 
 
         [HttpPost]
-        [Route("api/Agregates/ReadDryerHistoryAsync")]
-        public async Task<IHttpActionResult> ReadDryerHistoryAsync()
+        [Route("api/Agregates/ReadDryerHistoryRealAsync")]
+        public async Task<IHttpActionResult> ReadDryerHistoryRealAsync()
         {
             try
             {
-                DryerHistoryFilter filter = JsonConvert.DeserializeObject<DryerHistoryFilter>(Request.Content.ReadAsStringAsync().Result);
-                return Ok(await dhRepo.ListFor(filter));
+                DryerHistoryRealFilter filter = JsonConvert.DeserializeObject<DryerHistoryRealFilter>(Request.Content.ReadAsStringAsync().Result);
+                return Ok(await dhrRepo.ListFor(filter));
+            }
+            catch (Exception ex) { return BadRequest(ex.Message); }
+        }
+
+
+
+        [HttpPost]
+        [Route("api/Agregates/ReadDryerHistoryBoolAsync")]
+        public async Task<IHttpActionResult> ReadDryerHistoryBoolAsync()
+        {
+            try
+            {
+                DryerHistoryBoolFilter filter = JsonConvert.DeserializeObject<DryerHistoryBoolFilter>(Request.Content.ReadAsStringAsync().Result);
+                return Ok(await dhbRepo.ListFor(filter));
+            }
+            catch (Exception ex) { return BadRequest(ex.Message); }
+        }
+
+
+
+        [HttpPost]
+        [Route("api/Agregates/ReadDryerGasHistoryAsync")]
+        public async Task<IHttpActionResult> ReadDryerGasHistoryAsync()
+        {
+            try
+            {
+                DryerHistoryRealFilter filter = JsonConvert.DeserializeObject<DryerHistoryRealFilter>(Request.Content.ReadAsStringAsync().Result);
+                return Ok(await dgRepo.ListFor(filter));
             }
             catch (Exception ex) { return BadRequest(ex.Message); }
         }

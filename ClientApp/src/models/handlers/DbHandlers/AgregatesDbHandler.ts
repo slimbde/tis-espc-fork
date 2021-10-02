@@ -2,6 +2,10 @@ import backendHost from "./backendHost"
 import { DryerRuntimeSensor } from "models/types/Sensors/Dryers/DryerRuntimeSensor"
 import { ChartPoint } from "models/types/Agregates/Dryers/Chart/ChartPoint"
 import { HistoryChartFilter } from "models/types/Agregates/Dryers/Chart/HistoryChartFilter"
+import { ProtocolFilter } from "models/types/Agregates/Dryers/Protocol/ProtocolFilter"
+import { ProtocolEntry } from "models/types/Agregates/Dryers/Protocol/ProtocolEntry"
+import { GasChartFilter } from "models/types/Agregates/Dryers/Gas/GasChartFilter"
+import { GasChartPoint } from "models/types/Agregates/Dryers/Gas/GasChartPoint"
 
 
 
@@ -9,7 +13,7 @@ export class AgregatesDbHandler {
   protected backend = backendHost
   protected api = "Agregates"
 
-  private chartCache: Map<string, ChartPoint[]> = new Map()
+  private protocolCache: Map<string, ProtocolEntry[]> = new Map()
   private static instance: AgregatesDbHandler
   private constructor() { }
 
@@ -34,12 +38,30 @@ export class AgregatesDbHandler {
   }
 
 
-  async ReadDryerHistoryAsync(filter: HistoryChartFilter): Promise<ChartPoint[]> {
-    const filterEntry = `${filter.areaId}${filter.from}${filter.to}${filter.param}`
-    if (this.chartCache.has(filterEntry))
-      return this.chartCache.get(filterEntry)!
+  async ReadDryerHistoryRealAsync(filter: HistoryChartFilter): Promise<ChartPoint[]> {
+    const resp = await fetch(`${this.backend}/${this.api}/ReadDryerHistoryRealAsync`, {
+      method: "POST",
+      headers: {
+        "Accept": "text/plain",
+        "Content-Type": "text/plain",
+      },
+      body: JSON.stringify(filter),
+      credentials: "include"
+    })
 
-    const resp = await fetch(`${this.backend}/${this.api}/ReadDryerHistoryAsync`, {
+    if (resp.status >= 400)
+      throw new Error(`[${this.api}DbHandler]: ${await resp.text()}`)
+
+    return await resp.json()
+  }
+
+
+  async ReadDryerHistoryBoolAsync(filter: ProtocolFilter): Promise<ProtocolEntry[]> {
+    const filterEntry = `${filter.areaId}${filter.from}${filter.to}`
+    if (this.protocolCache.has(filterEntry))
+      return this.protocolCache.get(filterEntry)!
+
+    const resp = await fetch(`${this.backend}/${this.api}/ReadDryerHistoryBoolAsync`, {
       method: "POST",
       headers: {
         "Accept": "text/plain",
@@ -53,8 +75,26 @@ export class AgregatesDbHandler {
       throw new Error(`[${this.api}DbHandler]: ${await resp.text()}`)
 
     const data = await resp.json()
-    this.chartCache.set(filterEntry, data)
+    this.protocolCache.set(filterEntry, data)
     return data
+  }
+
+
+  async ReadDryerGasHistoryAsync(filter: GasChartFilter): Promise<GasChartPoint[]> {
+    const resp = await fetch(`${this.backend}/${this.api}/ReadDryerGasHistoryAsync`, {
+      method: "POST",
+      headers: {
+        "Accept": "text/plain",
+        "Content-Type": "text/plain",
+      },
+      body: JSON.stringify(filter),
+      credentials: "include"
+    })
+
+    if (resp.status >= 400)
+      throw new Error(`[${this.api}DbHandler]: ${await resp.text()}`)
+
+    return await resp.json()
   }
 }
 
