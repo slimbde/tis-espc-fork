@@ -68,6 +68,7 @@ class NavMenu extends Component<NavProps> {
                   <DropdownToggle nav className={location.indexOf("/technology") > -1 ? "active" : ""}>Технология</DropdownToggle>
                   <DropdownMenu right>
                     <DropdownItem><NavLink tag={Link} to="/technology/production">Производство</NavLink></DropdownItem>
+                    <DropdownItem><NavLink tag={Link} to="/technology/operator">Журнал действий оператора</NavLink></DropdownItem>
                   </DropdownMenu>
                 </UncontrolledDropdown>}
 
@@ -76,7 +77,6 @@ class NavMenu extends Component<NavProps> {
                   <DropdownToggle nav className={location.indexOf("/diagnostic") > -1 ? "active programmer" : "programmer"}>Диагностика</DropdownToggle>
                   <DropdownMenu right>
                     <DropdownItem><NavLink tag={Link} to="/diagnostic/services">Состояние сервисов</NavLink></DropdownItem>
-                    <DropdownItem><NavLink tag={Link} to="/diagnostic/operator">Журнал действий оператора</NavLink></DropdownItem>
                   </DropdownMenu>
                 </UncontrolledDropdown>}
 

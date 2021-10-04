@@ -84,7 +84,7 @@ export const CCMTable: React.FC<Props> = ({
 
           return <tr key={`${h.HEAT_ID}${h.START_POINT}`} className={h.STOP_POINT === "ТЕКУЩ" ? "active" : ""}>
             <td title="Посмотреть события плавки" className="a-like" onClick={() => openModal(h.HEAT_ID)}>{h.HEAT_ID}</td>
-            <td title="Посмотреть действия оператора"><Link to={`/diagnostic/operator/${areaId}/${correctStart} ${h.START_POINT}/${correctStop} ${h.STOP_POINT}`}>{h.START_POINT}</Link></td>
+            <td title="Посмотреть действия оператора"><Link to={`/technology/operator/${areaId}/${correctStart} ${h.START_POINT}/${correctStop} ${h.STOP_POINT}`}>{h.START_POINT}</Link></td>
             <td>{h.STOP_POINT}</td>
             <td title="Посмотреть отчет по качеству" className="a-like" onClick={() => openQualityModal(h.HEAT_ID)}>{h.STEEL_GRADE_ID}</td>
             <td>{h.DURATION}</td>

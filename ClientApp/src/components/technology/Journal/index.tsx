@@ -1,7 +1,7 @@
 import "./journal.scss"
 import { useState } from "react"
 import { Alert, Button, ButtonGroup, Table } from "reactstrap"
-import { Controls } from "components/diagnostic/Journal/Controls"
+import { Controls } from "components/technology/Journal/Controls"
 import { OperatorFilter } from "models/types/Diagnostic/Operators/OperatorFilter"
 import { AreaId, getAreaName } from "models/types/Production/AreaId"
 import { EventPriorityProvider } from "models/types/Diagnostic/Operators/EventPrioritySet"
@@ -52,7 +52,7 @@ export const Journal: React.FC = () => {
   }
 
 
-  return <div className="journal-wrapper">
+  return <div className="journal-wrapper jumbotron">
     <Alert id="alert">Hello</Alert>
     <div className="title display-5">Журнал действий оператора {getAreaName(state.areaId)}</div>
     <div className="subtitle">

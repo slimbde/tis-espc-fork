@@ -91,7 +91,7 @@ export const VODTable: React.FC<Props> = ({
 
           return <tr key={`${h.HEAT_ID}${h.START_POINT}`} className={h.STOP_POINT === "ТЕКУЩ" ? "active" : ""}>
             <td title="Посмотреть события плавки" className="a-like" onClick={() => openModal(h.HEAT_ID)}>{h.HEAT_ID}</td>
-            <td title="Посмотреть действия оператора"><Link to={`/diagnostic/operator/${areaId}/${correctStart} ${h.START_POINT}/${correctStop} ${h.STOP_POINT}`}>{h.START_POINT}</Link></td>
+            <td title="Посмотреть действия оператора"><Link to={`/technology/operator/${areaId}/${correctStart} ${h.START_POINT}/${correctStop} ${h.STOP_POINT}`}>{h.START_POINT}</Link></td>
             <td>{h.STOP_POINT}</td>
             <td>{h.STEEL_GRD}</td>
             <td title="Посмотреть процесс плавки" className="a-like" onClick={() => openProcessModal(h.HEAT_ID)}>{h.PROCESS}</td>

@@ -186,7 +186,9 @@
       <DependentUpon>Web.config</DependentUpon>
     </Content>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="README\" />
+  </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\auth.db3" />
     <None Include="packages.config" />
