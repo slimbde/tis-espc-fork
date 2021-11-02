@@ -1,0 +1,77 @@
+@import "variables.scss";
+
+.staples-wrapper {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: auto 1fr 1.3fr;
+  grid-row-gap: 1rem;
+  grid-template-areas:
+    "title title title title"
+    "dsp akos akp1 akp2"
+    "mnlz1 mnlz2 vd1 vd2";
+  height: 85vh;
+
+  #loading {
+    top: 5rem;
+    left: 2rem;
+  }
+
+  #alert {
+    position: absolute;
+    right: 2rem;
+    top: 2rem;
+    margin-bottom: 0;
+  }
+
+  .dsp {
+    grid-area: dsp;
+  }
+
+  .card {
+    background-color: white;
+    font-size: 0.9rem;
+
+    .card-header {
+      display: flex;
+      flex-flow: row nowrap;
+      justify-content: space-between;
+      padding: 0.5rem 1rem;
+      margin-bottom: 0;
+      border-bottom: 0;
+
+      div:first-child {
+        font-weight: 500;
+        flex-grow: 1;
+      }
+
+      div:nth-child(2).delayed {
+        color: darkgrey;
+      }
+    }
+
+    .card-footer {
+      font-size: 0.85rem;
+      border-top: 1px solid whitesmoke;
+      display: flex;
+      flex-flow: column nowrap;
+      padding: 0.5rem 1rem;
+      background-color: white;
+      max-height: 8rem;
+
+      &:hover {
+        background-color: lighten(whitesmoke, 3%);
+      }
+
+      div {
+        display: flex;
+        flex-flow: row nowrap;
+        justify-content: space-between;
+      }
+
+      div.delayed {
+        color: darkgrey;
+      }
+    }
+  }
+}

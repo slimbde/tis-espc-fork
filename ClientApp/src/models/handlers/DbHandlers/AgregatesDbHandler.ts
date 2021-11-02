@@ -6,6 +6,7 @@ import { ProtocolFilter } from "models/types/Agregates/Dryers/Protocol/ProtocolF
 import { ProtocolEntry } from "models/types/Agregates/Dryers/Protocol/ProtocolEntry"
 import { GasChartFilter } from "models/types/Agregates/Dryers/Gas/GasChartFilter"
 import { GasChartPoint } from "models/types/Agregates/Dryers/Gas/GasChartPoint"
+import { AgregateSummary } from "models/types/Agregates/Staples/AgregateSummary"
 
 
 
@@ -88,6 +89,18 @@ export class AgregatesDbHandler {
         "Content-Type": "text/plain",
       },
       body: JSON.stringify(filter),
+      credentials: "include"
+    })
+
+    if (resp.status >= 400)
+      throw new Error(`[${this.api}DbHandler]: ${await resp.text()}`)
+
+    return await resp.json()
+  }
+
+
+  async ReadStapleSummaryAsync(): Promise<AgregateSummary[]> {
+    const resp = await fetch(`${this.backend}/${this.api}/ReadAgregateSummaryAsync`, {
       credentials: "include"
     })
 

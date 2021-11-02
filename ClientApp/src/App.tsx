@@ -9,11 +9,12 @@ import { Admin } from "components/admin";
 import Layout from "components/layout";
 import { VMExplorer } from "components/admin/vm";
 import { ARMOverview } from "components/overview/arms";
-import aHandler from "models/handlers/DbHandlers/AuthDbHandler"
 import { ARM } from "components/overview/arms/ARM";
 import { Compressor } from "components/overview/compressor";
 import { Dryers } from "components/agregates/Dryers";
 import { Journal } from "components/technology/Journal";
+import { Staples } from "components/agregates/Staples";
+import aHandler from "models/handlers/DbHandlers/AuthDbHandler"
 
 
 
@@ -67,6 +68,7 @@ const App: React.FC = () => {
     <Route exact path="/technology/operator" component={Journal} key="operator1" />,
     <Route exact path="/technology/operator/:AREAID/:FROM/:TO" component={Journal} key="operator2" />,
     <Route path="/agregates/dryers/:ID/:VIEW" component={Dryers} key="dryer" />,
+    <Route path="/agregates/staple" component={Staples} key="staple" />,
   ]
 
   const programmerRoutes = [

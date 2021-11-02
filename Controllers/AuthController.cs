@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -31,7 +33,7 @@ namespace TIS_ESPC_FORK.Controllers
         }
 
 
-
+        #region hide
         [HttpGet]
         [Authorize]
         [Route("api/Auth/GetUserName")]
@@ -73,7 +75,7 @@ namespace TIS_ESPC_FORK.Controllers
             }
             catch (Exception ex) { return BadRequest(ex.Message); }
         }
-
+        #endregion
 
         [AllowAnonymous]
         [HttpPost]
@@ -83,7 +85,8 @@ namespace TIS_ESPC_FORK.Controllers
             try
             {
                 NameValueCollection result = await Request.Content.ReadAsFormDataAsync();
-                return Ok("Received successfully");
+                Dictionary<string, string> receivedData = result.AllKeys.ToDictionary(key => key, key => result[key]);
+                return Ok("received");
             }
             catch (Exception ex) { return BadRequest(ex.Message); }
         }

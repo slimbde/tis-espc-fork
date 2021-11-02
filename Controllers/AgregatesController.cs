@@ -1,9 +1,9 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Web.Http;
 using TIS_ESPC_FORK.Models.DTOs.Agregates.Dryers;
+using TIS_ESPC_FORK.Models.DTOs.Agregates.Staple;
 using TIS_ESPC_FORK.Models.Repositories;
 
 
@@ -16,6 +16,7 @@ namespace TIS_ESPC_FORK.Controllers
         static readonly IRepository<DryerHistoryReal> dhrRepo = new DryerHistoryRealRepository();
         static readonly IRepository<DryerHistoryBool> dhbRepo = new DryerHistoryBoolRepository();
         static readonly IRepository<DryerGas> dgRepo = new DryerGasRepository();
+        static readonly IRepository<AgregateSummary> aRepo = new AgregateRepository();
 
 
 
@@ -68,6 +69,16 @@ namespace TIS_ESPC_FORK.Controllers
                 DryerHistoryRealFilter filter = JsonConvert.DeserializeObject<DryerHistoryRealFilter>(Request.Content.ReadAsStringAsync().Result);
                 return Ok(await dgRepo.ListFor(filter));
             }
+            catch (Exception ex) { return BadRequest(ex.Message); }
+        }
+
+
+
+        [HttpGet]
+        [Route("api/Agregates/ReadAgregateSummaryAsync")]
+        public async Task<IHttpActionResult> ReadAgregateSummaryAsync()
+        {
+            try { return Ok(await aRepo.ListFor(2)); }
             catch (Exception ex) { return BadRequest(ex.Message); }
         }
     }
