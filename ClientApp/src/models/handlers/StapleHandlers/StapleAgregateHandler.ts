@@ -5,20 +5,31 @@ import moment from "moment";
 export class StapleAgregateHandler {
   private summary: AgregateSummary[] = []
 
+  private isDataDelayed = (delayControlField: AgregateSummary) => moment()
+    .diff(moment(delayControlField.UpdatePoint, "DD.MM.YYYY HH:mm:ss"), "minute") > 2
+
   SetAgregateSummary = (summary: AgregateSummary[]) => this.summary = summary
 
   GetDSPInfo = (): AgregateInfo => {
     const dspSummary: AgregateSummary[] = this.summary.filter(s => s.Name === "AF")
     const steelGrade = dspSummary.filter(s => s.Tag === "mark")[0]
     const heatId = dspSummary.filter(s => s.Tag === "heatID")[0]
+    const energy = dspSummary.filter(s => s.Tag === "ee_input")[0].Value !== "0"
+    const refining = dspSummary.filter(s => s.Tag === "refining")[0].Value !== "0"
+    const smeltTime = dspSummary.filter(s => s.Tag === "smelt_time")[0].Value
+    const smeltStart = dspSummary.filter(s => s.Tag === "smelt_start")[0].UpdatePoint
 
     return {
       name: "ДСП",
       heatId: heatId.Value,
       steelGrade: steelGrade.Value,
+      energy,
+      refining,
+      smeltTime,
+      smeltStart,
 
-      //steelGradeDelayed: moment().diff(moment(steelGrade.UpdatePoint, "DD.MM.YYYY HH:mm:ss"), "hour") > 4,
-      heatIdDelayed: moment().diff(moment(heatId.UpdatePoint, "DD.MM.YYYY HH:mm:ss"), "hour") > 5,
+      dataDelayed: false,
+      lastUpdate: moment().format("YYYY-MM-DD HH:mm:ss"),
     }
   }
 
@@ -32,12 +43,13 @@ export class StapleAgregateHandler {
       name: "АКОС",
       heatId: heatId.Value,
       steelGrade: steelGrade.Value,
-      argonOn: summary.filter(s => s.Tag === "ARGON_ON")[0].Value === "1",
+      argon: summary.filter(s => s.Tag === "ARGON_ON")[0].Value === "1",
       energy: summary.filter(s => s.Tag === "ENERG_ARC_ON")[0].Value === "1",
       capdown: svodVertical.Value === "2" || svodVertical.Value === "0",
+      empty: false,
 
-      heatIdDelayed: moment().diff(moment(heatId.UpdatePoint, "DD.MM.YYYY HH:mm:ss"), "hour") > 3,
-      steelGradeDelayed: moment().diff(moment(steelGrade.UpdatePoint, "DD.MM.YYYY HH:mm:ss"), "hour") > 3,
+      dataDelayed: false,
+      lastUpdate: moment().format("YYYY-MM-DD HH:mm:ss"),
     }
   }
 
@@ -54,12 +66,12 @@ export class StapleAgregateHandler {
       heatId: heatId.Value.replace(/[^a-zA-Zа-яА-Я0-9]/g, ""),
       steelGrade: steelGrade.Value.replace(/[^a-zA-Zа-яА-Я0-9]/g, ""),
       empty: summary.filter(s => s.Tag === "LRF_ON")[0].Value === "False",
-      argonOn: summary.filter(s => s.Tag === "ARGON_ON")[0].Value === "True",
+      argon: summary.filter(s => s.Tag === "ARGON_ON")[0].Value === "True",
       energy: energyOn && capdown,
       capdown,
 
-      heatIdDelayed: moment().diff(moment(heatId.UpdatePoint, "DD.MM.YYYY HH:mm:ss"), "hour") > 1,
-      steelGradeDelayed: moment().diff(moment(steelGrade.UpdatePoint, "DD.MM.YYYY HH:mm:ss"), "hour") > 1,
+      dataDelayed: false,
+      lastUpdate: moment().format("YYYY-MM-DD HH:mm:ss"),
     }
   }
 
@@ -71,6 +83,7 @@ export class StapleAgregateHandler {
     const series = summary.filter(s => s.Tag === "SEQ_NO")[0]
     const castingSpeed = summary.filter(s => s.Tag === "STREAM_SPEED1")[0]
     const start = moment(summary.filter(s => s.Tag === "START")[0].Value, "YYYY-MM-DD HH:mm:ss")
+    const update = summary.filter(s => s.Tag === "$DateTime")[0]
 
     const castingHours = moment().diff(start, "hour")
     const castingMinutes = moment().diff(start, "minutes") - castingHours * 60
@@ -84,26 +97,38 @@ export class StapleAgregateHandler {
       castingStart: `${castingHours < 10 ? "0" + castingHours : castingHours}:${castingMinutes < 10 ? "0" + castingMinutes : castingMinutes}:${castingSeconds < 10 ? "0" + castingSeconds : castingSeconds}`,
       steelGrade: steelGrade.Value,
       castingSpeed: Math.round(+castingSpeed.Value * 100) / 100 + "",
-      streamCast: summary.filter(s => s.Tag === "STREAM_CAST")[0].Value === "True",
+      streamCast: +flow.Value > 0.05 && +castingSpeed.Value > 0.05,
+      tsg: "10",
 
-      heatIdDelayed: moment().diff(moment(heatId.UpdatePoint, "DD.MM.YYYY HH:mm:ss"), "hour") > 5,
-      steelGradeDelayed: moment().diff(moment(steelGrade.UpdatePoint, "DD.MM.YYYY HH:mm:ss"), "day") > 1,
-      flowDelayed: moment().diff(moment(flow.UpdatePoint, "DD.MM.YYYY HH:mm:ss"), "minute") > 1,
-      seriesDelayed: moment().diff(moment(series.UpdatePoint, "DD.MM.YYYY HH:mm:ss"), "minute") > 1,
-      castingSpeedDelayed: moment().diff(moment(castingSpeed.UpdatePoint, "DD.MM.YYYY HH:mm:ss"), "minute") > 1,
+      dataDelayed: this.isDataDelayed(update),
+      lastUpdate: update.UpdatePoint,
     }
   }
 
   GetMNLZ2Info = (): AgregateInfo => {
     const summary: AgregateSummary[] = this.summary.filter(s => s.Name === "CCM-2")
     const heatId = summary.filter(s => s.Tag === "TRK_MS_GEN_HT_ID")[0]
-    const flow = summary.filter(s => s.Tag === "COM_BS_CAST_MODE")[0]
     const series = summary.filter(s => s.Tag === "TRK_WS_SEQ_NO")[0]
     const castingSpeed = summary.filter(s => s.Tag === "GERM_WS_SP")[0]
+    const update = summary.filter(s => s.Tag === "$DateTime")[0]
 
     const mldTk = +summary.filter(s => s.Tag === "L2S_WM_COM_MLD_TK")[0].Value
     const exitWidth = +summary.filter(s => s.Tag === "MWA_WS_EXIT_WIDTH")[0].Value
     const stlHot = +summary.filter(s => s.Tag === "L2S_WM_TRK_STL_HOT")[0].Value
+
+    const a = summary.filter(s => s.Tag === "TGS_BS_A1_CAST_POS")[0].Value === "1"
+    const b = summary.filter(s => s.Tag === "TGS_BS_A2_CAST_POS")[0].Value === "1"
+    const c = summary.filter(s => s.Tag === "TGS_BS_ARM1_LD_PRE")[0].Value === "1"
+    const d = summary.filter(s => s.Tag === "TGS_BS_ARM2_LD_PRE")[0].Value === "1"
+
+    const tsg = a && b
+      ? "s11"
+      : (a && !b && c) || (!a && b && d)
+        ? "s10"
+        : ((!a && b && c) || (a && !b && d))
+          ? "s01"
+          : "s00"
+
 
     return {
       name: "МНЛЗ-2",
@@ -113,11 +138,10 @@ export class StapleAgregateHandler {
       castingStart: summary.filter(s => s.Tag === "TRK_WS_TIME_OPN")[0].Value,
       castingSpeed: Math.round(+castingSpeed.Value * 100) / 100 + "",
       streamCast: summary.filter(s => s.Tag === "COM_BS_CAST_MODE")[0].Value !== "0",
+      tsg,
 
-      heatIdDelayed: moment().diff(moment(heatId.UpdatePoint, "DD.MM.YYYY HH:mm:ss"), "hour") > 5,
-      flowDelayed: moment().diff(moment(flow.UpdatePoint, "DD.MM.YYYY HH:mm:ss"), "minute") > 1,
-      seriesDelayed: moment().diff(moment(series.UpdatePoint, "DD.MM.YYYY HH:mm:ss"), "minute") > 1,
-      castingSpeedDelayed: moment().diff(moment(castingSpeed.UpdatePoint, "DD.MM.YYYY HH:mm:ss"), "minute") > 1,
+      dataDelayed: this.isDataDelayed(update),
+      lastUpdate: update.UpdatePoint,
     }
   }
 
@@ -126,19 +150,20 @@ export class StapleAgregateHandler {
 
     const heatId = summary.filter(s => s.Tag === "HEAT_ID")[0]
     const steelGrade = summary.filter(s => s.Tag === "STEEL_GRD")[0]
-    const vacuumOn = summary.filter(s => s.Tag === "VACUUM_ON")[0].Value === "True"
+    const vacuum = summary.filter(s => s.Tag === "VACUUM_ON")[0].Value === "True"
     const capdown = summary.filter(s => s.Tag === "SVOD_LOW")[0].Value === "True"
 
     return {
       name: `ВД-${num}`,
       heatId: heatId.Value.replace(/[^a-zA-Zа-яА-Я0-9]/g, ""),
       steelGrade: steelGrade.Value.replace(/[^a-zA-Zа-яА-Я0-9]/g, ""),
-      argonOn: summary.filter(s => s.Tag === "ARGON_ON")[0].Value === "True",
-      energy: vacuumOn && capdown,
+      argon: summary.filter(s => s.Tag === "ARGON_ON")[0].Value === "True",
+      energy: vacuum && capdown,
       capdown,
+      vacuum,
 
-      heatIdDelayed: moment().diff(moment(heatId.UpdatePoint, "DD.MM.YYYY HH:mm:ss"), "day") > 1,
-      steelGradeDelayed: moment().diff(moment(steelGrade.UpdatePoint, "DD.MM.YYYY HH:mm:ss"), "day") > 1,
+      dataDelayed: false,
+      lastUpdate: moment().format("YYYY-MM-DD HH:mm:ss"),
     }
   }
 }

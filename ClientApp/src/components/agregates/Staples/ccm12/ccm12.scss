@@ -1,0 +1,45 @@
+.ccm {
+  display: flex;
+  height: 100%;
+  position: relative;
+
+  .head {
+    position: absolute;
+    z-index: 1;
+    left: 2rem;
+    width: 100%;
+    height: 100%;
+    background-size: contain;
+    background-repeat: no-repeat;
+
+    &.s00 {
+      background-image: url("img/CCM-12_00.png");
+    }
+
+    &.s01 {
+      background-image: url("img/CCM-12_01.png");
+    }
+
+    &.s10 {
+      background-image: url("img/CCM-12_10.png");
+    }
+
+    &.s11 {
+      background-image: url("img/CCM-12_11.png");
+    }
+  }
+
+  .strand {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 2rem;
+    background-image: url("img/CCM-12_s0.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+  }
+
+  .strand.cast {
+    background-image: url("img/CCM-12_s1.gif");
+  }
+}

@@ -1,0 +1,282 @@
+#AKP {
+  display: flex;
+  justify-content: center;
+  padding: 1rem;
+  height: 170px;
+
+  svg {
+    height: 100%;
+  }
+
+  #cap {
+    display: none;
+  }
+
+  #electrodes {
+    display: none;
+    transform: translate(-39.621883px, -107.173969px);
+  }
+
+  #arc {
+    display: none;
+  }
+
+  #tube {
+    fill: #b3b3b3;
+  }
+
+  #gas {
+    display: none;
+  }
+
+  &.VD {
+    #electrodes {
+      display: none !important;
+    }
+
+    #arc {
+      display: none !important;
+    }
+
+    &.vacuum.capdown #liningwall {
+      animation-iteration-count: infinite;
+      animation-duration: 1s;
+      animation-name: vacuumHandler;
+      animation-timing-function: linear;
+    }
+  }
+
+  &.argon {
+    #gas {
+      display: initial;
+    }
+
+    #tube {
+      fill: #ffff00;
+    }
+  }
+
+  &.capdown {
+    #cap {
+      display: initial;
+    }
+
+    #electrodes {
+      display: initial;
+    }
+
+    &.energy {
+      #arc {
+        display: initial;
+      }
+    }
+  }
+
+  &.energy {
+    #electrodes {
+      transform: translate(-39.621883px, -97.173969px);
+      fill: url(#linearGradient6638);
+    }
+  }
+
+  &.empty {
+    &.capdown {
+      #cap {
+        display: initial;
+      }
+
+      #electrodes {
+        display: initial;
+        transform: translate(-39.621883px, -107.173969px);
+        fill: #000;
+      }
+    }
+
+    #metal {
+      display: none;
+    }
+
+    #gas {
+      display: none;
+    }
+
+    #arc {
+      display: none;
+    }
+
+    #liningwall {
+      display: none;
+    }
+
+    #tube {
+      display: none;
+      fill: #b3b3b3;
+    }
+
+    #holders {
+      display: initial;
+    }
+  }
+}
+
+@keyframes vacuumHandler {
+  0% {
+    fill: gray;
+  }
+  25% {
+    fill: coral;
+  }
+}
+
+@keyframes bubbling1 {
+  0% {
+    transform: matrix(1.8, 0, 0, 1.8, 0, 11);
+  }
+  25% {
+    transform: matrix(2.2, 0, 0, 2.2, -1.6, -6);
+  }
+  50% {
+    transform: matrix(1.5, 0, 0, 1.5, 1.6, -12);
+  }
+  75% {
+    transform: matrix(1.3, 0, 0, 1.3, -1.6, -24);
+  }
+  100% {
+    transform: matrix(1.1, 0, 0, 1.1, 1.6, -31);
+  }
+}
+
+@keyframes bubbling2 {
+  25% {
+    transform: matrix(0.8, 0, 0, 0.8, 1, -10);
+  }
+  50% {
+    transform: matrix(0.3, 0, 0, 0.3, -3, -24);
+  }
+  75% {
+    transform: matrix(0.5, 0, 0, 0.5, 4, -32);
+  }
+  100% {
+    transform: matrix(0.1, 0, 0, 0.1, -2, -33);
+  }
+}
+
+@keyframes bubbling3 {
+  0% {
+    transform: matrix(0.8, 0, 0, 0.8, 0, 6);
+  }
+  25% {
+    transform: matrix(2.8, 0, 0, 2.8, 1.6, -5);
+  }
+  50% {
+    transform: matrix(2.5, 0, 0, 2.5, -1.6, -11);
+  }
+  75% {
+    transform: matrix(2.3, 0, 0, 2.3, 1.6, -20);
+  }
+  100% {
+    transform: matrix(1, 0, 0, 1, -1.6, -30);
+  }
+}
+
+@keyframes bubbling4 {
+  0% {
+    transform: matrix(0.8, 0, 0, 0.8, 0, 6);
+  }
+  25% {
+    transform: matrix(1.2, 0, 0, 1.2, 1.6, -15);
+  }
+  50% {
+    transform: matrix(0.5, 0, 0, 0.5, -5, -21);
+  }
+  75% {
+    transform: matrix(0.3, 0, 0, 0.3, -1.3, -32);
+  }
+  100% {
+    transform: matrix(0.1, 0, 0, 0.1, 3, -36);
+  }
+}
+
+@keyframes bubbling5 {
+  0% {
+    transform: matrix(0.8, 0, 0, 0.8, 0, 15);
+  }
+  25% {
+    transform: matrix(1, 0, 0, 1, 3.5, -5);
+  }
+  50% {
+    transform: matrix(0.7, 0, 0, 0.7, 1.1, -10);
+  }
+  75% {
+    transform: matrix(0.3, 0, 0, 0.3, 4.2, -17);
+  }
+  100% {
+    transform: matrix(0.1, 0, 0, 0.1, 2.3, -22);
+  }
+}
+
+@keyframes bubbling6 {
+  0% {
+    transform: matrix(0.8, 0, 0, 0.8, 0, 15);
+  }
+  25% {
+    transform: matrix(1.3, 0, 0, 1.3, 1.6, -5);
+  }
+  50% {
+    transform: matrix(0.5, 0, 0, 0.5, -3, -12);
+  }
+  75% {
+    transform: matrix(0.3, 0, 0, 0.3, 1.6, -19);
+  }
+  100% {
+    transform: matrix(0.1, 0, 0, 0.1, -1.6, -25);
+  }
+}
+
+.buble1 {
+  animation-iteration-count: infinite;
+  animation-duration: 1s;
+  animation-name: bubbling1;
+  animation-timing-function: linear;
+}
+
+.buble2 {
+  animation-iteration-count: infinite;
+  animation-duration: 2.3s;
+  animation-name: bubbling2;
+  animation-timing-function: linear;
+}
+
+.buble3 {
+  animation-iteration-count: infinite;
+  animation-duration: 3.2s;
+  animation-name: bubbling3;
+  animation-timing-function: linear;
+}
+
+.buble4 {
+  animation-iteration-count: infinite;
+  animation-duration: 6s;
+  animation-name: bubbling4;
+  animation-timing-function: linear;
+}
+
+.buble5 {
+  animation-iteration-count: infinite;
+  animation-duration: 5.1s;
+  animation-name: bubbling5;
+  animation-timing-function: linear;
+}
+
+.buble6 {
+  animation-iteration-count: infinite;
+  animation-duration: 0.5s;
+  animation-name: bubbling6;
+  animation-timing-function: linear;
+}
+
+@media (max-height: 900px) {
+  #AKP svg {
+    height: 100px;
+  }
+}

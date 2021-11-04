@@ -4,8 +4,9 @@
   position: relative;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: auto 1fr 1.3fr;
+  grid-template-rows: auto 1fr 1.1fr;
   grid-row-gap: 1rem;
+  grid-column-gap: 5px;
   grid-template-areas:
     "title title title title"
     "dsp akos akp1 akp2"
@@ -32,6 +33,33 @@
     background-color: white;
     font-size: 0.9rem;
 
+    &.delayed {
+      box-shadow: 0 0 10px yellow;
+      color: lightgray;
+
+      svg {
+        opacity: 0.2;
+      }
+
+      div.head,
+      div.strand {
+        opacity: 0.2;
+      }
+
+      &::before {
+        position: absolute;
+        background: rgb(113, 121, 9);
+        background: linear-gradient(90deg, rgba(113, 121, 9, 0) 0%, yellow 70%);
+        display: block;
+        width: 70%;
+        text-align: right;
+        right: 0;
+        padding: 0.5rem;
+        color: darkgoldenrod;
+        content: "Задержка данных";
+      }
+    }
+
     .card-header {
       display: flex;
       flex-flow: row nowrap;
@@ -44,10 +72,11 @@
         font-weight: 500;
         flex-grow: 1;
       }
+    }
 
-      div:nth-child(2).delayed {
-        color: darkgrey;
-      }
+    .card-body {
+      padding: 0;
+      padding-bottom: 0.5rem;
     }
 
     .card-footer {
@@ -69,8 +98,27 @@
         justify-content: space-between;
       }
 
-      div.delayed {
-        color: darkgrey;
+      div:last-child {
+        text-align: right;
+      }
+    }
+  }
+}
+
+@media (max-height: 900px) {
+  .staples-wrapper {
+    grid-row-gap: 0.2rem;
+
+    .card {
+      font-size: 0.7rem;
+
+      .card-body {
+        height: 15vh;
+        min-height: 140px;
+      }
+
+      .card-footer {
+        font-size: 0.7rem;
       }
     }
   }

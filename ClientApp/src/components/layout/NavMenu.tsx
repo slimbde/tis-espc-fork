@@ -30,7 +30,7 @@ class NavMenu extends Component<NavProps> {
     const location = this.props.location.pathname
 
     return <header className="position-relative" style={{ zIndex: 1 }}>
-      <Navbar className="navbar-expand-lg navbar-toggleable-lg bg-dark box-shadow" dark>
+      <Navbar className="navbar-expand-sm bg-dark box-shadow" dark>
         <Container className="pt-0">
           <Collapse className="flex-lg-row-reverse" isOpen={!this.state.collapsed} navbar>
             <ul className="navbar-nav nav-ul w-100" id="nav-ul">

@@ -11,27 +11,16 @@ export type AgregateInfo = {
   smeltTime?: string
   castingStart?: string
   state?: string
+  tsg?: string
   streamCast?: boolean
-  argonOn?: boolean
+  argon?: boolean
   capdown?: boolean
   empty?: boolean
   energy?: boolean
   vacuum?: boolean
+  refining?: boolean
 
-  heatIdDelayed?: boolean
-  seriesDelayed?: boolean
-  steelGradeDelayed?: boolean
-  flowDelayed?: boolean
-  castingSpeedDelayed?: boolean
-  smeltStartDelayed?: boolean
-  smeltTimeDelayed?: boolean
-  castingStartDelayed?: boolean
-  stateDelayed?: boolean
-  streamCastDelayed?: boolean
-  argonOnDelayed?: boolean
-  capdownDelayed?: boolean
-  emptyDelayed?: boolean
-  energyDelayed?: boolean
-  vacuumDelayed?: boolean
+  dataDelayed?: boolean
+  lastUpdate?: string
 }
 

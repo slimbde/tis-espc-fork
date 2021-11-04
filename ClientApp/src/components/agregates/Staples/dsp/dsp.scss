@@ -1,0 +1,134 @@
+#AF {
+  padding: 1rem;
+  display: flex;
+  justify-content: center;
+
+  svg {
+    height: 140px;
+  }
+
+  #arcs {
+    display: none;
+  }
+
+  #electrodes {
+    fill: #000000;
+    transform: translate(0, -2px);
+  }
+
+  #metal {
+    fill: #eaad12;
+    stroke: none;
+  }
+
+  #gate {
+    fill: #999999;
+    stroke: #000000;
+  }
+
+  #basement {
+    fill: #999999;
+  }
+
+  #backstage {
+    fill: #8a0b0b;
+  }
+
+  #drainmetal {
+    display: none;
+  }
+
+  &.energy {
+    #arcs {
+      display: initial;
+      fill: url(#arcGradient);
+      stroke: none;
+    }
+
+    #electrodes {
+      fill: url(#electrodeGradient);
+      stroke: none;
+      transform: translate(0, 0);
+    }
+
+    #metal {
+      animation: blinking 1s infinite;
+    }
+  }
+
+  &.empty {
+    #electrodes {
+      fill: #000000;
+      transform: translate(0, -2px);
+    }
+
+    #arcs {
+      display: none;
+    }
+
+    #metal {
+      display: none;
+    }
+
+    #backstage {
+      fill: #999999;
+    }
+  }
+
+  &.drain {
+    svg {
+      transform-box: view-box;
+      transform-origin: 50% 50%;
+      transform: rotateZ(29deg) scale(0.95) translate(0, -0px);
+    }
+
+    #metal {
+      display: none;
+    }
+
+    #drainmetal {
+      fill: #eaad12;
+      stroke: none;
+      display: initial;
+    }
+
+    #gate {
+      display: none;
+    }
+  }
+
+  &.filling {
+    #metal {
+      fill: #000;
+      filter: url(#filling);
+    }
+  }
+}
+
+@keyframes blinking {
+  0% {
+    fill: url(#metalGradient2);
+  }
+
+  25% {
+    fill: url(#metalGradient1);
+  }
+
+  50% {
+    fill: url(#metalGradient);
+  }
+
+  75% {
+    fill: url(#metalGradient1);
+  }
+
+  100% {
+    fill: url(#metalGradient2);
+  }
+}
+
+@media (max-height: 900px) {
+  #AF svg {
+    height: 100px;
+  }
+}
