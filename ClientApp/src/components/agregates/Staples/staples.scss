@@ -11,7 +11,8 @@
     "title title title title"
     "dsp akos akp1 akp2"
     "mnlz1 mnlz2 vd1 vd2";
-  height: 85vh;
+  max-height: 85vh;
+  overflow-y: auto !important;
 
   #loading {
     top: 5rem;
@@ -112,6 +113,10 @@
     .card {
       font-size: 0.7rem;
 
+      .card-header {
+        padding: 0.3rem 0.5rem;
+      }
+
       .card-body {
         height: 15vh;
         min-height: 140px;
@@ -119,6 +124,11 @@
 
       .card-footer {
         font-size: 0.7rem;
+        padding: 0.5rem;
+      }
+
+      &:nth-last-child(-n + 4) {
+        margin-bottom: 2rem;
       }
     }
   }

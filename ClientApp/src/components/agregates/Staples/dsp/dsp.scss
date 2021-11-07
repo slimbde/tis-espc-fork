@@ -100,7 +100,27 @@
   &.filling {
     #metal {
       fill: #000;
-      filter: url(#filling);
+      transform: scale(0.95, 0.6) translate(0, 15px);
+      animation: none;
+    }
+
+    &.energy {
+      #arcs {
+        display: initial;
+        fill: url(#arcGradient);
+        stroke: none;
+      }
+
+      #metal {
+        fill: darken(gold, 20%);
+        position: relative;
+      }
+
+      #electrodes {
+        fill: url(#electrodeGradient);
+        stroke: none;
+        transform: translate(0, 0);
+      }
     }
   }
 }
