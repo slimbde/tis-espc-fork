@@ -1,7 +1,9 @@
 import "./arms.scss"
 import { useEffect, useState } from "react"
-import { armsList } from "./armSettings"
 import { Link } from "react-router-dom"
+
+const armsList = (window as any).config.armsList
+
 
 type State = {
   ccmArm1: string

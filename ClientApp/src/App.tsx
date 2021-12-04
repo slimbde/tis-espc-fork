@@ -65,15 +65,15 @@ const App: React.FC = () => {
   const technologistRoutes = [
     ...userRoutes,
     <Route path="/technology/production" component={Production} key="production" />,
-    <Route exact path="/technology/operator" component={Journal} key="operator1" />,
-    <Route exact path="/technology/operator/:AREAID/:FROM/:TO" component={Journal} key="operator2" />,
     <Route path="/agregates/dryers/:ID/:VIEW" component={Dryers} key="dryer" />,
     <Route path="/agregates/staple" component={Staples} key="staple" />,
   ]
 
   const programmerRoutes = [
     ...technologistRoutes,
-    <Route path="/diagnostic" component={Diagnostic} key="diagnostic" />
+    <Route exact path="/diagnostic/services" component={Diagnostic} key="diagnostic" />,
+    <Route exact path="/diagnostic/operator" component={Journal} key="operator1" />,
+    <Route exact path="/diagnostic/operator/:AREAID/:FROM/:TO" component={Journal} key="operator2" />,
   ]
 
   const adminRoutes = [

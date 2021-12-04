@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react"
 import { Link, useRouteMatch } from "react-router-dom"
-import { armsList, armsNames } from "./armSettings"
+
+const armsList = (window as any).config.armsList
+const armsNames = (window as any).config.armsNames
+
 
 export const ARM: React.FC = () => {
   const match = useRouteMatch<{ ARM_ID: string }>()

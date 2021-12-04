@@ -12,6 +12,7 @@ using TIS_ESPC_FORK.Models.Repositories;
 
 namespace TIS_ESPC_FORK.Controllers
 {
+    [RoutePrefix("api/Screenshots")]
     public class ScreenshotsController : ApiController
     {
         static readonly IRepository<CompressorSensor> cRepo = new CompressorRepository();
@@ -19,9 +20,8 @@ namespace TIS_ESPC_FORK.Controllers
         /// <summary>
         /// Receive screenshot end point. Stores data to the certain file
         /// </summary>
-        [AllowAnonymous]
         [HttpPost]
-        [Route("api/Screenshots/publish")]
+        [Route("publish")]
         public HttpResponseMessage publish()
         {
             try
@@ -34,7 +34,7 @@ namespace TIS_ESPC_FORK.Controllers
                 if (!Directory.Exists(targetDir))
                 {
                     Directory.CreateDirectory(targetDir);
-                    EventLog.WriteEntry("Application", "Successfully created directory Screen", EventLogEntryType.Information);
+                    EventLog.WriteEntry("Application", "Successfully created directory Overview", EventLogEntryType.Information);
                 }
 
                 foreach (string file in httpRequest.Files)
@@ -55,7 +55,7 @@ namespace TIS_ESPC_FORK.Controllers
 
 
         [HttpGet]
-        [Route("api/Screenshots/ReadCompressorAsync")]
+        [Route("ReadCompressorAsync")]
         public async Task<IHttpActionResult> ReadCompressorAsync()
         {
             try { return Ok(await cRepo.ListFor(null)); }
