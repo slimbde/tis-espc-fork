@@ -116,18 +116,18 @@ export class StapleAgregateHandler {
     const exitWidth = +summary.filter(s => s.Tag === "MWA_WS_EXIT_WIDTH")[0].Value
     const stlHot = +summary.filter(s => s.Tag === "L2S_WM_TRK_STL_HOT")[0].Value
 
-    const a = summary.filter(s => s.Tag === "TGS_BS_A1_CAST_POS")[0].Value === "1"
-    const b = summary.filter(s => s.Tag === "TGS_BS_A2_CAST_POS")[0].Value === "1"
-    const c = summary.filter(s => s.Tag === "TGS_BS_ARM1_LD_PRE")[0].Value === "1"
-    const d = summary.filter(s => s.Tag === "TGS_BS_ARM2_LD_PRE")[0].Value === "1"
+    const LD_1 = summary.filter(s => s.Tag === "TGS_BS_ARM1_LD_PRE")[0].Value === "1"
+    const LD_2 = summary.filter(s => s.Tag === "TGS_BS_ARM2_LD_PRE")[0].Value === "1"
+    const CAST_1 = summary.filter(s => s.Tag === "TGS_BS_A1_CAST_POS")[0].Value === "1"
+    const CAST_2 = summary.filter(s => s.Tag === "TGS_BS_A2_CAST_POS")[0].Value === "1"
 
-    const tsg = a && b
-      ? "s11"
-      : (a && !b && c) || (!a && b && d)
-        ? "s10"
-        : ((!a && b && c) || (a && !b && d))
-          ? "s01"
-          : "s00"
+    let tsg
+    if (LD_1 && LD_2) tsg = "s11"
+    else if ((LD_1 && !LD_2 && CAST_1) || (!LD_1 && LD_2 && CAST_2)) tsg = "s10"
+    else if ((!LD_1 && LD_2 && CAST_1) || (LD_1 && !LD_2 && CAST_2)) tsg = "s01"
+    else if ((LD_1 && !LD_2)) tsg = "s10"
+    else if ((!LD_1 && LD_2)) tsg = "s01"
+    else tsg = "s00"
 
 
     return {

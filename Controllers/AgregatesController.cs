@@ -9,6 +9,7 @@ using TIS_ESPC_FORK.Models.Repositories;
 
 namespace TIS_ESPC_FORK.Controllers
 {
+    [RoutePrefix("api/Agregates")]
     [Authorize(Roles = "Администратор,Программист,Технолог")]
     public class AgregatesController : ApiController
     {
@@ -23,7 +24,7 @@ namespace TIS_ESPC_FORK.Controllers
 
 
         [HttpGet]
-        [Route("api/Agregates/ReadDryerRuntimeAsync")]
+        [Route("ReadDryerRuntimeAsync")]
         public async Task<IHttpActionResult> ReadDryerRuntimeAsync(string areaId)
         {
             try { return Ok(await drRepo.ListFor(new DryerRuntimeFilter { AreaId = areaId })); }
@@ -33,7 +34,7 @@ namespace TIS_ESPC_FORK.Controllers
 
 
         [HttpPost]
-        [Route("api/Agregates/ReadDryerHistoryRealAsync")]
+        [Route("ReadDryerHistoryRealAsync")]
         public async Task<IHttpActionResult> ReadDryerHistoryRealAsync()
         {
             try
@@ -47,7 +48,7 @@ namespace TIS_ESPC_FORK.Controllers
 
 
         [HttpPost]
-        [Route("api/Agregates/ReadDryerHistoryBoolAsync")]
+        [Route("ReadDryerHistoryBoolAsync")]
         public async Task<IHttpActionResult> ReadDryerHistoryBoolAsync()
         {
             try
@@ -61,7 +62,7 @@ namespace TIS_ESPC_FORK.Controllers
 
 
         [HttpPost]
-        [Route("api/Agregates/ReadDryerGasHistoryAsync")]
+        [Route("ReadDryerGasHistoryAsync")]
         public async Task<IHttpActionResult> ReadDryerGasHistoryAsync()
         {
             try
@@ -75,7 +76,7 @@ namespace TIS_ESPC_FORK.Controllers
 
 
         [HttpGet]
-        [Route("api/Agregates/ReadAgregateSummaryAsync")]
+        [Route("ReadAgregateSummaryAsync")]
         public async Task<IHttpActionResult> ReadAgregateSummaryAsync()
         {
             try { return Ok(await aRepo.ListFor(2)); }
