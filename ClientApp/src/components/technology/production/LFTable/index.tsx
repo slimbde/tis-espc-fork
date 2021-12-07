@@ -58,6 +58,7 @@ export const LFTable: React.FC<Props> = ({
           <th>Время оконча ния</th>
           <th>Марка</th>
           <th>Вес, т</th>
+          <th>№ сталь ковша</th>
           <th>Нач. темпе ратура</th>
           <th>Конеч. темпе ратура</th>
           <th>Плавка, мин:c</th>
@@ -86,6 +87,7 @@ export const LFTable: React.FC<Props> = ({
             <td>{h.STOP_POINT}</td>
             <td>{h.STEEL_GRD}</td>
             <td>{h.WEIGHT}</td>
+            <td>{h.LADLE_ID}</td>
             <td>{h.FIRST_TEMP}</td>
             <td>{h.END_TEMP}</td>
             <td>{h.TOTAL_TIME}</td>

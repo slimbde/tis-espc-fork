@@ -125,6 +125,7 @@ namespace TIS_ESPC_FORK.Models.Repositories
                                       ,MAX(CUSTOM_HEAT_ID)                                                                                                HEAT_ID
                                       ,MIN (FINAL_STEEL_GRADE_ID)                                                                                         STEEL_GRD
                                       ,ROUND(MIN(FINAL_WGT / 1000))                                                                                       WEIGHT
+                                      ,MAX(LADLE_ID)                                                                                                      LADLE_ID
                                       ,(SELECT TEMPERATURE_VALUE FROM MS_MECHEL_ESPC6.REP_SAMPLES
                                         WHERE REPORT_COUNTER = R.REPORT_COUNTER AND SAMPLE_COUNTER = 1)                                                   FIRST_TEMP
                                       ,MIN(FINAL_TEMP)                                                                                                    END_TEMP
@@ -178,6 +179,7 @@ namespace TIS_ESPC_FORK.Models.Repositories
                                                 ELSE LTRIM(SUBSTR(PRACTICE_ID,1,3)) 
                                               END)                                                                                                              PROCESS
                                           ,ROUND(MIN(FINAL_WGT/1000))                                                                                           WEIGHT
+                                          ,MAX(LADLE_ID)                                                                                                        LADLE_ID
                                           ,(SELECT TEMPERATURE_VALUE       
                                             FROM MS_MECHEL_ESPC6.REP_SAMPLES 
                                             WHERE REPORT_COUNTER=R.REPORT_COUNTER AND SAMPLE_COUNTER=1)                                                         FIRST_TEMP

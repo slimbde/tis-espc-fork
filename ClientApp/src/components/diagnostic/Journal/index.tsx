@@ -1,7 +1,7 @@
 import "./journal.scss"
 import { useState } from "react"
 import { Alert, Button, ButtonGroup, Table } from "reactstrap"
-import { Controls } from "components/technology/Journal/Controls"
+import { Controls } from "components/diagnostic/Journal/Controls"
 import { OperatorFilter } from "models/types/Diagnostic/Operators/OperatorFilter"
 import { AreaId, getAreaName } from "models/types/Production/AreaId"
 import { EventPriorityProvider } from "models/types/Diagnostic/Operators/EventPrioritySet"

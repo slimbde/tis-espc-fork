@@ -6,6 +6,7 @@ export type VODHeat = {
   STEEL_GRD: string
   PROCESS: string
   WEIGHT: string
+  LADLE_ID: string
   FIRST_TEMP: string
   END_TEMP: string
   ALL_TIME: string

@@ -5,6 +5,7 @@ export type LFHeat = {
   HEAT_ID: string
   STEEL_GRD: string
   WEIGHT: string
+  LADLE_ID: string
   FIRST_TEMP: string
   END_TEMP: string
   TOTAL_TIME: string

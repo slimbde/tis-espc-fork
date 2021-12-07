@@ -65,6 +65,7 @@ export const VODTable: React.FC<Props> = ({
           <th>Марка</th>
           <th>Про цесс</th>
           <th>Вес, т</th>
+          <th>№ сталь ковша</th>
           <th>Нач. темпе ратура</th>
           <th>Конеч. темпе ратура</th>
           <th>Плавка, мин</th>
@@ -96,6 +97,7 @@ export const VODTable: React.FC<Props> = ({
             <td>{h.STEEL_GRD}</td>
             <td title="Посмотреть процесс плавки" className="a-like" onClick={() => openProcessModal(h.HEAT_ID)}>{h.PROCESS}</td>
             <td>{h.WEIGHT}</td>
+            <td>{h.LADLE_ID}</td>
             <td>{h.FIRST_TEMP}</td>
             <td>{h.END_TEMP}</td>
             <td>{h.ALL_TIME}</td>

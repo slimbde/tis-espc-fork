@@ -6,15 +6,15 @@ import { Production } from "components/technology/production";
 import { NotAuthorized } from "components/notAuthorized";
 import { Diagnostic } from "components/diagnostic";
 import { Admin } from "components/admin";
-import Layout from "components/layout";
 import { VMExplorer } from "components/admin/vm";
 import { ARMOverview } from "components/overview/arms";
 import { ARM } from "components/overview/arms/ARM";
 import { Compressor } from "components/overview/compressor";
 import { Dryers } from "components/agregates/Dryers";
-import { Journal } from "components/technology/Journal";
+import { Journal } from "components/diagnostic/Journal";
 import { Staples } from "components/agregates/Staples";
 import aHandler from "models/handlers/DbHandlers/AuthDbHandler"
+import Layout from "components/layout";
 
 
 
