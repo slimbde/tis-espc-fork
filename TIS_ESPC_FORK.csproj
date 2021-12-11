@@ -161,6 +161,9 @@
     <Compile Include="Models\DTOs\Agregates\Dryers\DryerHistoryRealFilter.cs" />
     <Compile Include="Models\DTOs\Agregates\Dryers\DryerRuntimeFilter.cs" />
     <Compile Include="Models\DTOs\Agregates\Staple\AgregateSummary.cs" />
+    <Compile Include="Models\DTOs\Agregates\Staple\CCMCrystAttributes.cs" />
+    <Compile Include="Models\DTOs\Agregates\Staple\CCMHeatAttributes.cs" />
+    <Compile Include="Models\DTOs\Agregates\Staple\CCMPhysAttributes.cs" />
     <Compile Include="Models\DTOs\Overview\CompressorSensor.cs" />
     <Compile Include="Models\DTOs\Production\HeatCCMProcess.cs" />
     <Compile Include="Models\DTOs\Production\HeatCCMQuality.cs" />

@@ -7,6 +7,7 @@ import { ProtocolEntry } from "models/types/Agregates/Dryers/Protocol/ProtocolEn
 import { GasChartFilter } from "models/types/Agregates/Dryers/Gas/GasChartFilter"
 import { GasChartPoint } from "models/types/Agregates/Dryers/Gas/GasChartPoint"
 import { AgregateSummary } from "models/types/Agregates/Staples/AgregateSummary"
+import { CCMInstantInfo } from "models/types/Agregates/Staples/CCMInstantInfo"
 
 
 
@@ -108,6 +109,17 @@ export class AgregatesDbHandler {
       throw new Error(`[${this.api}DbHandler]: ${await resp.text()}`)
 
     return await resp.json()
+  }
+
+  async ReadCCM2InstantAsync(): Promise<CCMInstantInfo> {
+    const resp = await fetch(`${this.backend}/${this.api}/ReadAgregateInfoAsync?filter=ccm2`, {
+      credentials: "include"
+    })
+
+    if (resp.status >= 400)
+      throw new Error(`[${this.api}DbHandler]: ${await resp.text()}`)
+
+    return await resp.json() as CCMInstantInfo
   }
 }
 

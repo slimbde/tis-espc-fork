@@ -2,6 +2,7 @@ import React, { useState } from "react"
 import { Modal, ModalBody, ModalHeader, Table } from "reactstrap"
 import pHandler from "models/handlers/DbHandlers/ProductionDbHandler"
 import { HeatCCMQuality } from "models/types/Production/HeatCCMQuality"
+import { Loading } from "components/extra/Loading"
 
 
 type Props = {
@@ -30,6 +31,7 @@ export const HeatCCMQualityModal: React.FC<Props> = ({
     <Modal className="ccm-heat-quality-modal" isOpen={isOpen} onOpened={getEvents} toggle={toggle} fade={false} unmountOnClose={true}>
       <ModalHeader toggle={toggle}>Отчет по качеству плавки {heatId}</ModalHeader>
       <ModalBody>
+        {processes.length === 0 && <Loading />}
         {processes.length > 0 &&
           <Table hover>
             <thead>

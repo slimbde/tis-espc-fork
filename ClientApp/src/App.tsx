@@ -15,6 +15,7 @@ import { Journal } from "components/diagnostic/Journal";
 import { Staples } from "components/agregates/Staples";
 import aHandler from "models/handlers/DbHandlers/AuthDbHandler"
 import Layout from "components/layout";
+import { CCMDetails } from "components/agregates/Staples/CCMDetails";
 
 
 
@@ -66,7 +67,15 @@ const App: React.FC = () => {
     ...userRoutes,
     <Route path="/technology/production" component={Production} key="production" />,
     <Route path="/agregates/dryers/:ID/:VIEW" component={Dryers} key="dryer" />,
-    <Route path="/agregates/staple" component={Staples} key="staple" />,
+    <Route exact path="/agregates/staple" component={Staples} key="staple" />,
+    <Route exact path="/agregates/staple/ccm1" component={CCMDetails} key="ccm1details" />,
+    <Route exact path="/agregates/staple/ccm2" component={CCMDetails} key="ccm2details" />,
+    <Route exact path="/agregates/staple/dsp" component={CCMDetails} key="dspdetails" />,
+    <Route exact path="/agregates/staple/akos" component={CCMDetails} key="akosdetails" />,
+    <Route exact path="/agregates/staple/akp1" component={CCMDetails} key="akp1details" />,
+    <Route exact path="/agregates/staple/akp2" component={CCMDetails} key="akp2details" />,
+    <Route exact path="/agregates/staple/vd1" component={CCMDetails} key="vd1details" />,
+    <Route exact path="/agregates/staple/vd2" component={CCMDetails} key="vd2details" />,
   ]
 
   const programmerRoutes = [

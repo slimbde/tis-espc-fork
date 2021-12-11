@@ -58,8 +58,8 @@ class NavMenu extends Component<NavProps> {
               <UncontrolledDropdown nav inNavbar>
                 <DropdownToggle nav>Ресурсы</DropdownToggle>
                 <DropdownMenu right>
-                  <DropdownItem><NavLink tag={Link} to={{ pathname: "http://10.2.19.215" }} target="_blank">Старый веб-сервер</NavLink></DropdownItem>
-                  <DropdownItem><NavLink tag={Link} to={{ pathname: "http://10.2.19.223/espc6temp/app/main/index.php" }} target="_blank">Учет сыпучих материалов и ферросплавов</NavLink></DropdownItem>
+                  <DropdownItem><NavLink tag="a" href="http://10.2.19.215" target="_blank">Старый веб-сервер</NavLink></DropdownItem>
+                  <DropdownItem><NavLink tag="a" href="http://10.2.19.223/espc6temp/app/main/index.php" target="_blank">Учет сыпучих материалов и ферросплавов</NavLink></DropdownItem>
                 </DropdownMenu>
               </UncontrolledDropdown>
 
@@ -87,9 +87,9 @@ class NavMenu extends Component<NavProps> {
                     <DropdownItem><NavLink tag={Link} exact to="/admin">Администрирование пользователей</NavLink></DropdownItem>
                     <DropdownItem divider />
                     <DropdownItem><NavLink tag={Link} to="/admin/hpe">HPE VM Explorer</NavLink></DropdownItem>
-                    <DropdownItem><NavLink tag={Link} to={{ pathname: "https://10.2.19.201/ui/#/login" }} target="_blank">Гипервизор МНЛЗ</NavLink></DropdownItem>
-                    <DropdownItem><NavLink tag={Link} to={{ pathname: "https://10.2.19.200/ui/#/login" }} target="_blank">Гипервизор АКП-2</NavLink></DropdownItem>
-                    <DropdownItem><NavLink tag={Link} to={{ pathname: "https://10.2.19.202/ui/#/login" }} target="_blank">Гипервизор АКП-2</NavLink></DropdownItem>
+                    <DropdownItem><NavLink tag="a" href="https://10.2.19.201/ui/#/login" target="_blank">Гипервизор МНЛЗ</NavLink></DropdownItem>
+                    <DropdownItem><NavLink tag="a" href="https://10.2.19.200/ui/#/login" target="_blank">Гипервизор АКП-2</NavLink></DropdownItem>
+                    <DropdownItem><NavLink tag="a" href="https://10.2.19.202/ui/#/login" target="_blank">Гипервизор АКП-2</NavLink></DropdownItem>
                   </DropdownMenu>
                 </UncontrolledDropdown>}
 

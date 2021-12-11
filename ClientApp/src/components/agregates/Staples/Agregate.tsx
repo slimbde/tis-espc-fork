@@ -1,8 +1,9 @@
 import { AgregateInfo } from "models/types/Agregates/Staples/AgregateInfo"
+import { Link } from "react-router-dom"
 import { Card, CardBody, CardFooter, CardHeader } from "reactstrap"
-import { AKPView } from "./akp"
-import { CCMView } from "./ccm12"
-import { DSPView } from "./dsp"
+import { AKPView } from "./views/akp"
+import { CCMView } from "./views/ccm12"
+import { DSPView } from "./views/dsp"
 
 
 
@@ -32,10 +33,27 @@ export const Agregate: React.FC<AgregateInfo> = ({
   lastUpdate,
 }) => {
 
+  const detailsLink = () => {
+    switch (name) {
+      case "МНЛЗ-1": return "staple/ccm1"
+      case "МНЛЗ-2": return "staple/ccm2"
+      case "ДСП": return "staple/dsp"
+      case "АКОС": return "staple/akos"
+      case "АКП2-1поз": return "staple/akp1"
+      case "АКП2-2поз": return "staple/akp2"
+      case "ВД-1поз": return "staple/vd1"
+      case "ВД-2поз": return "staple/vd2"
+      default: return "staple"
+    }
+  }
+
+
   return <Card className={`${className ?? ""} ${dataDelayed ? "delayed" : ""}`}>
     <CardHeader>
       <div>{name}</div>
-      <div title="Плавка">{heatId}</div>
+      <div>
+        {name === "МНЛЗ-2" ? <Link title="Посмотреть подробно" to={detailsLink}>{heatId}</Link> : <>{heatId}</>}
+      </div>
       {series && <div title="Номер в серии">&nbsp;({series})</div>}
     </CardHeader>
 
@@ -44,10 +62,10 @@ export const Agregate: React.FC<AgregateInfo> = ({
       {name === "МНЛЗ-2" && <CCMView cast={streamCast!} head={tsg!} />}
       {name === "ДСП" && <DSPView energy={energy!} refining={refining!} />}
       {name === "АКОС" && <AKPView energy={energy!} argon={argon!} capdown={capdown!} empty={empty!} />}
-      {name === "АКП-1" && <AKPView energy={energy!} argon={argon!} capdown={capdown!} empty={empty!} />}
-      {name === "АКП-2" && <AKPView energy={energy!} argon={argon!} capdown={capdown!} empty={empty!} />}
-      {name === "ВД-1" && <AKPView vd vacuum={vacuum} argon={argon!} capdown={capdown!} empty={empty!} />}
-      {name === "ВД-2" && <AKPView vd vacuum={vacuum} argon={argon!} capdown={capdown!} empty={empty!} />}
+      {name === "АКП2-1поз" && <AKPView energy={energy!} argon={argon!} capdown={capdown!} empty={empty!} />}
+      {name === "АКП2-2поз" && <AKPView energy={energy!} argon={argon!} capdown={capdown!} empty={empty!} />}
+      {name === "ВД-1поз" && <AKPView vd vacuum={vacuum} argon={argon!} capdown={capdown!} empty={empty!} />}
+      {name === "ВД-2поз" && <AKPView vd vacuum={vacuum} argon={argon!} capdown={capdown!} empty={empty!} />}
     </CardBody>
 
     <CardFooter>

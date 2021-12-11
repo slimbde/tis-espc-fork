@@ -60,6 +60,9 @@
     span {
       margin-bottom: 0.1rem;
     }
+    button.active {
+      z-index: 0;
+    }
   }
 
   span {

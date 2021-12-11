@@ -2,13 +2,13 @@ import { AgregateInfo } from "models/types/Agregates/Staples/AgregateInfo";
 import { AgregateSummary } from "models/types/Agregates/Staples/AgregateSummary";
 import moment from "moment";
 
-export class StapleAgregateHandler {
-  private summary: AgregateSummary[] = []
+export class StapleSummaryHandler {
+  private summary: AgregateSummary[]
 
   private isDataDelayed = (delayControlField: AgregateSummary) => moment()
     .diff(moment(delayControlField.UpdatePoint, "DD.MM.YYYY HH:mm:ss"), "minute") > 2
 
-  SetAgregateSummary = (summary: AgregateSummary[]) => this.summary = summary
+  constructor(summary: AgregateSummary[]) { this.summary = summary }
 
   GetDSPInfo = (): AgregateInfo => {
     const dspSummary: AgregateSummary[] = this.summary.filter(s => s.Name === "AF")
@@ -62,7 +62,7 @@ export class StapleAgregateHandler {
     const capdown = summary.filter(s => s.Tag === "SVOD_LOW")[0].Value === "True"
 
     return {
-      name: `АКП-${num}`,
+      name: `АКП2-${num}поз`,
       heatId: heatId.Value.replace(/[^a-zA-Zа-яА-Я0-9]/g, ""),
       steelGrade: steelGrade.Value.replace(/[^a-zA-Zа-яА-Я0-9]/g, ""),
       empty: summary.filter(s => s.Tag === "LRF_ON")[0].Value === "False",
@@ -132,7 +132,7 @@ export class StapleAgregateHandler {
 
     return {
       name: "МНЛЗ-2",
-      flow: Math.round(((mldTk * exitWidth * stlHot) / 1000000000) * +castingSpeed.Value * 60) + "",
+      flow: Math.round(((mldTk * exitWidth * stlHot) / 1000000000) * + castingSpeed.Value * 60) + "",
       heatId: heatId.Value,
       series: series.Value,
       castingStart: summary.filter(s => s.Tag === "TRK_WS_TIME_OPN")[0].Value,
@@ -154,7 +154,7 @@ export class StapleAgregateHandler {
     const capdown = summary.filter(s => s.Tag === "SVOD_LOW")[0].Value === "True"
 
     return {
-      name: `ВД-${num}`,
+      name: `ВД-${num}поз`,
       heatId: heatId.Value.replace(/[^a-zA-Zа-яА-Я0-9]/g, ""),
       steelGrade: steelGrade.Value.replace(/[^a-zA-Zа-яА-Я0-9]/g, ""),
       argon: summary.filter(s => s.Tag === "ARGON_ON")[0].Value === "True",

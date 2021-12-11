@@ -1,7 +1,7 @@
 import { blinkAlert } from "components/extra/Alert";
 import { Loading } from "components/extra/Loading";
 import aHandler from "models/handlers/DbHandlers/AgregatesDbHandler";
-import { StapleAgregateHandler } from "models/handlers/StapleHandlers/StapleAgregateHandler";
+import { StapleSummaryHandler } from "models/handlers/StapleHandlers/StapleSummaryHandler";
 import { AgregateInfo } from "models/types/Agregates/Staples/AgregateInfo";
 import { useEffect, useState } from "react";
 import { Alert } from "reactstrap"
@@ -24,9 +24,6 @@ type State = {
 }
 
 
-const sHandler = new StapleAgregateHandler()
-
-
 
 
 export const Staples: React.FC = () => {
@@ -35,21 +32,21 @@ export const Staples: React.FC = () => {
     loading: true,
     loadError: false,
     title: "Основные агрегаты ЭСПЦ-6",
-    dsp: { name: "ДСП", className: "dsp" },
-    akos: { name: "АКОС", className: "akos" },
-    akp1: { name: "АКП-1", className: "akp1" },
-    akp2: { name: "АКП-2", className: "akp2" },
-    mnlz1: { name: "МНЛЗ-1", className: "mnlz1" },
-    mnlz2: { name: "МНЛЗ-2", className: "mnlz2" },
-    vd1: { name: "ВД-1", className: "vd1" },
-    vd2: { name: "ВД-2", className: "vd2" },
+    dsp: {},
+    akos: {},
+    akp1: {},
+    akp2: {},
+    mnlz1: {},
+    mnlz2: {},
+    vd1: {},
+    vd2: {},
   })
 
 
   useEffect(() => {
     const update = () => aHandler.ReadStapleSummaryAsync()
       .then(summary => {
-        sHandler.SetAgregateSummary(summary)
+        const sHandler = new StapleSummaryHandler(summary)
 
         setState(state => ({
           ...state,
@@ -73,7 +70,7 @@ export const Staples: React.FC = () => {
     update()
       .then(() => setState(state => ({ ...state, loading: false })))
 
-    const interval = setInterval(() => update(), 10000)
+    const interval = setInterval(() => update(), 15000)
     return () => clearInterval(interval)
   }, [])
 

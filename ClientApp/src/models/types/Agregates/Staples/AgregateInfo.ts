@@ -1,7 +1,7 @@
 
 export type AgregateInfo = {
   className?: string
-  name: string
+  name?: string
   heatId?: string
   series?: string
   steelGrade?: string
@@ -23,4 +23,3 @@ export type AgregateInfo = {
   dataDelayed?: boolean
   lastUpdate?: string
 }
-
