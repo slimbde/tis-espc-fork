@@ -1,9 +1,9 @@
 import { CompressorSensor } from "models/types/Sensors/Compressor/CompressorSensor"
-import backendHost from "./backendHost"
+
 
 
 export class CompressorDbHandler {
-  protected backend = backendHost
+  protected backend = (window as any).config.backendHost
   protected api = "Screenshots"
 
   private static instance: CompressorDbHandler

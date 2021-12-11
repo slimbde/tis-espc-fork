@@ -99,8 +99,10 @@ namespace TIS_ESPC_FORK.Models.Repositories
                           ,FLOOR(LFT_FW.VALUE * 60 / 1000)                                                        LEFTFLOW
                           ,FLOOR(RGT_FW.VALUE * 60 / 1000)                                                        RIGHTFLOW
                           ,FLOOR((T1.VALUE + T2.VALUE + T3.VALUE + T4.VALUE) / 4)                                 DELTAT
+                          ,ID.REPORT_COUNTER
                         FROM RTDB_INITIAL_DATA ID
-                        JOIN REP_CCM_STRANDS ST ON ST.REPORT_COUNTER = ID.REPORT_COUNTER
+                        -- kostyl below is intended to fix the occasion when heat is started but no current report_counter exists in REP_CCM_STRANDS table
+                        JOIN REP_CCM_STRANDS ST ON ST.REPORT_COUNTER = ID.REPORT_COUNTER OR ST.REPORT_COUNTER = (SELECT MAX(REPORT_COUNTER) FROM REP_CCM_STRANDS)
                         JOIN RTDB_MOULD_INFO MI ON MI.AREA_ID = ID.AREA_ID
                         JOIN CCM_DATA CRYST ON CRYST.AREA_ID = ID.AREA_ID AND CRYST.VAR_ID = 'MOULDLEVEL'
                         JOIN CCM_DATA OSC ON OSC.AREA_ID = ID.AREA_ID AND OSC.VAR_ID = 'OSCFREQ'
@@ -116,29 +118,30 @@ namespace TIS_ESPC_FORK.Models.Repositories
                 result["cryst"] = await db.QuerySingleAsync<CCMCrystAttributes>(stmt);
 
                 stmt = @"WITH CCM_DATA AS (
-                          SELECT
+                            SELECT
                             V.VAR_ID
                             ,Q.VAR_REAL_VALUE               VALUE
                             ,1100                           AREA_ID
-                          FROM RTDB_CCM_QCS_STRANDS Q
-                          JOIN RTDB_CCM_VARIABLES V ON V.VAR_CODE = Q.VAR_EXP_CODE
+                            FROM RTDB_CCM_QCS_STRANDS Q
+                            JOIN RTDB_CCM_VARIABLES V ON V.VAR_CODE = Q.VAR_EXP_CODE
                         )
                         SELECT
-                          ROUND(CST_SPD.VALUE, 2)                                                       CASTINGSPEED
-                          ,ROUND(7380 * MI.WIDTH * MI.THICKNESS * CST_SPD.VALUE  / 10E8, 2)             STEELFLOW
-                          ,FLOOR(PD.TIME_TO_END_PROC / 60)                                              LADLETIMETOEND
-                          ,FLOOR(PD.TIME_TO_END_TUND / 60)                                              TUNDISHTIMETOEND
-                          ,ROUND(R.LADLE_TARE_WGT / 10E2, 1)                                            LADLETAREWEIGHT
-                          ,ROUND(RC.TUNDISH_AT_LADLE_OPEN_WGT / 10E2, 1)                                TUNDISHTAREWEIGHT
-                          ,ROUND(R.START_WGT / 10E2, 1)                                                 PRODUCTWEIGHT
-                          ,ROUND(LDL_WGT.VALUE, 1)                                                      LADLEWEIGHT
-                          ,ROUND(TUND_WGT.VALUE, 1)                                                     TUNDISHWEIGHT
+                            ROUND(CST_SPD.VALUE, 2)                                                       CASTINGSPEED
+                            ,ROUND(7380 * MI.WIDTH * MI.THICKNESS * CST_SPD.VALUE  / 10E8, 2)             STEELFLOW
+                            ,FLOOR(PD.TIME_TO_END_PROC / 60)                                              LADLETIMETOEND
+                            ,FLOOR(PD.TIME_TO_END_TUND / 60)                                              TUNDISHTIMETOEND
+                            ,ROUND(R.LADLE_TARE_WGT / 10E2, 1)                                            LADLETAREWEIGHT
+                            ,ROUND(RC.TUNDISH_AT_LADLE_OPEN_WGT / 10E2, 1)                                TUNDISHTAREWEIGHT
+                            ,ROUND(R.START_WGT / 10E2, 1)                                                 PRODUCTWEIGHT
+                            ,ROUND(LDL_WGT.VALUE, 1)                                                      LADLEWEIGHT
+                            ,ROUND(TUND_WGT.VALUE, 1)                                                     TUNDISHWEIGHT
                         FROM RTDB_INITIAL_DATA ID
                         JOIN CCM_DATA CST_SPD ON CST_SPD.AREA_ID = ID.AREA_ID AND CST_SPD.VAR_ID = 'CASTSPEED'
                         JOIN RTDB_MOULD_INFO MI ON MI.AREA_ID = ID.AREA_ID
                         JOIN RTDB_PROCESS_DATA PD ON PD.AREA_ID = ID.AREA_ID
-                        JOIN REPORTS R ON R.REPORT_COUNTER = ID.REPORT_COUNTER
-                        JOIN REP_CCM RC ON RC.REPORT_COUNTER = ID.REPORT_COUNTER
+                        -- two kostyls below are intended to fix the occasion when heat is started but no current report_counter exists in target table
+                        JOIN REPORTS R ON R.REPORT_COUNTER = ID.REPORT_COUNTER OR R.REPORT_COUNTER = (SELECT MAX(REPORT_COUNTER) FROM REPORTS)
+                        JOIN REP_CCM RC ON RC.REPORT_COUNTER = ID.REPORT_COUNTER OR RC.REPORT_COUNTER = (SELECT MAX(REPORT_COUNTER) FROM REP_CCM)
                         JOIN CCM_DATA LDL_WGT ON LDL_WGT.AREA_ID = ID.AREA_ID AND LDL_WGT.VAR_ID = 'REP_WS_LD_WT'
                         JOIN CCM_DATA TUND_WGT ON TUND_WGT.AREA_ID = ID.AREA_ID AND TUND_WGT.VAR_ID = 'TUNDISHWGT'";
 

@@ -6,11 +6,10 @@ import { HeatVODProcess } from "models/types/Production/HeatVODProcess"
 import { LFHeat } from "models/types/Production/LFHeat"
 import { ProductionFilter } from "models/types/Production/ProductionFilter"
 import { VODHeat } from "models/types/Production/VODHeat"
-import backendHost from "./backendHost"
 
 
 export class ProductionDbHandler {
-  protected backend = backendHost
+  protected backend = (window as any).config.backendHost
   protected api = "Production"
 
   private static instance: ProductionDbHandler

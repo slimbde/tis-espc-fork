@@ -1,4 +1,3 @@
-import backendHost from "./backendHost"
 import { DryerRuntimeSensor } from "models/types/Sensors/Dryers/DryerRuntimeSensor"
 import { ChartPoint } from "models/types/Agregates/Dryers/Chart/ChartPoint"
 import { HistoryChartFilter } from "models/types/Agregates/Dryers/Chart/HistoryChartFilter"
@@ -12,7 +11,7 @@ import { CCMInstantInfo } from "models/types/Agregates/Staples/CCMInstantInfo"
 
 
 export class AgregatesDbHandler {
-  protected backend = backendHost
+  protected backend = (window as any).config.backendHost
   protected api = "Agregates"
 
   private protocolCache: Map<string, ProtocolEntry[]> = new Map()

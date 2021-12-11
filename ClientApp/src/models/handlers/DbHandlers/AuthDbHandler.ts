@@ -1,9 +1,9 @@
 import { UserRole } from "models/types/Auth/UserRole"
-import backendHost from "./backendHost"
+
 
 class AuthDbHandler {
   private static instance: AuthDbHandler
-  protected backend = backendHost
+  protected backend = (window as any).config.backendHost
 
   private constructor() { }
 

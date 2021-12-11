@@ -17,6 +17,7 @@ type State = {
   samples?: string[]
   mysql?: AgregateInfo
   events?: string[]
+  lastUpdate?: string
 }
 
 
@@ -36,6 +37,7 @@ export const CCMDetails: React.FC = () => {
           samples: data.samples,
           mysql: new StapleSummaryHandler(data.mysql).GetMNLZ2Info(),
           events: data.events,
+          lastUpdate: new Date().toLocaleTimeString()
         })
       })
       .catch(error => {
@@ -62,7 +64,11 @@ export const CCMDetails: React.FC = () => {
 
   return <div className="ccm-details-wrapper">
     <Alert id="alert">Hello</Alert>
-    <div className={`title display-5 ${ccmState()}`} style={{ gridArea: "title" }}>МНЛЗ-2</div>
+    <div className={`title display-5 ${ccmState()}`} style={{ gridArea: "title" }}>
+      МНЛЗ-2
+      <div className="last-update">{state.lastUpdate}</div>
+    </div>
+
     <span className="a-like" style={{ gridArea: "title" }} onClick={() => window.history.back()}>Назад</span>
 
     <ListGroup className={`heat ${ccmState()}`} style={{ gridArea: "heat" }}>

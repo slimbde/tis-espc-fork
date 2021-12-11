@@ -1,5 +1,6 @@
 
 window.config = {
+  backendHost: "http://10.2.10.84:83/api",
   host: "http://10.2.19.193:82",
   imgPath: "Overview",
   oldImgPath: "Screen",

@@ -13,11 +13,23 @@
     "cryst samples view"
     "cryst events events";
   max-height: 85vh;
+  overflow-y: auto;
   height: 100%;
 
   .title {
     position: relative;
     margin-bottom: 0;
+    width: fit-content;
+
+    .last-update {
+      position: absolute;
+      grid-area: title;
+      bottom: -0.9rem;
+      right: -4rem;
+      font-size: 0.7rem;
+      font-weight: 400;
+      color: gray;
+    }
 
     &::after {
       position: absolute;
@@ -57,7 +69,7 @@
   #alert {
     position: absolute;
     right: 2rem;
-    top: 2rem;
+    top: 1rem;
     margin-bottom: 0;
   }
 

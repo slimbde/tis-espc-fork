@@ -2,11 +2,10 @@ import { OperatorFilter } from "models/types/Diagnostic/Operators/OperatorFilter
 import { OperatorInfo } from "models/types/Diagnostic/Operators/OperatorInfo"
 import { ServerInfo } from "models/types/Diagnostic/ServerInfo"
 import { ServiceInfo } from "models/types/Diagnostic/ServiceInfo"
-import backendHost from "./backendHost"
 
 
 class DiagnosticDbHandler {
-  protected backend = backendHost
+  protected backend = (window as any).config.backendHost
   protected api = "Diagnostic"
 
   private static instance: DiagnosticDbHandler
