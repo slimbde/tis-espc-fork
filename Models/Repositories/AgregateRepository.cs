@@ -41,7 +41,9 @@ namespace TIS_ESPC_FORK.Models.Repositories
         {
             IDictionary<string, object> result = new Dictionary<string, object>();
 
-            string stmt = @"WITH SHIFT AS (
+            using (IDbConnection db = new OracleConnection(oraString))
+            {
+                string stmt = @"WITH SHIFT AS (
                                 SELECT
                                 CASE 
                                     WHEN NOW.HOUR = 19 AND NOW.MINUTE > 30 THEN 2
@@ -77,8 +79,6 @@ namespace TIS_ESPC_FORK.Models.Repositories
                             JOIN REP_CCM_PRODUCT_ORDERS PO ON PO.REPORT_COUNTER = ID.REPORT_COUNTER AND PO.ORD_SEQ = 1
                             JOIN REP_CCM_STRANDS ST ON ST.REPORT_COUNTER = ID.REPORT_COUNTER";
 
-            using (IDbConnection db = new OracleConnection(oraString))
-            {
                 result["heat"] = await db.QuerySingleAsync<CCMHeatAttributes>(stmt);
 
                 stmt = @"WITH CCM_DATA AS (
@@ -163,7 +163,7 @@ namespace TIS_ESPC_FORK.Models.Repositories
 
             using (IDbConnection db = new MySqlConnection(conString))
             {
-                stmt = @"SELECT      
+                string stmt = @"SELECT      
                             dc.Description              Name
                             ,ds.dev_tag                 Tag
                             ,ds.dev_value               Value

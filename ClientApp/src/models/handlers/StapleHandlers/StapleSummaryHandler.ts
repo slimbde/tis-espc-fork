@@ -81,22 +81,20 @@ export class StapleSummaryHandler {
     const steelGrade = summary.filter(s => s.Tag === "STEEL_GRADE")[0]
     const flow = summary.filter(s => s.Tag === "FLOW_SPEED")[0]
     const series = summary.filter(s => s.Tag === "SEQ_NO")[0]
-    const castingSpeed = summary.filter(s => s.Tag === "STREAM_SPEED1")[0]
-    const start = moment(summary.filter(s => s.Tag === "START")[0].Value, "YYYY-MM-DD HH:mm:ss")
+    const castingSpeed = summary.filter(s => s.Tag === "CASTING_SPEED")[0]
+    const start = summary.filter(s => s.Tag === "HEAT_START")[0].Value
+    const duration = summary.filter(s => s.Tag === "HEAT_TIME")[0].Value
     const update = summary.filter(s => s.Tag === "$DateTime")[0]
 
-    const castingHours = moment().diff(start, "hour")
-    const castingMinutes = moment().diff(start, "minutes") - castingHours * 60
-    const castingSeconds = moment().diff(start, "second") - castingHours * 3600 - castingMinutes * 60
 
     return {
       name: "МНЛЗ-1",
-      flow: Math.round(+flow.Value * 100) / 100 + "",
       heatId: heatId.Value,
       series: series.Value,
-      castingStart: `${castingHours < 10 ? "0" + castingHours : castingHours}:${castingMinutes < 10 ? "0" + castingMinutes : castingMinutes}:${castingSeconds < 10 ? "0" + castingSeconds : castingSeconds}`,
+      smeltStart: start,
+      smeltTime: duration,
       steelGrade: steelGrade.Value,
-      castingSpeed: Math.round(+castingSpeed.Value * 100) / 100 + "",
+      castingSpeed: castingSpeed.Value,
       streamCast: +flow.Value > 0.05 && +castingSpeed.Value > 0.05,
       tsg: "10",
 

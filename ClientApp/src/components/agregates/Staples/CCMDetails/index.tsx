@@ -29,13 +29,26 @@ export const CCMDetails: React.FC = () => {
   const update = () => {
     aHandler.ReadCCM2InstantAsync()
       .then(data => {
+        const mysql = new StapleSummaryHandler(data.mysql).GetMNLZ2Info()
+
+        data.heat.HeatId = `${mysql.heatId!} (${mysql.series})`
+
+        if (data.phys.CastingSpeed === "0") {
+          data.samples = []
+          data.heat.AimLen = ""
+          data.heat.SteelGradeId = ""
+          data.heat.MouldLife = ""
+          data.heat.TundishCarOnCast = ""
+          data.heat.LadleArmOnCast = ""
+        }
+
         setState({
           ...state,
           heat: data.heat,
           cryst: data.cryst,
           phys: data.phys,
           samples: data.samples,
-          mysql: new StapleSummaryHandler(data.mysql).GetMNLZ2Info(),
+          mysql,
           events: data.events,
           lastUpdate: new Date().toLocaleTimeString()
         })
@@ -54,9 +67,9 @@ export const CCMDetails: React.FC = () => {
   }, [])
 
   const ccmState = () => {
-    if (state.cryst?.Lvl === "0") return "state-idle"
+    if (!state.mysql?.streamCast) return "state-idle"
     if (state.phys?.CastingSpeed && state.phys.CastingSpeed !== "0") return "state-process"
-    return ""
+    return "state-preset"
   }
 
 

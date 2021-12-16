@@ -47,6 +47,11 @@
       background-color: $state-idle;
     }
 
+    &.state-preset::after {
+      content: "Запуск";
+      background-color: $state-preset;
+    }
+
     &.state-process::after {
       content: "Разливка";
       background-color: $state-process;
@@ -55,6 +60,10 @@
 
   .state-idle::before {
     background-color: $state-idle !important;
+  }
+
+  .state-preset::before {
+    background-color: $state-preset !important;
   }
 
   .state-process::before {
