@@ -2,17 +2,21 @@
 export type AgregateInfo = {
   className?: string
   name?: string
+  castingSpeed?: string
+  flowSpeed?: string
   heatId?: string
+  heatStart?: string
+  heatTime?: string
   series?: string
   steelGrade?: string
-  flow?: string
-  castingSpeed?: string
-  smeltStart?: string
-  smeltTime?: string
-  castingStart?: string
-  state?: string
-  tsg?: string
+
+  castedMeters?: string
+  castedTonns?: string
+  slabThickness?: string
+  slabWidth?: string
   streamCast?: boolean
+  tgs?: string
+
   argon?: boolean
   capdown?: boolean
   empty?: boolean

@@ -1,4 +1,4 @@
-import "./ccmDetails.scss"
+import "./ccm1Details.scss"
 import { blinkAlert } from "components/extra/Alert"
 import { AgregateInfo } from "models/types/Agregates/Staples/AgregateInfo"
 import { CCMInstantCrystDecoder, CCMInstantCrystInfo, CCMInstantHeatDecoder, CCMInstantHeatInfo, CCMInstantPhysDecoder, CCMInstantPhysInfo } from "models/types/Agregates/Staples/CCMInstantInfo"
@@ -16,40 +16,64 @@ type State = {
   phys?: CCMInstantPhysInfo
   samples?: string[]
   mysql?: AgregateInfo
-  events?: string[]
   lastUpdate?: string
 }
 
 
 
-export const CCMDetails: React.FC = () => {
+export const CCM1Details: React.FC = () => {
 
   const [state, setState] = useState<State>({})
 
   const update = () => {
-    aHandler.ReadCCM2InstantAsync()
+    aHandler.ReadStapleSummaryAsync()
       .then(data => {
-        const mysql = new StapleSummaryHandler(data.mysql).GetMNLZ2Info()
+        const mysql = new StapleSummaryHandler(data).GetMNLZ1Info()
 
-        data.heat.HeatId = `${mysql.heatId!} (${mysql.series})`
+        const heat: CCMInstantHeatInfo = {
+          HeatId: `${mysql.heatId!} (${mysql.series})`,
+          SteelGradeId: mysql.steelGrade,
+          ShiftResponsible: mysql.shiftResponsible,
+          ShiftCode: mysql.shiftCode,
+          TeamId: mysql.teamId,
+          CrystShos: mysql.crystShos,
+          TundishShos: mysql.tundishShos,
+          LadleId: mysql.ladleId,
+          LadleShib: mysql.ladleShib,
+          TundishCar: mysql.tundishCar,
+          TundishId: mysql.tundishId,
+          CutId: mysql.cutId,
+        }
 
-        if (data.phys.CastingSpeed === "0") {
-          data.samples = []
-          data.heat.AimLen = ""
-          data.heat.SteelGradeId = ""
-          data.heat.MouldLife = ""
-          data.heat.TundishCarOnCast = ""
-          data.heat.LadleArmOnCast = ""
+        const cryst: CCMInstantCrystInfo = {
+          SlabWidth: mysql.slabWidth,
+          SlabThickness: mysql.slabThickness,
+          CrystStoik: mysql.crystStoik,
+          CrystFreq: mysql.crystFreq,
+          CrystPullEffort: mysql.crystPullEffort,
+          CrystTshears: mysql.crystTshears,
+          CrystFlow: mysql.crystFlow,
+          CrystFLeft: mysql.crystFLeft,
+          CrystFRight: mysql.crystFRight,
+          CrystTdelta: mysql.crystTdelta,
+          CrystTbefore: mysql.crystTbefore,
+        }
+
+        const phys: CCMInstantPhysInfo = {
+          CastedMeters: mysql.castedMeters,
+          CastingSpeed: mysql.castingSpeed,
+          OptimalSpeed: mysql.optimalSpeed,
+          FlowSpeed: Math.round((+mysql.flowSpeed! * 1000 / 60) * 100) / 100 + "",
+          HeatWeight: mysql.heatWeight,
         }
 
         setState({
           ...state,
-          heat: data.heat,
-          cryst: data.cryst,
-          phys: data.phys,
-          samples: data.samples,
+          heat,
+          cryst,
+          phys,
+          samples: mysql.samples?.split(";"),
           mysql,
-          events: data.events,
           lastUpdate: new Date().toLocaleTimeString()
         })
       })
@@ -61,7 +85,7 @@ export const CCMDetails: React.FC = () => {
 
   useEffect(() => {
     update()
-    const interval = setInterval(update, 15000)
+    const interval = setInterval(update, 60000)
     return () => clearInterval(interval)
     //eslint-disable-next-line
   }, [])
@@ -78,7 +102,7 @@ export const CCMDetails: React.FC = () => {
   return <div className="ccm-details-wrapper">
     <Alert id="alert">Hello</Alert>
     <div className={`title display-5 ${ccmState()}`} style={{ gridArea: "title" }}>
-      МНЛЗ-2
+      МНЛЗ-1
       <div className="last-update">{state.lastUpdate}</div>
     </div>
 
@@ -94,7 +118,7 @@ export const CCMDetails: React.FC = () => {
       {!state.heat && <Loading />}
     </ListGroup>
 
-    <ListGroup className={`cryst ${ccmState()}`} style={{ gridArea: "cryst" }}>
+    {state.cryst && <ListGroup className={`cryst ${ccmState()}`} style={{ gridArea: "cryst" }}>
       {state.cryst && Object.keys(state.cryst).map(key =>
         <ListGroupItem key={key}>
           <div>{(CCMInstantCrystDecoder as any)[key]}</div>
@@ -102,9 +126,9 @@ export const CCMDetails: React.FC = () => {
         </ListGroupItem>
       )}
       {!state.cryst && <Loading />}
-    </ListGroup>
+    </ListGroup>}
 
-    <ListGroup className={`phys ${ccmState()}`} style={{ gridArea: "phys" }}>
+    {state.phys && <ListGroup className={`phys ${ccmState()}`} style={{ gridArea: "phys" }}>
       {state.phys && Object.keys(state.phys).map(key =>
         <ListGroupItem key={key}>
           <div>{(CCMInstantPhysDecoder as any)[key]}</div>
@@ -112,18 +136,13 @@ export const CCMDetails: React.FC = () => {
         </ListGroupItem>
       )}
       {!state.phys && <Loading />}
-    </ListGroup>
+    </ListGroup>}
 
-    <div className={`samples ${ccmState()}`} style={{ gridArea: "samples" }}>
+    {state.samples && <div className={`samples ${ccmState()}`} style={{ gridArea: "samples" }}>
       {state?.samples && state.samples.map((key, id) => <div key={id}>{key}</div>)}
       {!state.samples && <Loading />}
-    </div>
+    </div>}
 
-    <ListGroup className={`events ${ccmState()}`} style={{ gridArea: "events" }}>
-      {state.events?.map(key => <ListGroupItem key={key}>{key}</ListGroupItem>)}
-      {!state.events && <Loading />}
-    </ListGroup>
-
-    {state.mysql && <CCMView cast={state.mysql?.streamCast!} head={state.mysql?.tsg!} />}
+    {state.mysql && <CCMView cast={state.mysql?.streamCast!} head={state.mysql?.tgs!} />}
   </div>
 }

@@ -1,16 +1,19 @@
 import { AgregateSummary } from "./AgregateSummary"
 
 export type CCMInstantHeatInfo = {
-  HeatId: string
-  SteelGradeId: string
-  ShiftResponsible: string
-  ShiftCode: string
-  TeamId: string
-  PwdType: string
-  MouldLife: string
-  TundishCarOnCast: string
-  LadleArmOnCast: string
-  AimLen: string
+  HeatId?: string
+  SteelGradeId?: string
+  ShiftResponsible?: string
+  ShiftCode?: string
+  TeamId?: string
+  CrystShos?: string
+  TundishShos?: string
+  LadleId?: string
+  LadleArm?: string
+  LadleShib?: string
+  TundishCar?: string
+  TundishId?: string
+  CutId?: string
 }
 
 export enum CCMInstantHeatDecoder {
@@ -19,56 +22,69 @@ export enum CCMInstantHeatDecoder {
   ShiftResponsible = "Мастер",
   ShiftCode = "Смена",
   TeamId = "Бригада",
-  PwdType = "ШОС П/К",
-  MouldLife = "С/К (N стойк)",
-  TundishCarOnCast = "Тележка П/К",
-  LadleArmOnCast = "П/К (N стойк)",
-  AimLen = "Раскрой",
+  CrystShos = "ШОС крист",
+  TundishShos = "ШОС П/К",
+  LadleArm = "Стенд С/К",
+  LadleId = "C/К (N стойк)",
+  LadleShib = "Шибер",
+  TundishCar = "Тележка П/К",
+  TundishId = "П/К (N стойк)",
+  CutId = "Раскрой",
 }
 
 
 export type CCMInstantCrystInfo = {
-  Width: string
-  Thickness: string
-  MouldLife: string
-  Frequency: string
-  Lvl: string
-  TotalFlow: string
-  LeftFlow: string
-  RightFlow: string
-  DeltaT: string
+  SlabThickness?: string
+  SlabWidth?: string
+  CrystStoik?: string
+  CrystFreq?: string
+  CrystPullEffort?: string
+  CrystTshears?: string
+  Lvl?: string
+  CrystFlow?: string
+  CrystFLeft?: string
+  CrystFRight?: string
+  CrystTdelta?: string
+  CrystTbefore?: string
 }
 
 export enum CCMInstantCrystDecoder {
-  Width = "Ширина",
-  Thickness = "Высота",
-  MouldLife = "Стойкость",
-  Frequency = "Частота качания, мин`¹",
+  SlabThickness = "Высота",
+  SlabWidth = "Ширина",
+  CrystStoik = "Стойкость",
+  CrystFreq = "Частота качания, мин`¹",
+  CrystPullEffort = "Усилие вытягивания, т",
+  CrystTshears = "Температура перед ножницами, ℃",
   Lvl = "Уровень, мм",
-  TotalFlow = "Расход воды, м³/ч",
-  LeftFlow = "Расход воды слева, м³/ч",
-  RightFlow = "Расход воды справа, м³/ч",
-  DeltaT = "Перепад t, ℃",
+  CrystFlow = "Расход воды, м³/ч",
+  CrystFLeft = "Расход воды слева, м³/ч",
+  CrystFRight = "Расход воды справа, м³/ч",
+  CrystTdelta = "Перепад t, ℃",
+  CrystTbefore = "Температура вх. воды, ℃",
 }
 
 export type CCMInstantPhysInfo = {
-  CastingSpeed: string
-  SteelFlow: string
-  LadleTimeToEnd: string
-  TundishTimeToEnd: string
-  ProductWeight: string
-  LadleTareWeight: string
-  LadleWeight: string
-  TundishTareWeight: string
-  TundishWeight: string
+  CastedMeters?: string
+  CastingSpeed?: string
+  OptimalSpeed?: string
+  FlowSpeed?: string
+  LadleTimeToEnd?: string
+  TundishTimeToEnd?: string
+  HeatWeight?: string
+  LadleTareWeight?: string
+  LadleWeight?: string
+  TundishTareWeight?: string
+  TundishWeight?: string
 }
 
 export enum CCMInstantPhysDecoder {
+  CastedMeters = "Длина плавки",
   CastingSpeed = "Скорость разливки",
-  SteelFlow = "Поток стали, кг/мин",
+  OptimalSpeed = "Оптимальная скорость",
+  FlowSpeed = "Поток стали, кг/мин",
   LadleTimeToEnd = "Время до конца с/к, мин",
   TundishTimeToEnd = "Время до конца п/к, мин",
-  ProductWeight = "Вес продукта",
+  HeatWeight = "Вес продукта, т",
   LadleTareWeight = "Тара стальковша",
   LadleWeight = "Масса стальковша",
   TundishTareWeight = "Тара промковша",

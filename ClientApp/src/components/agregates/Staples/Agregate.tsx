@@ -14,14 +14,16 @@ export const Agregate: React.FC<AgregateInfo> = ({
   heatId,
   series,
   steelGrade,
-  flow,
+  flowSpeed,
   castingSpeed,
-  smeltStart,
-  smeltTime,
-  castingStart,
-  state,
+  heatStart,
+  heatTime,
+  tgs,
   streamCast,
-  tsg,
+  slabWidth,
+  slabThickness,
+  castedMeters,
+  castedTonns,
   energy,
   refining,
   argon,
@@ -52,14 +54,14 @@ export const Agregate: React.FC<AgregateInfo> = ({
     <CardHeader>
       <div>{name}</div>
       <div>
-        {name === "МНЛЗ-2" ? <Link title="Посмотреть подробно" to={detailsLink}>{heatId}</Link> : <>{heatId}</>}
+        {name === "МНЛЗ-2" || name === "МНЛЗ-1" ? <Link title="Посмотреть подробно" to={detailsLink}>{heatId}</Link> : <>{heatId}</>}
       </div>
       {series && <div title="Номер в серии">&nbsp;({series})</div>}
     </CardHeader>
 
     <CardBody>
       {name === "МНЛЗ-1" && <CCMView cast={streamCast!} head={`s10`} />}
-      {name === "МНЛЗ-2" && <CCMView cast={streamCast!} head={tsg!} />}
+      {name === "МНЛЗ-2" && <CCMView cast={streamCast!} head={tgs!} />}
       {name === "ДСП" && <DSPView energy={energy!} refining={refining!} />}
       {name === "АКОС" && <AKPView energy={energy!} argon={argon!} capdown={capdown!} empty={empty!} />}
       {name === "АКП2-1поз" && <AKPView energy={energy!} argon={argon!} capdown={capdown!} empty={empty!} />}
@@ -71,12 +73,7 @@ export const Agregate: React.FC<AgregateInfo> = ({
     <CardFooter>
       {steelGrade && <div>
         <div>Марка стали</div>
-        <div>{steelGrade}</div>
-      </div>}
-
-      {flow && <div>
-        <div>Поток, т/ч</div>
-        <div>{flow}</div>
+        <div>{`${steelGrade} ${slabWidth ? `${slabWidth}*` : ""}${slabThickness ? slabThickness : ""}`}</div>
       </div>}
 
       {castingSpeed && <div>
@@ -84,24 +81,19 @@ export const Agregate: React.FC<AgregateInfo> = ({
         <div>{castingSpeed}</div>
       </div>}
 
-      {smeltStart && <div>
+      {heatStart && <div>
         <div>Начало плавки</div>
-        <div>{smeltStart}</div>
+        <div>{heatStart}</div>
       </div>}
 
-      {smeltTime && <div>
+      {heatTime && <div>
         <div>Продолжительность</div>
-        <div>{smeltTime}</div>
+        <div>{heatTime}</div>
       </div>}
 
-      {castingStart && <div>
-        <div>Продолжительность</div>
-        <div>{castingStart}</div>
-      </div>}
-
-      {state && <div>
-        <div>Состояние</div>
-        <div>{state}</div>
+      {castedMeters && <div>
+        <div>Отлито м (тонн)</div>
+        <div>{castedMeters} ({castedTonns})</div>
       </div>}
 
       {argon && <div>

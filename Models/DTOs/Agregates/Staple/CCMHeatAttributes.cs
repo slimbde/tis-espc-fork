@@ -8,10 +8,9 @@ namespace TIS_ESPC_FORK.Models.DTOs.Agregates.Staple
         public string ShiftResponsible { get; set; }
         public string ShiftCode { get; set; }
         public string TeamId { get; set; }
-        public string PwdType { get; set; }
-        public string MouldLife { get; set; }
-        public string TundishCarOnCast { get; set; }
-        public string LadleArmOnCast { get; set; }
-        public string AimLen { get; set; }
+        public string TundishShos { get; set; }
+        public string LadleId { get; set; }
+        public string TundishCar { get; set; }
+        public string CutId { get; set; }
     }
 }

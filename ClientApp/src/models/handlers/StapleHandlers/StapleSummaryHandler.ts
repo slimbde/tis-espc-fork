@@ -1,6 +1,8 @@
 import { AgregateInfo } from "models/types/Agregates/Staples/AgregateInfo";
 import { AgregateSummary } from "models/types/Agregates/Staples/AgregateSummary";
+import { CCMAgregateInfo } from "models/types/Agregates/Staples/CCMAgregateInfo";
 import moment from "moment";
+
 
 export class StapleSummaryHandler {
   private summary: AgregateSummary[]
@@ -16,8 +18,8 @@ export class StapleSummaryHandler {
     const heatId = dspSummary.filter(s => s.Tag === "heatID")[0]
     const energy = dspSummary.filter(s => s.Tag === "ee_input")[0].Value !== "0"
     const refining = dspSummary.filter(s => s.Tag === "refining")[0].Value !== "0"
-    const smeltTime = dspSummary.filter(s => s.Tag === "smelt_time")[0].Value
-    const smeltStart = dspSummary.filter(s => s.Tag === "smelt_start")[0].UpdatePoint
+    const heatTime = dspSummary.filter(s => s.Tag === "smelt_time")[0].Value
+    const heatStart = dspSummary.filter(s => s.Tag === "smelt_start")[0].UpdatePoint
 
     return {
       name: "ДСП",
@@ -25,8 +27,8 @@ export class StapleSummaryHandler {
       steelGrade: steelGrade.Value,
       energy,
       refining,
-      smeltTime,
-      smeltStart,
+      heatTime,
+      heatStart,
 
       dataDelayed: false,
       lastUpdate: moment().format("YYYY-MM-DD HH:mm:ss"),
@@ -75,28 +77,92 @@ export class StapleSummaryHandler {
     }
   }
 
-  GetMNLZ1Info = (): AgregateInfo => {
+  GetMNLZ1Info = (): CCMAgregateInfo => {
     const summary: AgregateSummary[] = this.summary.filter(s => s.Name === "CCM-1")
-    const heatId = summary.filter(s => s.Tag === "HEAT_ID")[0]
-    const steelGrade = summary.filter(s => s.Tag === "STEEL_GRADE")[0]
-    const flow = summary.filter(s => s.Tag === "FLOW_SPEED")[0]
-    const series = summary.filter(s => s.Tag === "SEQ_NO")[0]
-    const castingSpeed = summary.filter(s => s.Tag === "CASTING_SPEED")[0]
-    const start = summary.filter(s => s.Tag === "HEAT_START")[0].Value
-    const duration = summary.filter(s => s.Tag === "HEAT_TIME")[0].Value
+
+    const castedMeters = summary.filter(s => s.Tag === "CASTED_METERS")[0].Value
+    const castedTonns = summary.filter(s => s.Tag === "CASTED_TONNS")[0].Value
+    const castingSpeed = summary.filter(s => s.Tag === "CASTING_SPEED")[0].Value
+    const crystFlow = summary.filter(s => s.Tag === "CRYST_FLOW")[0].Value
+    const crystFreq = summary.filter(s => s.Tag === "CRYST_FREQ")[0].Value
+    const crystFLeft = summary.filter(s => s.Tag === "CRYST_F_LEFT")[0].Value
+    const crystFRight = summary.filter(s => s.Tag === "CRYST_F_RIGHT")[0].Value
+    const crystPullEffort = summary.filter(s => s.Tag === "CRYST_PULL_EFFORT")[0].Value
+    const crystShos = summary.filter(s => s.Tag === "CRYST_SHOS")[0].Value
+    const crystStoik = summary.filter(s => s.Tag === "CRYST_STOIK")[0].Value
+    const crystTbefore = summary.filter(s => s.Tag === "CRYST_T_BEFORE")[0].Value
+    const crystTdelta = summary.filter(s => s.Tag === "CRYST_T_DELTA")[0].Value
+    const crystTshears = summary.filter(s => s.Tag === "CRYST_T_SHEARS")[0].Value
+    const currentTemp = summary.filter(s => s.Tag === "CURRENT_TEMP")[0].Value
+    const cutId = summary.filter(s => s.Tag === "CUT_ID")[0].Value
+    const flowSpeed = summary.filter(s => s.Tag === "FLOW_SPEED")[0].Value
+    const heatId = summary.filter(s => s.Tag === "HEAT_ID")[0].Value
+    const heatStart = summary.filter(s => s.Tag === "HEAT_START")[0].Value
+    const heatTime = summary.filter(s => s.Tag === "HEAT_TIME")[0].Value
+    const heatWeight = summary.filter(s => s.Tag === "HEAT_WEIGHT")[0].Value
+    const ladleArm = summary.filter(s => s.Tag === "LADLE_ARM")[0].Value
+    const ladleId = summary.filter(s => s.Tag === "LADLE_ID")[0].Value
+    const ladleShib = summary.filter(s => s.Tag === "LADLE_SHIB")[0].Value
+    const ladleStoik = summary.filter(s => s.Tag === "LADLE_STOIK")[0].Value
+    const optimalSpeed = summary.filter(s => s.Tag === "OPTIMAL_SPEED")[0].Value
+    const samples = summary.filter(s => s.Tag === "SAMPLES")[0].Value
+    const series = summary.filter(s => s.Tag === "SEQ_NO")[0].Value
+    const shiftCode = summary.filter(s => s.Tag === "SHIFT_CODE")[0].Value
+    const shiftResponsible = summary.filter(s => s.Tag === "SHIFT_RESPONSIBLE")[0].Value
+    const slabThickness = summary.filter(s => s.Tag === "SLAB_THICKNESS")[0].Value
+    const slabWidth = summary.filter(s => s.Tag === "SLAB_WIDTH")[0].Value
+    const steelGrade = summary.filter(s => s.Tag === "STEEL_GRADE")[0].Value
+    const teamId = summary.filter(s => s.Tag === "TEAM_ID")[0].Value
+    const tundishCar = summary.filter(s => s.Tag === "TUNDISH_CAR")[0].Value
+    const tundishId = summary.filter(s => s.Tag === "TUNDISH_ID")[0].Value
+    const tundishShos = summary.filter(s => s.Tag === "TUNDISH_SHOS")[0].Value
+    const tundishStoik = summary.filter(s => s.Tag === "TUNDISH_STOIK")[0].Value
+
     const update = summary.filter(s => s.Tag === "$DateTime")[0]
 
 
     return {
       name: "МНЛЗ-1",
-      heatId: heatId.Value,
-      series: series.Value,
-      smeltStart: start,
-      smeltTime: duration,
-      steelGrade: steelGrade.Value,
-      castingSpeed: castingSpeed.Value,
-      streamCast: +flow.Value > 0.05 && +castingSpeed.Value > 0.05,
-      tsg: "10",
+      castedMeters,
+      castedTonns,
+      castingSpeed,
+      crystFlow,
+      crystFreq,
+      crystFLeft,
+      crystFRight,
+      crystPullEffort,
+      crystShos,
+      crystStoik,
+      crystTbefore,
+      crystTdelta,
+      crystTshears,
+      currentTemp,
+      cutId,
+      flowSpeed,
+      heatId,
+      heatStart,
+      heatTime,
+      heatWeight,
+      ladleArm,
+      ladleId: `${ladleId} (${ladleStoik})`,
+      ladleShib,
+      ladleStoik,
+      optimalSpeed,
+      samples,
+      series,
+      shiftCode,
+      shiftResponsible,
+      slabThickness,
+      slabWidth,
+      steelGrade,
+      streamCast: +flowSpeed > 0.05 && +castingSpeed > 0.05,
+      teamId,
+      tundishCar,
+      tundishId: `${tundishId} (${tundishStoik})`,
+      tundishShos,
+      tundishStoik,
+
+      tgs: "s10",
 
       dataDelayed: this.isDataDelayed(update),
       lastUpdate: update.UpdatePoint,
@@ -119,24 +185,24 @@ export class StapleSummaryHandler {
     const CAST_1 = summary.filter(s => s.Tag === "TGS_BS_A1_CAST_POS")[0].Value === "1"
     const CAST_2 = summary.filter(s => s.Tag === "TGS_BS_A2_CAST_POS")[0].Value === "1"
 
-    let tsg
-    if (LD_1 && LD_2) tsg = "s11"
-    else if ((LD_1 && !LD_2 && CAST_1) || (!LD_1 && LD_2 && CAST_2)) tsg = "s10"
-    else if ((!LD_1 && LD_2 && CAST_1) || (LD_1 && !LD_2 && CAST_2)) tsg = "s01"
-    else if ((LD_1 && !LD_2)) tsg = "s10"
-    else if ((!LD_1 && LD_2)) tsg = "s01"
-    else tsg = "s00"
+    let tgs
+    if (LD_1 && LD_2) tgs = "s11"
+    else if ((LD_1 && !LD_2 && CAST_1) || (!LD_1 && LD_2 && CAST_2)) tgs = "s10"
+    else if ((!LD_1 && LD_2 && CAST_1) || (LD_1 && !LD_2 && CAST_2)) tgs = "s01"
+    else if ((LD_1 && !LD_2)) tgs = "s10"
+    else if ((!LD_1 && LD_2)) tgs = "s01"
+    else tgs = "s00"
 
 
     return {
       name: "МНЛЗ-2",
-      flow: Math.round(((mldTk * exitWidth * stlHot) / 1000000000) * + castingSpeed.Value * 60) + "",
+      flowSpeed: Math.round(((mldTk * exitWidth * stlHot) / 1000000000) * + castingSpeed.Value * 60) + "",
       heatId: heatId.Value,
       series: series.Value,
-      castingStart: summary.filter(s => s.Tag === "TRK_WS_TIME_OPN")[0].Value,
+      heatStart: summary.filter(s => s.Tag === "TRK_WS_TIME_OPN")[0].Value,
       castingSpeed: Math.round(+castingSpeed.Value * 100) / 100 + "",
       streamCast: summary.filter(s => s.Tag === "COM_BS_CAST_MODE")[0].Value !== "0",
-      tsg,
+      tgs,
 
       dataDelayed: this.isDataDelayed(update),
       lastUpdate: update.UpdatePoint,

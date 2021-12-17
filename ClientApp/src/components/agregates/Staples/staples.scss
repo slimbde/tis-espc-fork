@@ -26,6 +26,10 @@
     margin-bottom: 0;
   }
 
+  .display-5 {
+    margin-bottom: 0;
+  }
+
   .dsp {
     grid-area: dsp;
   }
@@ -65,7 +69,7 @@
       display: flex;
       flex-flow: row nowrap;
       justify-content: space-between;
-      padding: 0.5rem 1rem;
+      padding: 0.4rem 1rem;
       margin-bottom: 0;
       border-bottom: 0;
 
@@ -78,6 +82,8 @@
     .card-body {
       padding: 0;
       padding-bottom: 0.5rem;
+      min-height: 200px;
+      height: 200px;
     }
 
     .card-footer {
@@ -85,9 +91,10 @@
       border-top: 1px solid whitesmoke;
       display: flex;
       flex-flow: column nowrap;
-      padding: 0.5rem 1rem;
+      padding: 0.4rem 1rem;
       background-color: white;
       max-height: 8rem;
+      min-height: 5rem;
 
       &:hover {
         background-color: lighten(whitesmoke, 3%);

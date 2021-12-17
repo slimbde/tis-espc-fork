@@ -66,11 +66,10 @@ namespace TIS_ESPC_FORK.Models.Repositories
                                 ,LI.SUPERINTENDENT                                                            SHIFTRESPONSIBLE
                                 ,SHIFT.CODE                                                                   SHIFTCODE
                                 ,LI.TEAM_ID                                                                   TEAMID
-                                ,TI.PWD_TYPE                                                                  PWDTYPE
-                                ,ST.MOULD_LIFE                                                                MOULDLIFE
-                                ,GS.TUND_CAR_ON_CAST                                                          TUNDISHCARONCAST
-                                ,GS.LADLE_ARM_ON_CAST                                                         LADLEARMONCAST
-                                ,PO.AIM_LEN                                                                   AIMLEN
+                                ,TI.PWD_TYPE                                                                  TUNDISHSHOS
+                                ,ST.MOULD_LIFE                                                                LADLEID
+                                ,GS.TUND_CAR_ON_CAST                                                          TUNDISHCAR
+                                ,PO.AIM_LEN                                                                   CUTID
                             FROM RTDB_INITIAL_DATA ID
                             JOIN LOGIN_INFO LI ON LI.AREA_ID = ID.AREA_ID
                             JOIN SHIFT ON SHIFT.AREA_ID = ID.AREA_ID
@@ -90,15 +89,15 @@ namespace TIS_ESPC_FORK.Models.Repositories
                           JOIN RTDB_CCM_VARIABLES V ON V.VAR_CODE = Q.VAR_EXP_CODE
                         )
                         SELECT
-                          MI.WIDTH
-                          ,MI.THICKNESS
-                          ,ST.MOULD_LIFE                                                                          MOULDLIFE
-                          ,FLOOR(OSC.VALUE)                                                                       FREQUENCY
+                          MI.WIDTH                                                                                SLABWIDTH
+                          ,MI.THICKNESS                                                                           SLABTHICKNESS
+                          ,ST.MOULD_LIFE                                                                          CRYSTSTOIK
+                          ,FLOOR(OSC.VALUE)                                                                       CRYSTFREQ
                           ,FLOOR(CRYST.VALUE)                                                                     LVL
-                          ,FLOOR((LOS_FW.VALUE + FIX_FW.VALUE + LFT_FW.VALUE + RGT_FW.VALUE) * 60 / 1000)         TOTALFLOW
-                          ,FLOOR(LFT_FW.VALUE * 60 / 1000)                                                        LEFTFLOW
-                          ,FLOOR(RGT_FW.VALUE * 60 / 1000)                                                        RIGHTFLOW
-                          ,FLOOR((T1.VALUE + T2.VALUE + T3.VALUE + T4.VALUE) / 4)                                 DELTAT
+                          ,FLOOR((LOS_FW.VALUE + FIX_FW.VALUE + LFT_FW.VALUE + RGT_FW.VALUE) * 60 / 1000)         CRYSTFLOW
+                          ,FLOOR(LFT_FW.VALUE * 60 / 1000)                                                        CRYSTFLEFT
+                          ,FLOOR(RGT_FW.VALUE * 60 / 1000)                                                        CRYSTFRIGHT
+                          ,FLOOR((T1.VALUE + T2.VALUE + T3.VALUE + T4.VALUE) / 4)                                 CRYSTTDELTA
                           ,ID.REPORT_COUNTER
                         FROM RTDB_INITIAL_DATA ID
                         -- kostyl below is intended to fix the occasion when heat is started but no current report_counter exists in REP_CCM_STRANDS table
@@ -127,12 +126,12 @@ namespace TIS_ESPC_FORK.Models.Repositories
                         )
                         SELECT
                             ROUND(CST_SPD.VALUE, 2)                                                       CASTINGSPEED
-                            ,ROUND(7380 * MI.WIDTH * MI.THICKNESS * CST_SPD.VALUE  / 10E8, 2)             STEELFLOW
+                            ,ROUND(7380 * MI.WIDTH * MI.THICKNESS * CST_SPD.VALUE  / 10E8, 2)             FLOWSPEED
                             ,FLOOR(PD.TIME_TO_END_PROC / 60)                                              LADLETIMETOEND
                             ,FLOOR(PD.TIME_TO_END_TUND / 60)                                              TUNDISHTIMETOEND
                             ,ROUND(R.LADLE_TARE_WGT / 10E2, 1)                                            LADLETAREWEIGHT
                             ,ROUND(RC.TUNDISH_AT_LADLE_OPEN_WGT / 10E2, 1)                                TUNDISHTAREWEIGHT
-                            ,ROUND(R.START_WGT / 10E2, 1)                                                 PRODUCTWEIGHT
+                            ,ROUND(R.START_WGT / 10E2, 1)                                                 HEATWEIGHT
                             ,ROUND(LDL_WGT.VALUE, 1)                                                      LADLEWEIGHT
                             ,ROUND(TUND_WGT.VALUE, 1)                                                     TUNDISHWEIGHT
                         FROM RTDB_INITIAL_DATA ID
