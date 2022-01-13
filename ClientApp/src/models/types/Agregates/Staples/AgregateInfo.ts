@@ -1,6 +1,5 @@
 
 export type AgregateInfo = {
-  className?: string
   name?: string
   castingSpeed?: string
   flowSpeed?: string
@@ -9,6 +8,9 @@ export type AgregateInfo = {
   heatTime?: string
   series?: string
   steelGrade?: string
+
+  heatCurrentTime?: string
+  eeHeatActive?: string
 
   castedMeters?: string
   castedTonns?: string

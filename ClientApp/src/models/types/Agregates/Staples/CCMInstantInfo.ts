@@ -63,6 +63,7 @@ export enum CCMInstantCrystDecoder {
   CrystTbefore = "Температура вх. воды, ℃",
 }
 
+
 export type CCMInstantPhysInfo = {
   CastedMeters?: string
   CastingSpeed?: string
@@ -90,6 +91,7 @@ export enum CCMInstantPhysDecoder {
   TundishTareWeight = "Тара промковша",
   TundishWeight = "Масса промковша",
 }
+
 
 export type CCMInstantInfo = {
   heat: CCMInstantHeatInfo

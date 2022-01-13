@@ -1,6 +1,7 @@
 import { AgregateInfo } from "models/types/Agregates/Staples/AgregateInfo";
 import { AgregateSummary } from "models/types/Agregates/Staples/AgregateSummary";
 import { CCMAgregateInfo } from "models/types/Agregates/Staples/CCMAgregateInfo";
+import { DSPAgregateInfo } from "models/types/Agregates/Staples/DSPAgregateInfo";
 import moment from "moment";
 
 
@@ -12,25 +13,68 @@ export class StapleSummaryHandler {
 
   constructor(summary: AgregateSummary[]) { this.summary = summary }
 
-  GetDSPInfo = (): AgregateInfo => {
+  GetDSPInfo = (): DSPAgregateInfo => {
     const dspSummary: AgregateSummary[] = this.summary.filter(s => s.Name === "AF")
-    const steelGrade = dspSummary.filter(s => s.Tag === "mark")[0]
-    const heatId = dspSummary.filter(s => s.Tag === "heatID")[0]
-    const energy = dspSummary.filter(s => s.Tag === "ee_input")[0].Value !== "0"
-    const refining = dspSummary.filter(s => s.Tag === "refining")[0].Value !== "0"
-    const heatTime = dspSummary.filter(s => s.Tag === "smelt_time")[0].Value
-    const heatStart = dspSummary.filter(s => s.Tag === "smelt_start")[0].UpdatePoint
+    const steelGrade = dspSummary.filter(s => s.Tag === "STEEL_GRADE")[0]
+    const heatId = dspSummary.filter(s => s.Tag === "HEAT_ID")[0]
+    const energy = dspSummary.filter(s => s.Tag === "ENERGY_ON")[0].Value !== "0"
+    const eeHeatActive = dspSummary.filter(s => s.Tag === "EE_HEAT_ACTIVE")[0].Value
+    const refining = dspSummary.filter(s => s.Tag === "REFINING")[0].Value !== "0"
+    const heatTime = dspSummary.filter(s => s.Tag === "HEAT_TIME")[0].Value
+    const heatStart = dspSummary.filter(s => s.Tag === "HEAT_START")[0].Value
+    const heatCurrentTime = dspSummary.filter(s => s.Tag === "HEAT_CURRENT_TIME")[0].Value
+
+    const eeHeatReactive = dspSummary.filter(s => s.Tag === "EE_HEAT_REACTIVE")[0].Value
+    const eeTodayActive = dspSummary.filter(s => s.Tag === "EE_TODAY_ACTIVE")[0].Value
+    const eeTodayReactive = dspSummary.filter(s => s.Tag === "EE_TODAY_REACTIVE")[0].Value
+    const eeYestActive = dspSummary.filter(s => s.Tag === "EE_YEST_ACTIVE")[0].Value
+    const eeYestReactive = dspSummary.filter(s => s.Tag === "EE_YEST_REACTIVE")[0].Value
+    const heatTab = dspSummary.filter(s => s.Tag === "HEAT_TAB")[0].Value
+    const ladleId = dspSummary.filter(s => s.Tag === "LADLE_ID")[0].Value
+    const psn = dspSummary.filter(s => s.Tag === "PSN")[0].Value
+    const stoikCaseFrmw = dspSummary.filter(s => s.Tag === "STOIK_CASE_FRMW")[0].Value
+    const stoikErk = dspSummary.filter(s => s.Tag === "STOIK_ERK")[0].Value
+    const stoikFloor = dspSummary.filter(s => s.Tag === "STOIK_FLOOR")[0].Value
+    const stoikQ1 = dspSummary.filter(s => s.Tag === "STOIK_Q1")[0].Value
+    const stoikQ2 = dspSummary.filter(s => s.Tag === "STOIK_Q2")[0].Value
+    const stoikSvodFrmw = dspSummary.filter(s => s.Tag === "STOIK_SVOD_FRMW")[0].Value
+    const stoikSvodLg = dspSummary.filter(s => s.Tag === "STOIK_SVOD_LG")[0].Value
+    const stoikSvodSm = dspSummary.filter(s => s.Tag === "STOIK_SVOD_SM")[0].Value
+    const stoikWall = dspSummary.filter(s => s.Tag === "STOIK_WALL")[0].Value
+
+    const update = dspSummary.filter(s => s.Tag === "$DateTime")[0]
+
 
     return {
       name: "ДСП",
       heatId: heatId.Value,
       steelGrade: steelGrade.Value,
       energy,
+      eeHeatActive,
       refining,
       heatTime,
       heatStart,
+      heatCurrentTime,
 
-      dataDelayed: false,
+      eeHeatReactive,
+      eeTodayActive,
+      eeTodayReactive,
+      eeYestActive,
+      eeYestReactive,
+      heatTab,
+      ladleId,
+      psn,
+      stoikCaseFrmw,
+      stoikErk,
+      stoikFloor,
+      stoikQ1,
+      stoikQ2,
+      stoikSvodFrmw,
+      stoikSvodLg,
+      stoikSvodSm,
+      stoikWall,
+
+      dataDelayed: this.isDataDelayed(update),
       lastUpdate: moment().format("YYYY-MM-DD HH:mm:ss"),
     }
   }
@@ -175,6 +219,8 @@ export class StapleSummaryHandler {
     const series = summary.filter(s => s.Tag === "TRK_WS_SEQ_NO")[0]
     const castingSpeed = summary.filter(s => s.Tag === "GERM_WS_SP")[0]
     const update = summary.filter(s => s.Tag === "$DateTime")[0]
+    const heatStart = summary.filter(s => s.Tag === "TRK_WS_TIME_OPN")[0].Value
+    const heatTime = moment.utc(moment().diff(moment(heatStart, "HH:mm:ss"))).format("HH:mm:ss")
 
     const mldTk = +summary.filter(s => s.Tag === "L2S_WM_COM_MLD_TK")[0].Value
     const exitWidth = +summary.filter(s => s.Tag === "MWA_WS_EXIT_WIDTH")[0].Value
@@ -199,7 +245,8 @@ export class StapleSummaryHandler {
       flowSpeed: Math.round(((mldTk * exitWidth * stlHot) / 1000000000) * + castingSpeed.Value * 60) + "",
       heatId: heatId.Value,
       series: series.Value,
-      heatStart: summary.filter(s => s.Tag === "TRK_WS_TIME_OPN")[0].Value,
+      heatStart,
+      heatTime,
       castingSpeed: Math.round(+castingSpeed.Value * 100) / 100 + "",
       streamCast: summary.filter(s => s.Tag === "COM_BS_CAST_MODE")[0].Value !== "0",
       tgs,

@@ -1,6 +1,6 @@
 import { AgregateInfo } from "models/types/Agregates/Staples/AgregateInfo"
 import { Link } from "react-router-dom"
-import { Card, CardBody, CardFooter, CardHeader } from "reactstrap"
+import { Card, CardBody, CardHeader } from "reactstrap"
 import { AKPView } from "./views/akp"
 import { CCMView } from "./views/ccm12"
 import { DSPView } from "./views/dsp"
@@ -9,7 +9,6 @@ import { DSPView } from "./views/dsp"
 
 
 export const Agregate: React.FC<AgregateInfo> = ({
-  className,
   name,
   heatId,
   series,
@@ -18,6 +17,8 @@ export const Agregate: React.FC<AgregateInfo> = ({
   castingSpeed,
   heatStart,
   heatTime,
+  heatCurrentTime,
+  eeHeatActive,
   tgs,
   streamCast,
   slabWidth,
@@ -49,17 +50,27 @@ export const Agregate: React.FC<AgregateInfo> = ({
     }
   }
 
+  const cardStatusStyle = () => {
+    let className = ""
 
-  return <Card className={`${className ?? ""} ${dataDelayed ? "delayed" : ""}`}>
-    <CardHeader>
+    if (castingSpeed && flowSpeed && +castingSpeed > 0 && +flowSpeed > 0) className += "process"
+    if (energy || argon || vacuum || refining) className += "process"
+
+    return className
+  }
+
+
+  return <Card className={`${dataDelayed ? "delayed" : ""}`}>
+    <CardHeader className={cardStatusStyle()}>
       <div>{name}</div>
       <div>
-        {name === "МНЛЗ-2" || name === "МНЛЗ-1" ? <Link title="Посмотреть подробно" to={detailsLink}>{heatId}</Link> : <>{heatId}</>}
+        {name === "МНЛЗ-2" || name === "МНЛЗ-1" || name === "ДСП" ? <Link title="Посмотреть подробно" to={detailsLink}>{heatId}</Link> : <>{heatId}</>}
+        {series && <div title="Номер в серии">&nbsp;({series})</div>}
       </div>
-      {series && <div title="Номер в серии">&nbsp;({series})</div>}
+
     </CardHeader>
 
-    <CardBody>
+    <CardBody className={cardStatusStyle()}>
       {name === "МНЛЗ-1" && <CCMView cast={streamCast!} head={`s10`} />}
       {name === "МНЛЗ-2" && <CCMView cast={streamCast!} head={tgs!} />}
       {name === "ДСП" && <DSPView energy={energy!} refining={refining!} />}
@@ -68,48 +79,68 @@ export const Agregate: React.FC<AgregateInfo> = ({
       {name === "АКП2-2поз" && <AKPView energy={energy!} argon={argon!} capdown={capdown!} empty={empty!} />}
       {name === "ВД-1поз" && <AKPView vd vacuum={vacuum} argon={argon!} capdown={capdown!} empty={empty!} />}
       {name === "ВД-2поз" && <AKPView vd vacuum={vacuum} argon={argon!} capdown={capdown!} empty={empty!} />}
+
+      <div className="info">
+        {steelGrade && <div>
+          <div>Марка</div>
+          <div>{`${steelGrade} `}</div>
+        </div>}
+
+        {slabWidth && <div>
+          <div>Раскрой</div>
+          <div>{`${slabWidth ? `${slabWidth}*` : ""}${slabThickness ? slabThickness : ""}`}</div>
+        </div>}
+
+        {castingSpeed && <div>
+          <div>V, м&sup3;/мин</div>
+          <div>{castingSpeed}</div>
+        </div>}
+
+        {heatStart && <div>
+          <div>Начало</div>
+          <div>{heatStart}</div>
+        </div>}
+
+        {heatTime && <div>
+          <div>Время</div>
+          <div>{heatTime}</div>
+        </div>}
+
+        {heatCurrentTime && <div>
+          <div>Под током</div>
+          <div>{heatCurrentTime}</div>
+        </div>}
+
+        {castedMeters && <div>
+          <div>Отлито, м</div>
+          <div>{castedMeters}</div>
+        </div>}
+
+        {castedTonns && <div>
+          <div>Отлито, т</div>
+          <div>{castedTonns}</div>
+        </div>}
+
+        {argon && <div>
+          <div>Аргон</div>
+          <div>Включен</div>
+        </div>}
+
+        {energy && <div>
+          <div>Энергия</div>
+          <div>Подана</div>
+        </div>}
+
+        {eeHeatActive && <div>
+          <div>Расход ЭЭ</div>
+          <div>{eeHeatActive}</div>
+        </div>}
+
+        {vacuum && <div>
+          <div>Вакуум</div>
+          <div>Включено</div>
+        </div>}
+      </div>
     </CardBody>
-
-    <CardFooter>
-      {steelGrade && <div>
-        <div>Марка стали</div>
-        <div>{`${steelGrade} ${slabWidth ? `${slabWidth}*` : ""}${slabThickness ? slabThickness : ""}`}</div>
-      </div>}
-
-      {castingSpeed && <div>
-        <div>Скорость, м&sup3;/мин</div>
-        <div>{castingSpeed}</div>
-      </div>}
-
-      {heatStart && <div>
-        <div>Начало плавки</div>
-        <div>{heatStart}</div>
-      </div>}
-
-      {heatTime && <div>
-        <div>Продолжительность</div>
-        <div>{heatTime}</div>
-      </div>}
-
-      {castedMeters && <div>
-        <div>Отлито м (тонн)</div>
-        <div>{castedMeters} ({castedTonns})</div>
-      </div>}
-
-      {argon && <div>
-        <div>Аргон</div>
-        <div>Включен</div>
-      </div>}
-
-      {energy && <div>
-        <div>Энергия</div>
-        <div>Подана</div>
-      </div>}
-
-      {vacuum && <div>
-        <div>Вакуумирование</div>
-        <div>Включено</div>
-      </div>}
-    </CardFooter>
   </Card>
 }

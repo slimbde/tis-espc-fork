@@ -1,5 +1,6 @@
 import { blinkAlert } from "components/extra/Alert";
 import { Loading } from "components/extra/Loading";
+import { setFluid } from "components/extra/SetFluid";
 import aHandler from "models/handlers/DbHandlers/AgregatesDbHandler";
 import { StapleSummaryHandler } from "models/handlers/StapleHandlers/StapleSummaryHandler";
 import { AgregateInfo } from "models/types/Agregates/Staples/AgregateInfo";
@@ -44,6 +45,8 @@ export const Staples: React.FC = () => {
 
 
   useEffect(() => {
+    setFluid(true)
+
     const update = () => aHandler.ReadStapleSummaryAsync()
       .then(summary => {
         const sHandler = new StapleSummaryHandler(summary)
@@ -71,25 +74,29 @@ export const Staples: React.FC = () => {
       .then(() => setState(state => ({ ...state, loading: false })))
 
     const interval = setInterval(() => update(), 15000)
-    return () => clearInterval(interval)
+
+    return () => {
+      clearInterval(interval)
+      setFluid()
+    }
   }, [])
 
 
 
-  return <div className="staples-wrapper jumbotron">
+  return <div className="staples-wrapper">
     <Alert id="alert">Hello</Alert>
     <div className="title display-5" style={{ gridArea: "title" }} >{state.title}</div>
 
     {state.loading && <Loading />}
     {!state.loading && !state.loadError && <>
       <Agregate {...state.dsp}></Agregate>
-      <Agregate {...state.akos}></Agregate>
       <Agregate {...state.akp1}></Agregate>
       <Agregate {...state.akp2}></Agregate>
       <Agregate {...state.mnlz1}></Agregate>
-      <Agregate {...state.mnlz2}></Agregate>
+      <Agregate {...state.akos}></Agregate>
       <Agregate {...state.vd1}></Agregate>
       <Agregate {...state.vd2}></Agregate>
+      <Agregate {...state.mnlz2}></Agregate>
     </>}
 
   </div >

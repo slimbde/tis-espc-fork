@@ -11,10 +11,11 @@ export const DSPView: React.FC<Props> = ({
   refining,
 }) => {
 
-  return <div id="AF" className={`dsp ${energy && "energy"} ${refining && "filling"}`}>
+  return <div id="AF" className={`dsp${energy ? " energy" : ""}${refining ? " filling" : ""}`}>
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 38.301 29.487"
+      preserveAspectRatio="xMinYMin"
     >
       <defs>
         <linearGradient

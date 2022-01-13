@@ -27,6 +27,7 @@ export const AKPView: React.FC<Props> = ({
       xmlns="http://www.w3.org/2000/svg"
       xmlnsXlink="http://www.w3.org/1999/xlink"
       viewBox="0 0 87.378 124.485"
+      preserveAspectRatio="xMinYMin"
     >
       <defs>
         <linearGradient
