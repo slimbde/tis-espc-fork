@@ -18,4 +18,5 @@ export type DSPAgregateInfo = AgregateInfo & {
   stoikSvodLg?: string
   stoikSvodSm?: string
   stoikWall?: string
+  gas?: string[]
 }

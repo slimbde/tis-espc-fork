@@ -19,7 +19,6 @@ export class StapleSummaryHandler {
     const heatId = dspSummary.filter(s => s.Tag === "HEAT_ID")[0]
     const energy = dspSummary.filter(s => s.Tag === "ENERGY_ON")[0].Value !== "0"
     const eeHeatActive = dspSummary.filter(s => s.Tag === "EE_HEAT_ACTIVE")[0].Value
-    const refining = dspSummary.filter(s => s.Tag === "REFINING")[0].Value !== "0"
     const heatTime = dspSummary.filter(s => s.Tag === "HEAT_TIME")[0].Value
     const heatStart = dspSummary.filter(s => s.Tag === "HEAT_START")[0].Value
     const heatCurrentTime = dspSummary.filter(s => s.Tag === "HEAT_CURRENT_TIME")[0].Value
@@ -42,6 +41,20 @@ export class StapleSummaryHandler {
     const stoikSvodSm = dspSummary.filter(s => s.Tag === "STOIK_SVOD_SM")[0].Value
     const stoikWall = dspSummary.filter(s => s.Tag === "STOIK_WALL")[0].Value
 
+    const angle = dspSummary.filter(s => s.Tag === "ANGLE")[0].Value
+    const flushSteel = +angle > 5
+    const flushSlag = +angle < -5
+
+    const gas = []
+    gas.push(dspSummary.filter(s => s.Tag === "GAS_SFG1")[0].Value)
+    gas.push(dspSummary.filter(s => s.Tag === "GAS_SFG2")[0].Value)
+    gas.push(dspSummary.filter(s => s.Tag === "GAS_SFG3")[0].Value)
+    gas.push(dspSummary.filter(s => s.Tag === "GAS_SFG4")[0].Value)
+    gas.push(dspSummary.filter(s => s.Tag === "GAS_SFG5")[0].Value)
+    gas.push(dspSummary.filter(s => s.Tag === "GAS_MF")[0].Value)
+    gas.push(dspSummary.filter(s => s.Tag === "GAS_PK")[0].Value)
+    gas.push(dspSummary.filter(s => s.Tag === "GAS_SUMM")[0].Value)
+
     const update = dspSummary.filter(s => s.Tag === "$DateTime")[0]
 
 
@@ -50,11 +63,10 @@ export class StapleSummaryHandler {
       heatId: heatId.Value,
       steelGrade: steelGrade.Value,
       energy,
-      eeHeatActive,
-      refining,
-      heatTime,
       heatStart,
-      heatCurrentTime,
+      eeHeatActive: eeHeatActive !== "0" ? eeHeatActive : undefined,
+      heatTime: eeHeatActive !== "0" ? heatTime : undefined,
+      heatCurrentTime: eeHeatActive !== "0" ? heatCurrentTime : undefined,
 
       eeHeatReactive,
       eeTodayActive,
@@ -73,6 +85,9 @@ export class StapleSummaryHandler {
       stoikSvodLg,
       stoikSvodSm,
       stoikWall,
+      flushSteel,
+      flushSlag,
+      gas,
 
       dataDelayed: this.isDataDelayed(update),
       lastUpdate: moment().format("YYYY-MM-DD HH:mm:ss"),
@@ -269,7 +284,6 @@ export class StapleSummaryHandler {
       heatId: heatId.Value.replace(/[^a-zA-Zа-яА-Я0-9]/g, ""),
       steelGrade: steelGrade.Value.replace(/[^a-zA-Zа-яА-Я0-9]/g, ""),
       argon: summary.filter(s => s.Tag === "ARGON_ON")[0].Value === "True",
-      energy: vacuum && capdown,
       capdown,
       vacuum,
 

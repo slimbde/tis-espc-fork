@@ -75,7 +75,7 @@
     }
   }
 
-  &.drain {
+  &.flush-steel {
     svg {
       transform-box: view-box;
       transform-origin: 50% 50%;
@@ -90,6 +90,28 @@
       fill: #eaad12;
       stroke: none;
       display: initial;
+    }
+
+    #gate {
+      display: none;
+    }
+  }
+
+  &.flush-slag {
+    svg {
+      transform-box: view-box;
+      transform-origin: 50% 50%;
+      transform: rotateZ(-15deg) scale(0.95) translate(0, -0px);
+    }
+
+    #metal {
+      fill: darken(gold, 20%) !important;
+      transform: rotateZ(5deg) scaleY(0.8) translate(0, 3px) !important;
+      z-index: -1;
+    }
+
+    #drainmetal {
+      display: none;
     }
 
     #gate {

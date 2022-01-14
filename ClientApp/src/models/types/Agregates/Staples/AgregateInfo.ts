@@ -11,6 +11,8 @@ export type AgregateInfo = {
 
   heatCurrentTime?: string
   eeHeatActive?: string
+  flushSteel?: boolean
+  flushSlag?: boolean
 
   castedMeters?: string
   castedTonns?: string
@@ -24,7 +26,6 @@ export type AgregateInfo = {
   empty?: boolean
   energy?: boolean
   vacuum?: boolean
-  refining?: boolean
 
   dataDelayed?: boolean
   lastUpdate?: string

@@ -2,16 +2,20 @@ import "./dsp.scss"
 
 type Props = {
   energy: boolean
-  refining: boolean
+  coldIdle: boolean
+  flushSteel: boolean
+  flushSlag: boolean
 }
 
 
 export const DSPView: React.FC<Props> = ({
   energy,
-  refining,
+  coldIdle,
+  flushSteel,
+  flushSlag,
 }) => {
 
-  return <div id="AF" className={`dsp${energy ? " energy" : ""}${refining ? " filling" : ""}`}>
+  return <div id="AF" className={`dsp${energy ? " energy" : ""}${coldIdle ? " filling" : ""}${flushSteel ? " flush-steel" : ""}${flushSlag ? " flush-slag" : ""}`}>
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 38.301 29.487"

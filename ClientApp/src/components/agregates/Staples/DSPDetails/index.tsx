@@ -78,9 +78,21 @@ export const DSPDetails: React.FC = () => {
   }, [])
 
   const dspState = () => {
-    if (state.mysql?.energy || state.mysql?.refining) return "state-process"
+    if (state.mysql?.energy) return "state-heating"
+    if (state.mysql?.flushSteel) return "state-flush-steel"
+    if (state.mysql?.flushSlag) return "state-flush-slag"
+    if (state.mysql?.eeHeatActive) return "state-hot-idle"
     return "state-idle"
   }
+
+
+
+  const gasItem = (title: string, values: string) =>
+    <div className="gas-rows">
+      <div className="gas-item">{title}</div>
+      {values.split(";").map((val, idx) => <div className="gas-item" key={`${title}${idx}`}>{val}</div>)}
+    </div>
+
 
 
 
@@ -114,7 +126,41 @@ export const DSPDetails: React.FC = () => {
       {!state.energy && <Loading />}
     </ListGroup>
 
+    <div className={`gas ${dspState()}`}>
+      <div className="gas-header">
+        <div></div>
+        <div>Газ</div>
+        <div>O&#8322; на горелку</div>
+        <div>O&#8322; на продувку</div>
+      </div>
+      <div className="gas-sub-header">
+        <div></div>
+        <div>мгн</div>
+        <div>сумм</div>
+        <div>мгн</div>
+        <div>сумм</div>
+        <div>мгн</div>
+        <div>сумм</div>
+      </div>
+      {state.mysql?.gas &&
+        <>
+          {gasItem("СГФ1", state.mysql.gas[0])}
+          {gasItem("СГФ2", state.mysql.gas[1])}
+          {gasItem("СГФ3", state.mysql.gas[2])}
+          {gasItem("СГФ4", state.mysql.gas[3])}
+          {gasItem("СГФ5", state.mysql.gas[4])}
+          {gasItem("MФ", state.mysql.gas[5])}
+          {gasItem("ПК", state.mysql.gas[6])}
+          {gasItem("СУММ", state.mysql.gas[7])}
+        </>}
+    </div>
 
-    {state.mysql && <DSPView energy={state.mysql.energy!} refining={state.mysql.refining!} />}
+
+    {state.mysql && <DSPView
+      energy={state.mysql.energy!}
+      coldIdle={!state.mysql.eeHeatActive!}
+      flushSteel={state.mysql.flushSteel!}
+      flushSlag={state.mysql.flushSlag!}
+    />}
   </div>
 }

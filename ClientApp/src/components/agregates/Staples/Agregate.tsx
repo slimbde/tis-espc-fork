@@ -26,11 +26,12 @@ export const Agregate: React.FC<AgregateInfo> = ({
   castedMeters,
   castedTonns,
   energy,
-  refining,
   argon,
   capdown,
   empty,
   vacuum,
+  flushSteel,
+  flushSlag,
 
   dataDelayed,
   lastUpdate,
@@ -54,7 +55,7 @@ export const Agregate: React.FC<AgregateInfo> = ({
     let className = ""
 
     if (castingSpeed && flowSpeed && +castingSpeed > 0 && +flowSpeed > 0) className += "process"
-    if (energy || argon || vacuum || refining) className += "process"
+    if (energy || argon || vacuum || (eeHeatActive && eeHeatActive !== "0")) className += "process"
 
     return className
   }
@@ -73,7 +74,7 @@ export const Agregate: React.FC<AgregateInfo> = ({
     <CardBody className={cardStatusStyle()}>
       {name === "МНЛЗ-1" && <CCMView cast={streamCast!} head={`s10`} />}
       {name === "МНЛЗ-2" && <CCMView cast={streamCast!} head={tgs!} />}
-      {name === "ДСП" && <DSPView energy={energy!} refining={refining!} />}
+      {name === "ДСП" && <DSPView energy={energy!} coldIdle={!eeHeatActive} flushSteel={flushSteel!} flushSlag={flushSlag!} />}
       {name === "АКОС" && <AKPView energy={energy!} argon={argon!} capdown={capdown!} empty={empty!} />}
       {name === "АКП2-1поз" && <AKPView energy={energy!} argon={argon!} capdown={capdown!} empty={empty!} />}
       {name === "АКП2-2поз" && <AKPView energy={energy!} argon={argon!} capdown={capdown!} empty={empty!} />}
