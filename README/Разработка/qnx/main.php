@@ -1,6 +1,7 @@
 <?php
     
     require_once("./ccm1.php");
+    require_once("./dsp.php");
     
     //
     // sending data to Dispatcher DB entry point
@@ -10,4 +11,5 @@
     //
     
     SendCCM1data();
+    SendDSPdata();
 ?>

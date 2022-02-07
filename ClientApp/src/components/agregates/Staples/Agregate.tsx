@@ -93,7 +93,7 @@ export const Agregate: React.FC<AgregateInfo> = ({
         </div>}
 
         {castingSpeed && <div>
-          <div>V, м&sup3;/мин</div>
+          <div>V, м/мин</div>
           <div>{castingSpeed}</div>
         </div>}
 
