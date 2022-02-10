@@ -17,14 +17,19 @@ export const Agregate: React.FC<AgregateInfo> = ({
   castingSpeed,
   heatStart,
   heatTime,
+  heatWeight,
   heatCurrentTime,
   eeHeatActive,
+  ladleId,
+  argonFlow,
+  argonPressure,
   tgs,
   streamCast,
   slabWidth,
   slabThickness,
   castedMeters,
   castedTonns,
+  currentTemp,
   energy,
   argon,
   capdown,
@@ -107,11 +112,6 @@ export const Agregate: React.FC<AgregateInfo> = ({
           <div>{heatTime}</div>
         </div>}
 
-        {heatCurrentTime && <div>
-          <div>Под током</div>
-          <div>{heatCurrentTime}</div>
-        </div>}
-
         {castedMeters && <div>
           <div>Отлито, м</div>
           <div>{castedMeters}</div>
@@ -122,9 +122,34 @@ export const Agregate: React.FC<AgregateInfo> = ({
           <div>{castedTonns}</div>
         </div>}
 
-        {argon && <div>
-          <div>Аргон</div>
-          <div>Включен</div>
+        {eeHeatActive && <div>
+          <div>Расход ЭЭ</div>
+          <div>{eeHeatActive}</div>
+        </div>}
+
+        {currentTemp && name === "АКОС" && <div>
+          <div>Температура</div>
+          <div>{currentTemp}</div>
+        </div>}
+
+        {ladleId && name === "АКОС" && <div>
+          <div>Номер с/к</div>
+          <div>{ladleId}</div>
+        </div>}
+
+        {argonPressure && name === "АКОС" && <div>
+          <div>Ar, атм м&sup3;/ч</div>
+          <div>{argonPressure}&nbsp;&nbsp;&nbsp;{argonFlow}</div>
+        </div>}
+
+        {heatCurrentTime && <div>
+          <div>Под током</div>
+          <div>{heatCurrentTime}</div>
+        </div>}
+
+        {heatWeight && name === "АКОС" && <div>
+          <div>Вес Ме</div>
+          <div>{heatWeight}</div>
         </div>}
 
         {energy && <div>
@@ -132,14 +157,14 @@ export const Agregate: React.FC<AgregateInfo> = ({
           <div>Подана</div>
         </div>}
 
-        {eeHeatActive && <div>
-          <div>Расход ЭЭ</div>
-          <div>{eeHeatActive}</div>
+        {argon && <div>
+          <div>Аргон</div>
+          <div>Включен</div>
         </div>}
 
         {vacuum && <div>
           <div>Вакуум</div>
-          <div>Включено</div>
+          <div>Включен</div>
         </div>}
       </div>
     </CardBody>

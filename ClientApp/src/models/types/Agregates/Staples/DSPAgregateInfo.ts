@@ -7,7 +7,6 @@ export type DSPAgregateInfo = AgregateInfo & {
   eeYestActive?: string
   eeYestReactive?: string
   heatTab?: string
-  ladleId?: string
   psn?: string
   stoikCaseFrmw?: string
   stoikErk?: string

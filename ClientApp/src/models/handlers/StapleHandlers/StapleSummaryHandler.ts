@@ -98,15 +98,27 @@ export class StapleSummaryHandler {
     const summary: AgregateSummary[] = this.summary.filter(s => s.Name === "EAKP-2")
     const svodVertical = summary.filter(s => s.Tag === "SVOD_VERTICAL")[0]
     const heatId = summary.filter(s => s.Tag === "HEAT_ID")[0]
-    const steelGrade = summary.filter(s => s.Tag === "STEEL_GRD")[0]
+    const steelGrade = summary.filter(s => s.Tag === "STEEL_GRADE")[0]
+    const heatCurrentTime = summary.filter(s => s.Tag === "HEAT_CURRENT_TIME")[0].Value
+    const ladleId = summary.filter(s => s.Tag === "LADLE_ID")[0].Value
+    const argonFlow = summary.filter(s => s.Tag === "ARGON_FLOW")[0].Value
+    const argonPressure = summary.filter(s => s.Tag === "ARGON_PRESSURE")[0].Value
+    const currentTemp = summary.filter(s => s.Tag === "CURRENT_TEMP")[0].Value
+    const heatWeight = summary.filter(s => s.Tag === "HEAT_WEIGHT")[0].Value
 
     return {
       name: "АКОС",
       heatId: heatId.Value,
       steelGrade: steelGrade.Value,
       argon: summary.filter(s => s.Tag === "ARGON_ON")[0].Value === "1",
-      energy: summary.filter(s => s.Tag === "ENERG_ARC_ON")[0].Value === "1",
+      energy: summary.filter(s => s.Tag === "ENERGY_ARC_ON")[0].Value === "1",
       capdown: svodVertical.Value === "2" || svodVertical.Value === "0",
+      heatCurrentTime,
+      ladleId,
+      argonFlow,
+      argonPressure,
+      currentTemp,
+      heatWeight,
       empty: false,
 
       dataDelayed: false,

@@ -6,8 +6,13 @@ export type AgregateInfo = {
   heatId?: string
   heatStart?: string
   heatTime?: string
+  heatWeight?: string
   series?: string
   steelGrade?: string
+  ladleId?: string
+  argonFlow?: string
+  argonPressure?: string
+  currentTemp?: string
 
   heatCurrentTime?: string
   eeHeatActive?: string

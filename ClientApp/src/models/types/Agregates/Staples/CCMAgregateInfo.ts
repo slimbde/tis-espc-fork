@@ -11,11 +11,8 @@ export type CCMAgregateInfo = AgregateInfo & {
   crystTbefore?: string
   crystTdelta?: string
   crystTshears?: string
-  currentTemp?: string
   cutId?: string
-  heatWeight?: string
   ladleArm?: string
-  ladleId?: string
   ladleShib?: string
   ladleStoik?: string
   optimalSpeed?: string
