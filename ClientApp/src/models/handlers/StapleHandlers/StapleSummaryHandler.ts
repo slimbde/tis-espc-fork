@@ -1,5 +1,6 @@
 import { AgregateInfo } from "models/types/Agregates/Staples/AgregateInfo";
 import { AgregateSummary } from "models/types/Agregates/Staples/AgregateSummary";
+import { AKOSAgregateInfo, AKOSChemical } from "models/types/Agregates/Staples/AKOSAgregateInfo";
 import { CCMAgregateInfo } from "models/types/Agregates/Staples/CCMAgregateInfo";
 import { DSPAgregateInfo } from "models/types/Agregates/Staples/DSPAgregateInfo";
 import moment from "moment";
@@ -7,6 +8,15 @@ import moment from "moment";
 
 export class StapleSummaryHandler {
   private summary: AgregateSummary[]
+
+  private getTimeFromMins = (mins: number) => {
+    if (mins > 1440)
+      return moment.utc().hours(12).minutes(59).format("HH:mm")
+
+    const h = mins / 60 | 0
+    const m = mins % 60 | 0
+    return moment.utc().hours(h).minutes(m).format("HH:mm")
+  }
 
   private isDataDelayed = (delayControlField: AgregateSummary) => moment()
     .diff(moment(delayControlField.UpdatePoint, "DD.MM.YYYY HH:mm:ss"), "minute") > 2
@@ -94,34 +104,70 @@ export class StapleSummaryHandler {
     }
   }
 
-  GetAKOSInfo = (): AgregateInfo => {
+  GetAKOSInfo = (): AKOSAgregateInfo => {
     const summary: AgregateSummary[] = this.summary.filter(s => s.Name === "EAKP-2")
-    const svodVertical = summary.filter(s => s.Tag === "SVOD_VERTICAL")[0]
-    const heatId = summary.filter(s => s.Tag === "HEAT_ID")[0]
-    const steelGrade = summary.filter(s => s.Tag === "STEEL_GRADE")[0]
-    const heatCurrentTime = summary.filter(s => s.Tag === "HEAT_CURRENT_TIME")[0].Value
+
+    const heatId = summary.filter(s => s.Tag === "HEAT_ID")[0].Value
+    const heatTab = summary.filter(s => s.Tag === "HEAT_TAB")[0].Value
     const ladleId = summary.filter(s => s.Tag === "LADLE_ID")[0].Value
-    const argonFlow = summary.filter(s => s.Tag === "ARGON_FLOW")[0].Value
-    const argonPressure = summary.filter(s => s.Tag === "ARGON_PRESSURE")[0].Value
-    const currentTemp = summary.filter(s => s.Tag === "CURRENT_TEMP")[0].Value
+    const steelGrade = summary.filter(s => s.Tag === "STEEL_GRADE")[0].Value
     const heatWeight = summary.filter(s => s.Tag === "HEAT_WEIGHT")[0].Value
+    const stoikSvod = summary.filter(s => s.Tag === "STOIK_SVOD")[0].Value
+    const heatCurrentTime = summary.filter(s => s.Tag === "HEAT_CURRENT_TIME")[0].Value
+    const argonTime = summary.filter(s => s.Tag === "ARGON_TIME")[0].Value
+    const argonTimeDown = summary.filter(s => s.Tag === "ARGON_TIME_DOWN")[0].Value
+    const argonDelay = summary.filter(s => s.Tag === "ARGON_DELAY")[0].Value
+    const eeHeatActive = summary.filter(s => s.Tag === "EE_HEAT_ACTIVE")[0].Value
+    const argonFlow = summary.filter(s => s.Tag === "ARGON_FLOW")[0].Value
+    const argonFlowDown = summary.filter(s => s.Tag === "ARGON_FLOW_DOWN")[0].Value
+    const argonPressure = summary.filter(s => s.Tag === "ARGON_PRESSURE")[0].Value
+    const argonFlowInst = summary.filter(s => s.Tag === "ARGON_FLOW_INST")[0].Value
+    const argonFlowInstPwd = summary.filter(s => s.Tag === "ARGON_FLOW_INST_PWD")[0].Value
+    const steamPipeVacuum = summary.filter(s => s.Tag === "STEAM_PIPE_VACUUM")[0].Value
+    const currentTemp = summary.filter(s => s.Tag === "CURRENT_TEMP")[0].Value
+    const svodVertical = summary.filter(s => s.Tag === "SVOD_VERTICAL")[0].Value
+    const samples = summary.filter(s => s.Tag === "SAMPLES")[0].Value
+    const chemicalKey = summary.filter(s => s.Tag === "CHEMICAL_KEY")[0].Value
+
+    const chemicalNums = summary.filter(s => s.Tag === "CHEMICAL_NUMS")[0].Value.split(";")
+    const chemicalTimes = summary.filter(s => s.Tag === "CHEMICAL_TIMES")[0].Value.split(";")
+    const chemicals: AKOSChemical[] = chemicalNums.map((num, idx) => ({
+      num,
+      time: chemicalTimes[idx],
+      elements: summary.filter(s => s.Tag === `CHEMICAL_${idx}`)[0].Value
+    }))
+
+    const update = summary.filter(s => s.Tag === "$DateTime")[0]
 
     return {
       name: "АКОС",
-      heatId: heatId.Value,
-      steelGrade: steelGrade.Value,
+      heatId,
+      heatTab,
+      ladleId,
+      steelGrade,
+      heatWeight,
+      stoikSvod,
+      heatCurrentTime,
+      argonTime,
+      argonTimeDown,
+      argonDelay,
+      eeHeatActive,
+      argonFlow,
+      argonFlowDown,
+      argonPressure,
+      argonFlowInst,
+      argonFlowInstPwd,
+      steamPipeVacuum,
+      currentTemp,
+      samples,
+      chemicalKey,
+      chemicals,
       argon: summary.filter(s => s.Tag === "ARGON_ON")[0].Value === "1",
       energy: summary.filter(s => s.Tag === "ENERGY_ARC_ON")[0].Value === "1",
-      capdown: svodVertical.Value === "2" || svodVertical.Value === "0",
-      heatCurrentTime,
-      ladleId,
-      argonFlow,
-      argonPressure,
-      currentTemp,
-      heatWeight,
+      capdown: svodVertical === "2" || svodVertical === "0",
       empty: false,
 
-      dataDelayed: false,
+      dataDelayed: this.isDataDelayed(update),
       lastUpdate: moment().format("YYYY-MM-DD HH:mm:ss"),
     }
   }

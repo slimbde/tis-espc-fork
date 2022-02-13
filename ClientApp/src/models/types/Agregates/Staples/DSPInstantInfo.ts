@@ -1,4 +1,3 @@
-import { AgregateSummary } from "./AgregateSummary"
 
 export type DSPInstantHeatInfo = {
   HeatId?: string
@@ -56,22 +55,4 @@ export enum DSPInstantEnergyDecoder {
   eeTodayReactive = "С начала суток реактивная",
   eeYestActive = "За вчера активная",
   eeYestReactive = "За вчера реактивная",
-}
-
-
-
-export type DSPInstantGasInfo = {
-
-}
-
-export enum DSPInstantGasDecoder {
-
-}
-
-
-export type DSPInstantInfo = {
-  heat: DSPInstantHeatInfo
-  energy: DSPInstantEnergyInfo
-  //gas: DSPInstantGasInfo
-  mysql: AgregateSummary[]
 }

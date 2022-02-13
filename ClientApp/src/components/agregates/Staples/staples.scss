@@ -5,7 +5,7 @@
   position: relative;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: auto 1fr 1.1fr;
+  grid-template-rows: auto 0.6fr 1.4fr;
   grid-row-gap: 1rem;
   grid-column-gap: 15px;
   grid-template-areas:
@@ -13,6 +13,7 @@
     "dsp akp1 akp2 mnlz1"
     "akos vd1 vd2 mnlz2";
   max-height: 85vh;
+  height: 85vh;
   overflow-y: auto !important;
 
   #loading {
@@ -23,8 +24,8 @@
 
   #alert {
     position: absolute;
-    right: 2rem;
-    top: 2rem;
+    right: 1rem;
+    top: 1rem;
     margin-bottom: 0;
   }
 
@@ -154,7 +155,7 @@
       }
 
       .card-body {
-        height: 15vh;
+        max-height: 35vh;
         min-height: 140px;
       }
 

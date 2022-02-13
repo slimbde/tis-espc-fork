@@ -70,7 +70,7 @@ export const Agregate: React.FC<AgregateInfo> = ({
     <CardHeader className={cardStatusStyle()}>
       <div>{name}</div>
       <div>
-        {name === "МНЛЗ-2" || name === "МНЛЗ-1" || name === "ДСП" ? <Link title="Посмотреть подробно" to={detailsLink}>{heatId}</Link> : <>{heatId}</>}
+        {name === "МНЛЗ-2" || name === "МНЛЗ-1" || name === "ДСП" || name === "АКОС" ? <Link title="Посмотреть подробно" to={detailsLink}>{heatId}</Link> : <>{heatId}</>}
         {series && <div title="Номер в серии">&nbsp;({series})</div>}
       </div>
 

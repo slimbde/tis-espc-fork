@@ -18,6 +18,7 @@ import Layout from "components/layout";
 import { CCM2Details } from "components/agregates/Staples/CCM2Details";
 import { CCM1Details } from "components/agregates/Staples/CCM1Details";
 import { DSPDetails } from "components/agregates/Staples/DSPDetails";
+import { AKOSDetails } from "components/agregates/Staples/AKOSDetails";
 
 
 
@@ -74,7 +75,7 @@ const App: React.FC = () => {
     <Route exact path="/agregates/staple/ccm1" component={CCM1Details} key="ccm1details" />,
     <Route exact path="/agregates/staple/ccm2" component={CCM2Details} key="ccm2details" />,
     <Route exact path="/agregates/staple/dsp" component={DSPDetails} key="dspdetails" />,
-    <Route exact path="/agregates/staple/akos" component={CCM2Details} key="akosdetails" />,
+    <Route exact path="/agregates/staple/akos" component={AKOSDetails} key="akosdetails" />,
     <Route exact path="/agregates/staple/akp1" component={CCM2Details} key="akp1details" />,
     <Route exact path="/agregates/staple/akp2" component={CCM2Details} key="akp2details" />,
     <Route exact path="/agregates/staple/vd1" component={CCM2Details} key="vd1details" />,
