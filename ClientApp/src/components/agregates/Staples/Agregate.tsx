@@ -1,4 +1,5 @@
 import { AgregateInfo } from "models/types/Agregates/Staples/AgregateInfo"
+import { akosState, akpState, ccmState, dspState } from "models/types/Agregates/Staples/AgregateState"
 import { Link } from "react-router-dom"
 import { Card, CardBody, CardHeader } from "reactstrap"
 import { AKPView } from "./views/akp"
@@ -22,6 +23,7 @@ export const Agregate: React.FC<AgregateInfo> = ({
   eeHeatActive,
   ladleId,
   argonFlow,
+  argonTime,
   argonPressure,
   tgs,
   streamCast,
@@ -57,12 +59,17 @@ export const Agregate: React.FC<AgregateInfo> = ({
   }
 
   const cardStatusStyle = () => {
-    let className = ""
-
-    if (castingSpeed && flowSpeed && +castingSpeed > 0 && +flowSpeed > 0) className += "process"
-    if (energy || argon || vacuum || (eeHeatActive && eeHeatActive !== "0")) className += "process"
-
-    return className
+    switch (name) {
+      case "МНЛЗ-1":
+      case "МНЛЗ-2":
+        return ccmState(streamCast, castingSpeed)
+      case "АКОС":
+        return akosState(energy, argon, heatCurrentTime, argonTime)
+      case "ДСП":
+        return dspState(energy, eeHeatActive)
+      default:
+        return akpState(energy, argon, empty)
+    }
   }
 
 

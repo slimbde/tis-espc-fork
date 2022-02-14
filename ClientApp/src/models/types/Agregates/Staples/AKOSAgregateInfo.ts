@@ -5,7 +5,6 @@ export type AKOSAgregateInfo = AgregateInfo & {
   argonFlowDown?: string
   argonFlowInst?: string
   argonFlowInstPwd?: string
-  argonTime?: string
   argonTimeDown?: string
   chemicals?: AKOSChemical[]
   chemicalKey?: string

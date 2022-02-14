@@ -3,6 +3,7 @@ export type AgregateInfo = {
   name?: string
   argonFlow?: string
   argonPressure?: string
+  argonTime?: string
   castedMeters?: string
   castedTonns?: string
   castingSpeed?: string

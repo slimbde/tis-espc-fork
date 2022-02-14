@@ -8,6 +8,7 @@ import { CCMView } from "../views/ccm12"
 import { StapleSummaryHandler } from "models/handlers/StapleHandlers/StapleSummaryHandler"
 import aHandler from "models/handlers/DbHandlers/AgregatesDbHandler"
 import { Loading } from "components/extra/Loading"
+import { ccmState } from "models/types/Agregates/Staples/AgregateState"
 
 
 type State = {
@@ -90,25 +91,21 @@ export const CCM1Details: React.FC = () => {
     //eslint-disable-next-line
   }, [])
 
-  const ccmState = () => {
-    if (!state.mysql?.streamCast) return "state-idle"
-    if (state.phys?.CastingSpeed && state.phys.CastingSpeed !== "0") return "state-process"
-    return "state-preset"
-  }
+  const ccm1State = () => ccmState(state.mysql?.streamCast, state.phys?.CastingSpeed)
 
 
 
 
-  return <div className="ccm-details-wrapper">
+  return <div className="ccm1-details-wrapper">
     <Alert id="alert">Hello</Alert>
-    <div className={`title display-5 ${ccmState()}`} style={{ gridArea: "title" }}>
+    <div className={`title display-5 ${ccm1State()}`} style={{ gridArea: "title" }}>
       МНЛЗ-1
       <div className="last-update">{state.lastUpdate}</div>
     </div>
 
     <span className="a-like" style={{ gridArea: "title" }} onClick={() => window.history.back()}>Назад</span>
 
-    <ListGroup className={`heat ${ccmState()}`} style={{ gridArea: "heat" }}>
+    <ListGroup className={`heat ${ccm1State()}`} style={{ gridArea: "heat" }}>
       {state.heat && Object.keys(state.heat).map(key =>
         <ListGroupItem key={key}>
           <div>{(CCMInstantHeatDecoder as any)[key]}</div>
@@ -118,7 +115,7 @@ export const CCM1Details: React.FC = () => {
       {!state.heat && <Loading />}
     </ListGroup>
 
-    {state.cryst && <ListGroup className={`cryst ${ccmState()}`} style={{ gridArea: "cryst" }}>
+    {state.cryst && <ListGroup className={`cryst ${ccm1State()}`} style={{ gridArea: "cryst" }}>
       {state.cryst && Object.keys(state.cryst).map(key =>
         <ListGroupItem key={key}>
           <div>{(CCMInstantCrystDecoder as any)[key]}</div>
@@ -128,7 +125,7 @@ export const CCM1Details: React.FC = () => {
       {!state.cryst && <Loading />}
     </ListGroup>}
 
-    {state.phys && <ListGroup className={`phys ${ccmState()}`} style={{ gridArea: "phys" }}>
+    {state.phys && <ListGroup className={`phys ${ccm1State()}`} style={{ gridArea: "phys" }}>
       {state.phys && Object.keys(state.phys).map(key =>
         <ListGroupItem key={key}>
           <div>{(CCMInstantPhysDecoder as any)[key]}</div>
@@ -138,7 +135,7 @@ export const CCM1Details: React.FC = () => {
       {!state.phys && <Loading />}
     </ListGroup>}
 
-    {state.samples && <div className={`samples ${ccmState()}`} style={{ gridArea: "samples" }}>
+    {state.samples && <div className={`samples ${ccm1State()}`} style={{ gridArea: "samples" }}>
       {state?.samples && state.samples.map((key, id) => <div key={id}>{key}</div>)}
       {!state.samples && <Loading />}
     </div>}

@@ -64,16 +64,60 @@
       }
     }
 
-    & .process {
+    & .state-process {
       &.card-header {
         color: darkgreen;
         border-bottom-color: darken($state-process, 20%);
         background-color: darken($state-process, 5%);
+
+        &::before {
+          position: absolute;
+          left: 30%;
+          text-transform: uppercase;
+          font-size: 0.7rem;
+          line-height: 1.4rem;
+          content: "Обработка";
+        }
       }
 
       &.card-body .info div div {
         color: darkgreen;
         background-color: $state-process;
+      }
+    }
+
+    & .state-hot-idle {
+      &.card-header {
+        color: slategray;
+        border-bottom-color: darken($state-hot-idle, 20%);
+        background-color: darken($state-hot-idle, 5%);
+
+        &::before {
+          position: absolute;
+          left: 30%;
+          text-transform: uppercase;
+          font-size: 0.7rem;
+          line-height: 1.4rem;
+          content: "Горячий простой";
+        }
+      }
+
+      &.card-body .info div div {
+        color: slategray;
+        background-color: $state-hot-idle;
+      }
+    }
+
+    & .state-idle {
+      &.card-header {
+        &::before {
+          content: "Холодный простой";
+          position: absolute;
+          left: 27%;
+          text-transform: uppercase;
+          font-size: 0.7rem;
+          line-height: 1.4rem;
+        }
       }
     }
 

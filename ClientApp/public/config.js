@@ -13,7 +13,7 @@ window.config.oldHostPath = `${window.config.host}/${window.config.oldImgPath}`
 // And the virtual directory points to the images folder and no authentication needed
 window.config.armsList = {
   ccmArm1: `${window.config.hostPath}/espo-ccm2-arm1.png`,
-  ccmArm2: `${window.config.oldHostPath}/img_ccm/arm2.jpg`,
+  ccmArm2: `${window.config.hostPath}/espo-ccm2-arm2.png`,
   gega: `${window.config.oldHostPath}/img_ccm/arm_gega.jpg`,
   fda: `${window.config.oldHostPath}/img_ccm/fda.jpg`,
   mbps: `${window.config.oldHostPath}/img_ccm/mbps.jpg`,

@@ -5,15 +5,13 @@
   position: relative;
   display: grid;
   grid-template-columns: 1fr 1fr 1.2fr;
-  grid-template-rows: 3rem 1fr 1fr 1.5fr;
+  grid-template-rows: 3rem 1fr 0.7fr 1.5fr;
   grid-gap: 3rem;
   grid-template-areas:
     "title title title"
     "heat energo view"
     "samples energo view"
     "samples chems chems";
-  max-height: 85vh;
-  overflow-y: auto;
   overflow-x: hidden;
   height: 100%;
 
@@ -54,7 +52,7 @@
       background-color: $state-process;
     }
 
-    &.state-heating::after {
+    &.state-process::after {
       content: "Обработка";
       background-color: $state-process;
     }
@@ -64,7 +62,7 @@
     background-color: $state-idle !important;
   }
 
-  .state-heating::before,
+  .state-process::before,
   .state-hot-idle::before {
     background-color: $state-process !important;
   }

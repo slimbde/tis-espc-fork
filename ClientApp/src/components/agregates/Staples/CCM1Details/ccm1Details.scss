@@ -1,6 +1,6 @@
 @import "variables.scss";
 
-.ccm-details-wrapper {
+.ccm1-details-wrapper {
   padding: 1rem;
   position: relative;
   display: grid;
@@ -9,11 +9,9 @@
   grid-gap: 3rem;
   grid-template-areas:
     "title title title"
-    "heat phys view"
-    "cryst samples view"
-    "cryst events events";
-  max-height: 85vh;
-  overflow-y: auto;
+    "heat cryst view"
+    "phys samples view"
+    "phys events events";
   height: 100%;
 
   .title {
@@ -53,7 +51,7 @@
     }
 
     &.state-process::after {
-      content: "Разливка";
+      content: "Обработка";
       background-color: $state-process;
     }
   }

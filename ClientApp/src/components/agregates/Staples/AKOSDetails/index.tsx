@@ -8,6 +8,8 @@ import aHandler from "models/handlers/DbHandlers/AgregatesDbHandler"
 import { AKOSInstantEnergoDecoder, AKOSInstantEnergoInfo, AKOSInstantHeatDecoder, AKOSInstantHeatInfo } from "models/types/Agregates/Staples/AKOSInstantInfo"
 import { AKOSAgregateInfo } from "models/types/Agregates/Staples/AKOSAgregateInfo"
 import { AKPView } from "../views/akp"
+import { akosState } from "models/types/Agregates/Staples/AgregateState"
+
 
 
 type State = {
@@ -77,11 +79,7 @@ export const AKOSDetails: React.FC = () => {
     //eslint-disable-next-line
   }, [])
 
-  const akosState = () => {
-    if (state.mysql?.energy || state.mysql?.argon) return "state-heating"
-    if (state.mysql?.heatCurrentTime) return "state-hot-idle"
-    return "state-idle"
-  }
+  const akosDetailsState = () => akosState(state.mysql?.energy, state.mysql?.argon, state.mysql?.heatCurrentTime, state.mysql?.argonTime)
 
 
 
@@ -90,14 +88,14 @@ export const AKOSDetails: React.FC = () => {
 
   return <div className="akos-details-wrapper">
     <Alert id="alert">Hello</Alert>
-    <div className={`title display-5 ${akosState()}`} style={{ gridArea: "title" }}>
+    <div className={`title display-5 ${akosDetailsState()}`} style={{ gridArea: "title" }}>
       АКОС
       <div className="last-update">{state.lastUpdate}</div>
     </div>
 
     <span className="a-like" style={{ gridArea: "title" }} onClick={() => window.history.back()}>Назад</span>
 
-    <ListGroup className={`heat ${akosState()}`} style={{ gridArea: "heat" }}>
+    <ListGroup className={`heat ${akosDetailsState()}`} style={{ gridArea: "heat" }}>
       {state.heat && Object.keys(state.heat).map(key =>
         <ListGroupItem key={key}>
           <div>{(AKOSInstantHeatDecoder as any)[key]}</div>
@@ -107,7 +105,7 @@ export const AKOSDetails: React.FC = () => {
       {!state.heat && <Loading />}
     </ListGroup>
 
-    <ListGroup className={`energo ${akosState()}`} style={{ gridArea: "energo" }}>
+    <ListGroup className={`energo ${akosDetailsState()}`} style={{ gridArea: "energo" }}>
       {state.energo && Object.keys(state.energo).map(key =>
         <ListGroupItem key={key}>
           <div>{(AKOSInstantEnergoDecoder as any)[key]}</div>
@@ -117,7 +115,7 @@ export const AKOSDetails: React.FC = () => {
       {!state.energo && <Loading />}
     </ListGroup>
 
-    <ListGroup className={`samples ${akosState()}`} style={{ gridArea: "samples" }}>
+    <ListGroup className={`samples ${akosDetailsState()}`} style={{ gridArea: "samples" }}>
       {state.samples && state.samples.map(pair => {
         const split = pair.split("=")
         return <ListGroupItem key={pair}>
@@ -127,7 +125,7 @@ export const AKOSDetails: React.FC = () => {
       })}
     </ListGroup>
 
-    <div className={`chems ${akosState()}`}>
+    <div className={`chems ${akosDetailsState()}`}>
       <div className="chems-header">
         <div key={0}>№</div>
         <div key={1}>Время</div>
