@@ -1,7 +1,6 @@
 <?php
     
-    require_once("./ccm1.php");
-    require_once("./dsp.php");
+    require_once("./akp.php");
     
     //
     // sending data to Dispatcher DB entry point
@@ -10,6 +9,5 @@
     // please follow the given structure and add your handler here
     //
     
-    SendCCM1data();
-    SendDSPdata();
+    SendAKPdata();
 ?>

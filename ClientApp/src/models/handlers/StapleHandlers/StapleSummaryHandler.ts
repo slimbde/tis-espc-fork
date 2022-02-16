@@ -1,4 +1,5 @@
 import { AgregateInfo } from "models/types/Agregates/Staples/AgregateInfo";
+import { AgregateState } from "models/types/Agregates/Staples/AgregateState";
 import { AgregateSummary } from "models/types/Agregates/Staples/AgregateSummary";
 import { AKOSAgregateInfo } from "models/types/Agregates/Staples/AKOSAgregateInfo";
 import { CCMAgregateInfo } from "models/types/Agregates/Staples/CCMAgregateInfo";
@@ -178,21 +179,60 @@ export class StapleSummaryHandler {
   GetAKPInfo = (num: 1 | 2): AgregateInfo => {
     const summary: AgregateSummary[] = this.summary.filter(s => s.Name === `EAKP-1${num}`)
 
+    const update = summary.filter(s => s.Tag === "$DateTime")[0]
     const heatId = summary.filter(s => s.Tag === "HEAT_ID")[0]
-    const steelGrade = summary.filter(s => s.Tag === "STEEL_GRD")[0]
-    const energyOn = summary.filter(s => s.Tag === "SVOD_ARGON_ENERGY_ON")[0].Value === "True"
-    const capdown = summary.filter(s => s.Tag === "SVOD_LOW")[0].Value === "True"
+    const steelGrade = summary.filter(s => s.Tag === "STEEL_GRADE")[0]
+    const activeTank = +summary.filter(s => s.Tag === "TANK_ID")[0].Value
+    const argonFlow = summary.filter(s => s.Tag === "ARGON_FLOW_DOWN")[0].Value
+    const currentTemp = summary.filter(s => s.Tag === "CURRENT_TEMP")[0].Value
+    const heatCurrentTime = summary.filter(s => s.Tag === "HEAT_CURRENT_TIME")[0].Value
+    const heatWeight = summary.filter(s => s.Tag === "HEAT_WEIGHT")[0].Value
+    const ladleId = summary.filter(s => s.Tag === "LADLE_ID")[0].Value
+
+    // Холодный простой
+    let initializer: boolean[] = [false, false, false, true]
+    let state = AgregateState.IDLE
+
+    const stateCode = +summary.filter(s => s.Tag === "STATE")[0].Value
+
+    if (activeTank === num) {
+      if (stateCode === 1) {  // Горячий простой
+        initializer = [false, false, true, false]
+        state = AgregateState.HOTIDLE
+      }
+      if (stateCode === 2) {  // Продувка
+        initializer = [false, true, true, false]
+        state = AgregateState.PROCESS
+      }
+      if (stateCode === 3) {  // Под током
+        initializer = [true, false, true, false]
+        state = AgregateState.PROCESS
+      }
+      if (stateCode === 4) {  // Ток и продувка
+        initializer = [true, true, true, false]
+        state = AgregateState.PROCESS
+      }
+    }
+
+    const [energy, argon, capdown, empty] = initializer
+
 
     return {
       name: `АКП2-${num}поз`,
       heatId: heatId.Value.replace(/[^a-zA-Zа-яА-Я0-9]/g, ""),
       steelGrade: steelGrade.Value.replace(/[^a-zA-Zа-яА-Я0-9]/g, ""),
-      empty: summary.filter(s => s.Tag === "LRF_ON")[0].Value === "False",
-      argon: summary.filter(s => s.Tag === "ARGON_ON")[0].Value === "True",
-      energy: energyOn && capdown,
+      argonFlow,
+      currentTemp,
+      heatCurrentTime,
+      heatWeight,
+      ladleId,
+      empty,
+      argon,
+      energy,
       capdown,
+      state,
 
-      dataDelayed: false,
+      dataDelayed: this.isDataDelayed(update),
       lastUpdate: moment().format("YYYY-MM-DD HH:mm:ss"),
     }
   }

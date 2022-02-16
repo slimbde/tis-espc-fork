@@ -1,0 +1,137 @@
+@import "variables.scss";
+
+.akp-details-wrapper {
+  padding: 1rem;
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.2fr;
+  grid-template-rows: 3rem 1fr 0.1fr 1.9fr;
+  grid-gap: 3rem;
+  grid-template-areas:
+    "title   title  title"
+    "heat    energo view"
+    "samples energo view"
+    "samples chems  chems";
+  overflow-x: hidden;
+  height: 100%;
+
+  .title {
+    position: relative;
+    margin-bottom: 0;
+    width: fit-content;
+
+    .last-update {
+      position: absolute;
+      grid-area: title;
+      bottom: -0.9rem;
+      right: -4rem;
+      font-size: 0.7rem;
+      font-weight: 400;
+      color: gray;
+    }
+
+    &::after {
+      position: absolute;
+      line-height: 0.9rem;
+      font-size: 0.9rem;
+      margin-left: 1rem;
+      font-weight: 400;
+      top: 8px;
+      color: gray;
+      padding: 0.3rem 0.5rem;
+      width: max-content;
+    }
+
+    &.state-idle::after {
+      content: "Холодный простой";
+      background-color: $state-idle;
+    }
+
+    &.state-hot-idle::after {
+      content: "Горячий простой";
+      background-color: $state-hot-idle;
+    }
+
+    &.state-process::after {
+      content: "Обработка";
+      background-color: $state-process;
+    }
+  }
+
+  .state-idle::before {
+    background-color: $state-idle !important;
+  }
+
+  .state-process::before {
+    background-color: $state-process !important;
+  }
+
+  .state-hot-idle::before {
+    background-color: $state-hot-idle !important;
+  }
+
+  span {
+    margin-top: 2.3rem;
+    width: fit-content;
+  }
+
+  #alert {
+    position: absolute;
+    right: 2rem;
+    top: 1rem;
+    margin-bottom: 0;
+  }
+
+  #AKP {
+    grid-area: view;
+    width: 100% !important;
+
+    svg {
+      height: 250px !important;
+      margin-top: -1rem;
+    }
+  }
+
+  .list-group {
+    position: relative;
+
+    .list-group-item {
+      padding: 0;
+      display: flex;
+      flex-flow: row nowrap;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      border-width: 1px 0 0 0;
+      border-radius: 0;
+
+      div {
+        padding: 0.2rem 0.5rem;
+      }
+    }
+  }
+
+  .list-group::before,
+  .chems::before {
+    position: absolute;
+    z-index: 0;
+    top: -1.2rem;
+    left: 0;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    color: gray;
+    background-color: whitesmoke;
+    padding: 0.2rem 0.5rem;
+  }
+
+  .heat::before {
+    content: "Плавка";
+  }
+
+  .energo:not(#AKP)::before {
+    content: "Энергоносители";
+  }
+
+  .samples::before {
+    content: "Образцы";
+  }
+}

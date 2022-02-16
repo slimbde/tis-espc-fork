@@ -1,5 +1,5 @@
 import { AgregateInfo } from "models/types/Agregates/Staples/AgregateInfo"
-import { akosState, akpState, ccmState, dspState } from "models/types/Agregates/Staples/AgregateState"
+import { akosState, ccmState, dspState, vdState } from "models/types/Agregates/Staples/AgregateState"
 import { Link } from "react-router-dom"
 import { Card, CardBody, CardHeader } from "reactstrap"
 import { AKPView } from "./views/akp"
@@ -39,6 +39,7 @@ export const Agregate: React.FC<AgregateInfo> = ({
   vacuum,
   flushSteel,
   flushSlag,
+  state,
 
   dataDelayed,
   lastUpdate,
@@ -50,8 +51,8 @@ export const Agregate: React.FC<AgregateInfo> = ({
       case "МНЛЗ-2": return "staple/ccm2"
       case "ДСП": return "staple/dsp"
       case "АКОС": return "staple/akos"
-      case "АКП2-1поз": return "staple/akp1"
-      case "АКП2-2поз": return "staple/akp2"
+      case "АКП2-1поз": return "staple/akp/1"
+      case "АКП2-2поз": return "staple/akp/2"
       case "ВД-1поз": return "staple/vd1"
       case "ВД-2поз": return "staple/vd2"
       default: return "staple"
@@ -67,8 +68,11 @@ export const Agregate: React.FC<AgregateInfo> = ({
         return akosState(energy, argon, heatCurrentTime, argonTime)
       case "ДСП":
         return dspState(energy, eeHeatActive)
+      case "АКП2-1поз":
+      case "АКП2-2поз":
+        return state
       default:
-        return akpState(energy, argon, empty)
+        return vdState(energy, argon, empty)
     }
   }
 
@@ -77,7 +81,7 @@ export const Agregate: React.FC<AgregateInfo> = ({
     <CardHeader className={cardStatusStyle()}>
       <div>{name}</div>
       <div>
-        {name === "МНЛЗ-2" || name === "МНЛЗ-1" || name === "ДСП" || name === "АКОС" ? <Link title="Посмотреть подробно" to={detailsLink}>{heatId}</Link> : <>{heatId}</>}
+        {name === "МНЛЗ-2" || name === "МНЛЗ-1" || name === "ДСП" || name?.indexOf("АК") !== -1 ? <Link title="Посмотреть подробно" to={detailsLink}>{heatId}</Link> : <>{heatId}</>}
         {series && <div title="Номер в серии">&nbsp;({series})</div>}
       </div>
 
@@ -134,12 +138,12 @@ export const Agregate: React.FC<AgregateInfo> = ({
           <div>{eeHeatActive}</div>
         </div>}
 
-        {currentTemp && name === "АКОС" && <div>
+        {currentTemp && name?.indexOf("АК") !== -1 && <div>
           <div>Температура</div>
           <div>{currentTemp}</div>
         </div>}
 
-        {ladleId && name === "АКОС" && <div>
+        {ladleId && name?.indexOf("АК") !== -1 && <div>
           <div>Номер с/к</div>
           <div>{ladleId}</div>
         </div>}
@@ -149,13 +153,18 @@ export const Agregate: React.FC<AgregateInfo> = ({
           <div>{argonPressure}&nbsp;&nbsp;&nbsp;{argonFlow}</div>
         </div>}
 
+        {argonFlow && name?.indexOf("АКП") !== -1 && <div>
+          <div>Ar, м&sup3;/ч</div>
+          <div>{argonFlow}</div>
+        </div>}
+
         {heatCurrentTime && <div>
           <div>Под током</div>
           <div>{heatCurrentTime}</div>
         </div>}
 
-        {heatWeight && name === "АКОС" && <div>
-          <div>Вес Ме</div>
+        {heatWeight && name?.indexOf("АК") !== -1 && <div>
+          <div>Вес Ме, тонн</div>
           <div>{heatWeight}</div>
         </div>}
 

@@ -4,8 +4,8 @@ using Oracle.ManagedDataAccess.Client;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
-using System.Linq;
 using System.Data.Common;
+using System.Linq;
 using System.Threading.Tasks;
 using TIS_ESPC_FORK.Models.DTOs.Agregates.Staple;
 
@@ -180,13 +180,96 @@ namespace TIS_ESPC_FORK.Models.Repositories
 
             return result;
         }
-    
-    
-        public async Task<ILookup<string, object>> GetAKPInstant()
+
+
+        public async Task<IDictionary<string, object>> GetAKPInstantAsync(int stationCode)
         {
+            IDictionary<string, object> result = new Dictionary<string, object>();
+
             using (IDbConnection db = new OracleConnection(oraLFVODString))
             {
-                string stmt = 
+                object code = new { CODE = stationCode };
+
+                string stmt = @"SELECT
+                                  R.CUSTOM_HEAT_ID              HEATID
+                                  ,I.STEEL_GRADE_ID             STEELGRADE
+                                  ,I.LADLE_ID                   LADLEID
+                                  ,ROUND(P.EST_STEEL_WGT/1000)  HEATWEIGHT
+                                  ,(SELECT SUM(MATERIAL_REPORTED) FROM RTDB_LOG_MATERIALS WHERE STATION_CODE = :CODE AND MATERIAL_CLASS = 1) WIREA1
+                                  ,(SELECT SUM(MATERIAL_REPORTED) FROM RTDB_LOG_MATERIALS WHERE STATION_CODE = :CODE AND MATERIAL_CLASS = 4) METALBATCH
+                                FROM RTDB_INITIAL_DATA I
+                                JOIN REPORTS R ON R.REPORT_COUNTER = I.REPORT_COUNTER AND I.STATION_CODE = :CODE
+                                JOIN RTDB_PROCESS_DATA P ON P.STATION_CODE = :CODE";
+
+                result["heat"] = await db.QuerySingleAsync<LFHeatAttributes>(stmt, code);
+
+                stmt = @"SELECT
+                          P.TOTAL_POWER_ON          HEATCURRENTTIME
+                          ,P.STIRRING_PLUG1_TIME    ARGONTIME1
+                          ,P.STIRRING_PLUG2_TIME    ARGONTIME2
+                          ,P.TOTAL_PROCESS_TIME     HEATTIME  
+                          ,P.TOTAL_ENERGY           EEHEATACTIVE
+                          ,P.TOTAL_AR_CONS          ARGONFLOW
+                          ,A.CURRENT_1              ARGONFLOWINST1
+                          ,A.CURRENT_2              ARGONFLOWINST2
+                        FROM RTDB_PLC_DATA P
+                        JOIN RTDB_PLC_ACTUAL_DATA A ON A.STATION_CODE = P.STATION_CODE AND P.STATION_CODE = :CODE";
+
+                result["energo"] = await db.QuerySingleAsync<LFEnergoAttributes>(stmt, code);
+
+                stmt = @"SELECT * FROM (
+                            SELECT TO_CHAR(EVENT_DATE, 'HH24:MI ') || TEXT
+                            FROM REP_EVENTS E
+                            JOIN RTDB_INITIAL_DATA I ON E.REPORT_COUNTER = I.REPORT_COUNTER 
+                            AND I.STATION_CODE = :CODE
+                            AND E.EVENT_CLASS < 2000
+                            ORDER BY EVENT_COUNTER DESC
+                        )
+                        WHERE ROWNUM < 7";
+
+                result["events"] = await db.QueryAsync<string>(stmt, code);
+
+                stmt = @"SELECT
+                            TO_CHAR(SAMPLE_DATE, 'HH24:MI') POINT
+                            ,TEMPERATURE_VALUE              VALUE
+                        FROM RTDB_LOG_SAMPLES
+                        WHERE STATION_CODE = :CODE
+                        ORDER BY SAMPLE_DATE DESC";
+
+                string[] samples = (await db.QueryAsync<Temperature>(stmt, code)).Select(t => $"{t.Point}={t.Value}").ToArray();
+                result["samples"] = string.Join(";", samples);
+
+                stmt = @"SELECT
+                          A.SAMPLE_ID                                       SAMPLEID
+                          ,A.ANALYSIS_DATE                                  POINT
+                          ,E.ELEMENT_NAME                                   ELEMENT
+                          ,CASE WHEN E.VALUE < 0 THEN 0 ELSE E.VALUE END    VALUE
+                        FROM REP_ELEMENTS E
+                        JOIN RTDB_INITIAL_DATA I ON I.REPORT_COUNTER = E.REPORT_COUNTER AND I.STATION_CODE = :CODE
+                          AND MOD(E.ELEMENT_SEQ,100) IN (0,1,2,3,4,5,6,7,8,9,10,17,18,23)
+                        JOIN REP_ANALYSIS A ON A.REPORT_COUNTER = E.REPORT_COUNTER AND A.ANALYSIS_COUNTER = E.ANALYSIS_COUNTER AND A.SAMPLE_ID != 'ESTIMATED'
+                        ORDER BY E.ANALYSIS_COUNTER, E.ELEMENT_SEQ";
+
+                result["chems"] = await db.QueryAsync<Chemistry>(stmt, code);
             }
+
+            using (IDbConnection db = new MySqlConnection(conString))
+            {
+                string stmt = @"SELECT      
+                                    dc.Description              Name
+                                    ,ds.dev_tag                 Tag
+                                    ,ds.dev_value               Value
+                                    ,ds.dev_upd                 UpdatePoint
+                                FROM dev_state ds 
+                                JOIN dev_catalog dc 
+                                    ON ds.device = dc.device 
+                                    AND dc.device = @device
+                                    AND ds.dev_tag <> '';";
+
+                result["mysql"] = await db.QueryAsync<AgregateSummary>(stmt, new { device = stationCode % 10 + 70 });
+            }
+
+            return result;
+        }
     }
 }

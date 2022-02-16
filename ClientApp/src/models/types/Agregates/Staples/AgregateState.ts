@@ -23,15 +23,15 @@ export const akosState = (energy: boolean | undefined, argon: boolean | undefine
 }
 
 
-export const akpState = (energy: boolean | undefined, argon: boolean | undefined, empty: boolean | undefined) => {
-  if ((energy || argon) && empty) return AgregateState.HOTIDLE
-  if (energy || argon) return AgregateState.PROCESS
+export const dspState = (energy: boolean | undefined, eeHeatActive: string | undefined) => {
+  if (energy) return AgregateState.PROCESS
+  if (eeHeatActive) return AgregateState.HOTIDLE
   return AgregateState.IDLE
 }
 
 
-export const dspState = (energy: boolean | undefined, eeHeatActive: string | undefined) => {
-  if (energy) return AgregateState.PROCESS
-  if (eeHeatActive) return AgregateState.HOTIDLE
+export const vdState = (energy: boolean | undefined, vacuum: boolean | undefined, empty: boolean | undefined) => {
+  if (energy || vacuum) return AgregateState.PROCESS
+  if ((energy || vacuum) && !empty) return AgregateState.HOTIDLE
   return AgregateState.IDLE
 }

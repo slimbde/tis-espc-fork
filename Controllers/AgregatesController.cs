@@ -93,6 +93,8 @@ namespace TIS_ESPC_FORK.Controllers
                 switch (filter)
                 {
                     case "ccm2": return Ok(await aRepo.GetCCMInstantAsync());
+                    case "akp21": return Ok(await aRepo.GetAKPInstantAsync(11));
+                    case "akp22": return Ok(await aRepo.GetAKPInstantAsync(12));
                     default: throw new Exception("No filter provided");
                 }
             }

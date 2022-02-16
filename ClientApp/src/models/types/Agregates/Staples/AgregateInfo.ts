@@ -1,3 +1,4 @@
+import { AgregateState } from "./AgregateState";
 
 export type AgregateInfo = {
   name?: string
@@ -21,6 +22,7 @@ export type AgregateInfo = {
   slabWidth?: string
   steelGrade?: string
   tgs?: string
+  state?: AgregateState
 
   argon?: boolean
   capdown?: boolean

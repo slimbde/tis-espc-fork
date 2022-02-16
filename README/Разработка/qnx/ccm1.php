@@ -2,6 +2,37 @@
     
     require_once("./functions.php");
     
+    
+    //
+    // retrieves CCM1 temperatures
+    //
+    function getCCM1Temps($startHour, $startMinute) {
+        $result = array();
+        
+        for($i=0; $i<10; ++$i) {
+            $hour = read_file("//20/dd/length_tsteel_1", $i*10+0, 1, "c");
+            $minute = read_file("//20/dd/length_tsteel_1", $i*10+1, 1, "c");
+            
+            if(($hour == $startHour && $minute > $startMinute) 
+                || ($hour > $startHour)
+                || ($startHour > 20 && $hour < 10)  // on the day's edge
+                ) {
+                    $temp = read_file("//20/dd/length_tsteel_1", $i*10+6, 4, "l");
+                    array_push($result, $temp);
+                }
+        }
+        
+        $result = implode(";",$result);
+        
+        // as dev_value field of the target database is of length = 30, truncate the output string
+        if(strlen($result) > 30)        
+            $result = substr($result, 0, 30);
+        
+        return $result;
+    }
+    
+    
+    
     //
     // sending ccm1 instant data to the dispatcher db
     // written by Grigoriy Dolgiy 2021
@@ -62,7 +93,7 @@
         $values['TUNDISH_ID'] = read_file("//20/dd/fusion_struct_1",($tundishCar === 1) ? 1046 : 1194 ,4,"l");
         $values['TUNDISH_STOIK'] = read_file("//20/dd/fusion_struct_1",($tundishCar === 1) ? 1050 : 1200 ,4,"l");
         
-        $values['SAMPLES'] = getMNLZ1Temps($startHour, $startMinute);
+        $values['SAMPLES'] = getCCM1Temps($startHour, $startMinute);
         
         $str = assembleQuery("CCM-1", $values);
         

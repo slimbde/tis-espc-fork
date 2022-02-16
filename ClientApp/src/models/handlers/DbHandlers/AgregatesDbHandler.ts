@@ -7,6 +7,8 @@ import { GasChartFilter } from "models/types/Agregates/Dryers/Gas/GasChartFilter
 import { GasChartPoint } from "models/types/Agregates/Dryers/Gas/GasChartPoint"
 import { AgregateSummary } from "models/types/Agregates/Staples/AgregateSummary"
 import { CCMInstantInfo } from "models/types/Agregates/Staples/CCMInstantInfo"
+import { AKPInstantInfo } from "models/types/Agregates/Staples/AKPInstantInfo"
+import moment from "moment"
 
 
 
@@ -110,6 +112,7 @@ export class AgregatesDbHandler {
     return await resp.json()
   }
 
+
   async ReadCCM2InstantAsync(): Promise<CCMInstantInfo> {
     const resp = await fetch(`${this.backend}/${this.api}/ReadAgregateInfoAsync?filter=ccm2`, {
       credentials: "include"
@@ -119,6 +122,57 @@ export class AgregatesDbHandler {
       throw new Error(`[${this.api}DbHandler]: ${await resp.text()}`)
 
     return await resp.json() as CCMInstantInfo
+  }
+
+
+  async ReadAKPInstantAsync(tank: number): Promise<AKPInstantInfo> {
+    const resp = await fetch(`${this.backend}/${this.api}/ReadAgregateInfoAsync?filter=akp2${tank}`, {
+      credentials: "include"
+    })
+
+    if (resp.status >= 400)
+      throw new Error(`[${this.api}DbHandler]: ${await resp.text()}`)
+
+    // cast backend chemistry to frontend chemistry
+    type BackChemistry = {
+      SampleId: string
+      Point: string
+      Element: string
+      Value: string
+    }
+
+    const result = await resp.json() as AKPInstantInfo
+    const backChems = result.chems as any as BackChemistry[]
+
+    const sampleNo = backChems[0].SampleId
+    result.chemKeys = backChems.filter(el => el.SampleId === sampleNo).map(el => el.Element)
+
+    const nums = backChems.reduce((acc, curr) => {
+      acc.add(curr.SampleId)
+      return acc
+    }, new Set<string>())
+
+    result.chems = []
+    nums.forEach(num => {
+      const elements = backChems.filter(el => el.SampleId === num)
+
+      result.chems.push({
+        num,
+        time: moment(elements[0].Point, "dd.MM.yyyy HH:mm:ss").format("HH:mm"),
+        elements: elements.map(el => el.Value).join(";")
+      })
+    })
+
+    result.chems = result.chems.reverse()
+
+    const minToTime = (mins: number) => moment.utc(mins * 1000).format("HH:mm:ss")
+
+    result.energo.HeatTime = minToTime(+result.energo.HeatTime!)
+    result.energo.HeatCurrentTime = minToTime(+result.energo.HeatCurrentTime!)
+    result.energo.ArgonTime1 = minToTime(+result.energo.ArgonTime1!)
+    result.energo.ArgonTime2 = minToTime(+result.energo.ArgonTime2!)
+
+    return result
   }
 }
 
