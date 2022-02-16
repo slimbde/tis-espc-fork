@@ -5,16 +5,14 @@
   position: relative;
   display: grid;
   grid-template-columns: 1fr 1fr 1.2fr;
-  grid-template-rows: 3rem 1fr 0.35fr 1.5fr;
+  grid-template-rows: 3rem 170px 270px 1fr;
   grid-gap: 3rem;
   grid-template-areas:
     "title title title"
     "heat energy view"
-    "heat gas view";
-  max-height: 85vh;
-  overflow-y: auto;
+    "heat gas view"
+    "heat chems chems";
   overflow-x: hidden;
-  height: 100%;
 
   .title {
     position: relative;
@@ -50,7 +48,7 @@
 
     &.state-hot-idle::after {
       content: "Горячий простой";
-      background-color: $state-process;
+      background-color: $state-hot-idle;
     }
 
     &.state-heating::after {
@@ -75,9 +73,12 @@
 
   .state-heating::before,
   .state-flush-steel::before,
-  .state-flush-slag::before,
-  .state-hot-idle::before {
+  .state-flush-slag::before {
     background-color: $state-process !important;
+  }
+
+  .state-hot-idle::before {
+    background-color: $state-hot-idle !important;
   }
 
   span {
@@ -121,7 +122,8 @@
   }
 
   .list-group::before,
-  .gas::before {
+  .gas::before,
+  .chems::before {
     position: absolute;
     z-index: 0;
     top: -1.2rem;
@@ -197,5 +199,8 @@
         border-top: 2px solid lightgray;
       }
     }
+  }
+
+  .chems {
   }
 }

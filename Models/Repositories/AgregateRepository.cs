@@ -4,6 +4,7 @@ using Oracle.ManagedDataAccess.Client;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.Linq;
 using System.Data.Common;
 using System.Threading.Tasks;
 using TIS_ESPC_FORK.Models.DTOs.Agregates.Staple;
@@ -15,6 +16,7 @@ namespace TIS_ESPC_FORK.Models.Repositories
     {
         readonly static string conString = ConfigurationManager.ConnectionStrings["mysql"].ConnectionString;
         readonly static string oraString = ConfigurationManager.ConnectionStrings["oracle"].ConnectionString;
+        readonly static string oraLFVODString = ConfigurationManager.ConnectionStrings["oracleLFVOD"].ConnectionString;
 
 
 
@@ -178,5 +180,13 @@ namespace TIS_ESPC_FORK.Models.Repositories
 
             return result;
         }
+    
+    
+        public async Task<ILookup<string, object>> GetAKPInstant()
+        {
+            using (IDbConnection db = new OracleConnection(oraLFVODString))
+            {
+                string stmt = 
+            }
     }
 }

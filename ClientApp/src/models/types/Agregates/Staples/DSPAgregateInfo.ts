@@ -1,4 +1,5 @@
 import { AgregateInfo } from "./AgregateInfo";
+import { Chemical } from "./Chemical";
 
 export type DSPAgregateInfo = AgregateInfo & {
   eeHeatReactive?: string
@@ -18,4 +19,6 @@ export type DSPAgregateInfo = AgregateInfo & {
   stoikSvodSm?: string
   stoikWall?: string
   gas?: string[]
+  chemicals?: Chemical[]
+  chemicalKey?: string
 }

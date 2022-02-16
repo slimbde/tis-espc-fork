@@ -1,22 +1,14 @@
 import { AgregateInfo } from "models/types/Agregates/Staples/AgregateInfo";
 import { AgregateSummary } from "models/types/Agregates/Staples/AgregateSummary";
-import { AKOSAgregateInfo, AKOSChemical } from "models/types/Agregates/Staples/AKOSAgregateInfo";
+import { AKOSAgregateInfo } from "models/types/Agregates/Staples/AKOSAgregateInfo";
 import { CCMAgregateInfo } from "models/types/Agregates/Staples/CCMAgregateInfo";
+import { Chemical } from "models/types/Agregates/Staples/Chemical";
 import { DSPAgregateInfo } from "models/types/Agregates/Staples/DSPAgregateInfo";
 import moment from "moment";
 
 
 export class StapleSummaryHandler {
   private summary: AgregateSummary[]
-
-  private getTimeFromMins = (mins: number) => {
-    if (mins > 1440)
-      return moment.utc().hours(12).minutes(59).format("HH:mm")
-
-    const h = mins / 60 | 0
-    const m = mins % 60 | 0
-    return moment.utc().hours(h).minutes(m).format("HH:mm")
-  }
 
   private isDataDelayed = (delayControlField: AgregateSummary) => moment()
     .diff(moment(delayControlField.UpdatePoint, "DD.MM.YYYY HH:mm:ss"), "minute") > 2
@@ -65,6 +57,15 @@ export class StapleSummaryHandler {
     gas.push(dspSummary.filter(s => s.Tag === "GAS_PK")[0].Value)
     gas.push(dspSummary.filter(s => s.Tag === "GAS_SUMM")[0].Value)
 
+    const chemicalKey = dspSummary.filter(s => s.Tag === "CHEMICAL_KEY")[0].Value
+    const chemicalNums = dspSummary.filter(s => s.Tag === "CHEMICAL_NUMS")[0].Value.split(";")
+    const chemicalTimes = dspSummary.filter(s => s.Tag === "CHEMICAL_TIMES")[0].Value.split(";")
+    const chemicals: Chemical[] = chemicalNums.map((num, idx) => ({
+      num,
+      time: chemicalTimes[idx],
+      elements: dspSummary.filter(s => s.Tag === `CHEMICAL_${idx}`)[0].Value
+    }))
+
     const update = dspSummary.filter(s => s.Tag === "$DateTime")[0]
 
 
@@ -77,6 +78,8 @@ export class StapleSummaryHandler {
       eeHeatActive: eeHeatActive !== "0" ? eeHeatActive : undefined,
       heatTime: eeHeatActive !== "0" ? heatTime : undefined,
       heatCurrentTime: eeHeatActive !== "0" ? heatCurrentTime : undefined,
+      chemicalKey,
+      chemicals,
 
       eeHeatReactive,
       eeTodayActive,
@@ -131,7 +134,7 @@ export class StapleSummaryHandler {
 
     const chemicalNums = summary.filter(s => s.Tag === "CHEMICAL_NUMS")[0].Value.split(";")
     const chemicalTimes = summary.filter(s => s.Tag === "CHEMICAL_TIMES")[0].Value.split(";")
-    const chemicals: AKOSChemical[] = chemicalNums.map((num, idx) => ({
+    const chemicals: Chemical[] = chemicalNums.map((num, idx) => ({
       num,
       time: chemicalTimes[idx],
       elements: summary.filter(s => s.Tag === `CHEMICAL_${idx}`)[0].Value
