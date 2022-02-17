@@ -378,6 +378,13 @@ export class StapleSummaryHandler {
     const update = summary.filter(s => s.Tag === "$DateTime")[0]
     const heatStart = summary.filter(s => s.Tag === "TRK_WS_TIME_OPN")[0].Value
     const heatTime = moment.utc(moment().diff(moment(heatStart, "HH:mm:ss"))).format("HH:mm:ss")
+    const steelGrade = summary.filter(s => s.Tag === "STEEL_GRADE")[0].Value
+    const heatWeight = summary.filter(s => s.Tag === "HEAT_WEIGHT")[0].Value
+    const castedMeters = summary.filter(s => s.Tag === "CASTED_METERS")[0].Value
+    const castedTonns = summary.filter(s => s.Tag === "CASTED_TONNS")[0].Value
+    const slabThickness = summary.filter(s => s.Tag === "SLAB_THICKNESS")[0].Value
+    const slabWidth = summary.filter(s => s.Tag === "SLAB_WIDTH")[0].Value
+    const currentTemp = summary.filter(s => s.Tag === "CURRENT_TEMP")[0].Value
 
     const mldTk = +summary.filter(s => s.Tag === "L2S_WM_COM_MLD_TK")[0].Value
     const exitWidth = +summary.filter(s => s.Tag === "MWA_WS_EXIT_WIDTH")[0].Value
@@ -404,7 +411,14 @@ export class StapleSummaryHandler {
       series: series.Value,
       heatStart,
       heatTime,
+      heatWeight,
       castingSpeed: Math.round(+castingSpeed.Value * 100) / 100 + "",
+      steelGrade,
+      castedMeters,
+      castedTonns,
+      slabWidth,
+      slabThickness,
+      currentTemp,
       streamCast: summary.filter(s => s.Tag === "COM_BS_CAST_MODE")[0].Value !== "0",
       tgs,
 

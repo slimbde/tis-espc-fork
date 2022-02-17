@@ -266,7 +266,7 @@ namespace TIS_ESPC_FORK.Models.Repositories
                                     AND dc.device = @device
                                     AND ds.dev_tag <> '';";
 
-                result["mysql"] = await db.QueryAsync<AgregateSummary>(stmt, new { device = stationCode == 12 ? 72 : 71 });
+                result["mysql"] = await db.QueryAsync<AgregateSummary>(stmt, new { device = stationCode == 12 ? 71 : 72 });
             }
 
             return result;

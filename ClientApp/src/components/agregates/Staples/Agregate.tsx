@@ -119,13 +119,8 @@ export const Agregate: React.FC<AgregateInfo> = ({
         </div>}
 
         {castedMeters && <div>
-          <div>Отлито, м</div>
-          <div>{castedMeters}</div>
-        </div>}
-
-        {castedTonns && <div>
-          <div>Отлито, т</div>
-          <div>{castedTonns}</div>
+          <div>Отлито,м/т</div>
+          <div>{castedMeters} {castedTonns}</div>
         </div>}
 
         {eeHeatActive && <div>
@@ -133,8 +128,8 @@ export const Agregate: React.FC<AgregateInfo> = ({
           <div>{eeHeatActive}</div>
         </div>}
 
-        {currentTemp && name?.indexOf("АК") !== -1 && <div>
-          <div>Температура</div>
+        {currentTemp && <div>
+          <div>T, ℃</div>
           <div>{currentTemp}</div>
         </div>}
 
@@ -158,8 +153,8 @@ export const Agregate: React.FC<AgregateInfo> = ({
           <div>{heatCurrentTime}</div>
         </div>}
 
-        {heatWeight && name?.indexOf("АК") !== -1 && <div>
-          <div>Вес Ме, тонн</div>
+        {heatWeight && <div>
+          <div>Вес Ме, тн</div>
           <div>{heatWeight}</div>
         </div>}
 

@@ -60,7 +60,7 @@ export const CCM2Details: React.FC = () => {
 
   useEffect(() => {
     update()
-    const interval = setInterval(update, 15000)
+    const interval = setInterval(update, (window as any).config.agregatesUpdateInterval)
     return () => clearInterval(interval)
     //eslint-disable-next-line
   }, [])

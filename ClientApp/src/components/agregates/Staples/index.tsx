@@ -73,7 +73,7 @@ export const Staples: React.FC = () => {
     update()
       .then(() => setState(state => ({ ...state, loading: false })))
 
-    const interval = setInterval(() => update(), 15000)
+    const interval = setInterval(() => update(), (window as any).config.agregatesUpdateInterval)
 
     return () => {
       clearInterval(interval)

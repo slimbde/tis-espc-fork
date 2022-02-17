@@ -4,6 +4,7 @@ window.config = {
   host: "http://10.2.19.193:83",
   imgPath: "Overview",
   oldImgPath: "Screen",
+  agregatesUpdateInterval: 15000,
 }
 
 window.config.hostPath = `${window.config.host}/${window.config.imgPath}`

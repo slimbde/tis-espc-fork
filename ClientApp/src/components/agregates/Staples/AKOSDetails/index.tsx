@@ -76,7 +76,7 @@ export const AKOSDetails: React.FC = () => {
 
   useEffect(() => {
     update()
-    const interval = setInterval(update, 60000)
+    const interval = setInterval(update, (window as any).config.agregatesUpdateInterval)
     return () => clearInterval(interval)
     //eslint-disable-next-line
   }, [])
