@@ -5,13 +5,13 @@
   position: relative;
   display: grid;
   grid-template-columns: 1fr 1fr 1.2fr;
-  grid-template-rows: 3rem 1fr 0.1fr 1.9fr;
+  grid-template-rows: 3rem 250px 0.5fr 1fr;
   grid-gap: 3rem;
   grid-template-areas:
     "title   title  title"
     "heat    energo view"
-    "samples energo view"
-    "samples chems  chems";
+    "samples chems  chems"
+    "samples events events";
   overflow-x: hidden;
   height: 100%;
 
@@ -133,5 +133,16 @@
 
   .samples::before {
     content: "Образцы";
+  }
+
+  .events {
+    .list-group-item {
+      font-size: 0.78rem;
+      padding: 0.2rem.5rem;
+    }
+
+    &::before {
+      content: "События";
+    }
   }
 }

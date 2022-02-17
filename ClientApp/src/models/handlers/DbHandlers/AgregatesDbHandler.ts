@@ -142,28 +142,31 @@ export class AgregatesDbHandler {
     }
 
     const result = await resp.json() as AKPInstantInfo
-    const backChems = result.chems as any as BackChemistry[]
 
-    const sampleNo = backChems[0].SampleId
-    result.chemKeys = backChems.filter(el => el.SampleId === sampleNo).map(el => el.Element)
+    if (result.chems.length > 0) {
+      const backChems = result.chems as any as BackChemistry[]
 
-    const nums = backChems.reduce((acc, curr) => {
-      acc.add(curr.SampleId)
-      return acc
-    }, new Set<string>())
+      const sampleNo = backChems[0].SampleId
+      result.chemKeys = backChems.filter(el => el.SampleId === sampleNo).map(el => el.Element)
 
-    result.chems = []
-    nums.forEach(num => {
-      const elements = backChems.filter(el => el.SampleId === num)
+      const nums = backChems.reduce((acc, curr) => {
+        acc.add(curr.SampleId)
+        return acc
+      }, new Set<string>())
 
-      result.chems.push({
-        num,
-        time: moment(elements[0].Point, "dd.MM.yyyy HH:mm:ss").format("HH:mm"),
-        elements: elements.map(el => el.Value).join(";")
+      result.chems = []
+      nums.forEach(num => {
+        const elements = backChems.filter(el => el.SampleId === num)
+
+        result.chems.push({
+          num,
+          time: moment(elements[0].Point, "dd.MM.yyyy HH:mm:ss").format("HH:mm"),
+          elements: elements.map(el => el.Value).join(";")
+        })
       })
-    })
 
-    result.chems = result.chems.reverse()
+      result.chems = result.chems.reverse()
+    }
 
     const minToTime = (mins: number) => moment.utc(mins * 1000).format("HH:mm:ss")
 

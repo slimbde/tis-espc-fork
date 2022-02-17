@@ -1,5 +1,5 @@
 import { AgregateInfo } from "models/types/Agregates/Staples/AgregateInfo"
-import { akosState, ccmState, dspState, vdState } from "models/types/Agregates/Staples/AgregateState"
+import { AgregateState, ccmState, vdState } from "models/types/Agregates/Staples/AgregateState"
 import { Link } from "react-router-dom"
 import { Card, CardBody, CardHeader } from "reactstrap"
 import { AKPView } from "./views/akp"
@@ -64,15 +64,10 @@ export const Agregate: React.FC<AgregateInfo> = ({
       case "МНЛЗ-1":
       case "МНЛЗ-2":
         return ccmState(streamCast, castingSpeed)
-      case "АКОС":
-        return akosState(energy, argon, heatCurrentTime, argonTime)
-      case "ДСП":
-        return dspState(energy, eeHeatActive)
-      case "АКП2-1поз":
-      case "АКП2-2поз":
-        return state
-      default:
+      case "ВД-1поз":
+      case "ВД-2поз":
         return vdState(energy, argon, empty)
+      default: return state
     }
   }
 
@@ -90,7 +85,7 @@ export const Agregate: React.FC<AgregateInfo> = ({
     <CardBody className={cardStatusStyle()}>
       {name === "МНЛЗ-1" && <CCMView cast={streamCast!} head={`s10`} />}
       {name === "МНЛЗ-2" && <CCMView cast={streamCast!} head={tgs!} />}
-      {name === "ДСП" && <DSPView energy={energy!} coldIdle={!eeHeatActive} flushSteel={flushSteel!} flushSlag={flushSlag!} />}
+      {name === "ДСП" && <DSPView energy={energy!} coldIdle={state === AgregateState.IDLE} flushSteel={flushSteel!} flushSlag={flushSlag!} />}
       {name === "АКОС" && <AKPView energy={energy!} argon={argon!} capdown={capdown!} empty={empty!} />}
       {name === "АКП2-1поз" && <AKPView energy={energy!} argon={argon!} capdown={capdown!} empty={empty!} />}
       {name === "АКП2-2поз" && <AKPView energy={energy!} argon={argon!} capdown={capdown!} empty={empty!} />}
@@ -119,7 +114,7 @@ export const Agregate: React.FC<AgregateInfo> = ({
         </div>}
 
         {heatTime && <div>
-          <div>Время</div>
+          <div>Длительн.</div>
           <div>{heatTime}</div>
         </div>}
 

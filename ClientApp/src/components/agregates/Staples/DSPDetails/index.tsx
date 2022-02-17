@@ -8,7 +8,7 @@ import { DSPInstantEnergyDecoder, DSPInstantEnergyInfo, DSPInstantHeatDecoder, D
 import { DSPAgregateInfo } from "models/types/Agregates/Staples/DSPAgregateInfo"
 import { DSPView } from "../views/dsp"
 import aHandler from "models/handlers/DbHandlers/AgregatesDbHandler"
-import { dspState } from "models/types/Agregates/Staples/AgregateState"
+import { AgregateState } from "models/types/Agregates/Staples/AgregateState"
 
 
 type State = {
@@ -78,8 +78,6 @@ export const DSPDetails: React.FC = () => {
     //eslint-disable-next-line
   }, [])
 
-  const dspDetailsState = () => dspState(state.mysql?.energy, state.mysql?.eeHeatActive)
-
 
 
   const gasItem = (title: string, values: string) =>
@@ -94,14 +92,14 @@ export const DSPDetails: React.FC = () => {
 
   return <div className="dsp-details-wrapper">
     <Alert id="alert">Hello</Alert>
-    <div className={`title display-5 ${dspDetailsState()}`} style={{ gridArea: "title" }}>
+    <div className={`title display-5 ${state.mysql?.state}`} style={{ gridArea: "title" }}>
       ДСП
       <div className="last-update">{state.lastUpdate}</div>
     </div>
 
     <span className="a-like" style={{ gridArea: "title" }} onClick={() => window.history.back()}>Назад</span>
 
-    <ListGroup className={`heat ${dspDetailsState()}`} style={{ gridArea: "heat" }}>
+    <ListGroup className={`heat ${state.mysql?.state}`} style={{ gridArea: "heat" }}>
       {state.heat && Object.keys(state.heat).map(key =>
         <ListGroupItem key={key}>
           <div>{(DSPInstantHeatDecoder as any)[key]}</div>
@@ -111,7 +109,7 @@ export const DSPDetails: React.FC = () => {
       {!state.heat && <Loading />}
     </ListGroup>
 
-    <ListGroup className={`energy ${dspDetailsState()}`} style={{ gridArea: "energy" }}>
+    <ListGroup className={`energy ${state.mysql?.state}`} style={{ gridArea: "energy" }}>
       {state.energy && Object.keys(state.energy).map(key =>
         <ListGroupItem key={key}>
           <div>{(DSPInstantEnergyDecoder as any)[key]}</div>
@@ -121,7 +119,7 @@ export const DSPDetails: React.FC = () => {
       {!state.energy && <Loading />}
     </ListGroup>
 
-    <div className={`gas ${dspDetailsState()}`}>
+    <div className={`gas ${state.mysql?.state}`}>
       <div className="gas-header">
         <div></div>
         <div>Газ</div>
@@ -150,7 +148,7 @@ export const DSPDetails: React.FC = () => {
         </>}
     </div>
 
-    <div className={`chems ${dspDetailsState()}`}>
+    <div className={`chems ${state.mysql?.state}`}>
       <div className="chems-header">
         <div key={0}>№</div>
         <div key={1}>Время</div>
@@ -166,7 +164,7 @@ export const DSPDetails: React.FC = () => {
 
     {state.mysql && <DSPView
       energy={state.mysql.energy!}
-      coldIdle={!state.mysql.eeHeatActive!}
+      coldIdle={state.mysql?.state === AgregateState.IDLE}
       flushSteel={state.mysql.flushSteel!}
       flushSlag={state.mysql.flushSlag!}
     />}

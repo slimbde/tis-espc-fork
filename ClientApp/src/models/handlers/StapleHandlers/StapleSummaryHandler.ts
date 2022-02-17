@@ -44,6 +44,19 @@ export class StapleSummaryHandler {
     const stoikSvodSm = dspSummary.filter(s => s.Tag === "STOIK_SVOD_SM")[0].Value
     const stoikWall = dspSummary.filter(s => s.Tag === "STOIK_WALL")[0].Value
 
+
+    let state = AgregateState.IDLE                  // Холодный простой
+    const stateCode = +dspSummary.filter(s => s.Tag === "STATE")[0].Value
+
+    switch (stateCode) {
+      case 1:                                       // Плавление завалки
+      case 2:                                       // Плавление первой подвалки
+      case 3:                                       // Плавление второй подвалки
+      case 4: state = AgregateState.PROCESS; break; // Доводка металла
+      case 5: state = AgregateState.HOTIDLE; break; // Горячий простой
+      default: break;
+    }
+
     const angle = dspSummary.filter(s => s.Tag === "ANGLE")[0].Value
     const flushSteel = +angle > 5
     const flushSlag = +angle < -5
@@ -76,11 +89,12 @@ export class StapleSummaryHandler {
       steelGrade: steelGrade.Value,
       energy,
       heatStart,
-      eeHeatActive: eeHeatActive !== "0" ? eeHeatActive : undefined,
-      heatTime: eeHeatActive !== "0" ? heatTime : undefined,
-      heatCurrentTime: eeHeatActive !== "0" ? heatCurrentTime : undefined,
+      eeHeatActive,
+      heatTime,
+      heatCurrentTime,
       chemicalKey,
       chemicals,
+      state,
 
       eeHeatReactive,
       eeTodayActive,
@@ -129,10 +143,36 @@ export class StapleSummaryHandler {
     const argonFlowInstPwd = summary.filter(s => s.Tag === "ARGON_FLOW_INST_PWD")[0].Value
     const steamPipeVacuum = summary.filter(s => s.Tag === "STEAM_PIPE_VACUUM")[0].Value
     const currentTemp = summary.filter(s => s.Tag === "CURRENT_TEMP")[0].Value
-    const svodVertical = summary.filter(s => s.Tag === "SVOD_VERTICAL")[0].Value
     const samples = summary.filter(s => s.Tag === "SAMPLES")[0].Value
-    const chemicalKey = summary.filter(s => s.Tag === "CHEMICAL_KEY")[0].Value
 
+
+    // Холодный простой
+    let initializer: boolean[] = [false, false, false, true]
+    let state = AgregateState.IDLE
+
+    const stateCode = +summary.filter(s => s.Tag === "STATE")[0].Value
+
+    if (stateCode === 1) {  // Горячий простой
+      initializer = [false, false, true, false]
+      state = AgregateState.HOTIDLE
+    }
+    if (stateCode === 2) {  // Продувка
+      initializer = [false, true, true, false]
+      state = AgregateState.PROCESS
+    }
+    if (stateCode === 3) {  // Под током
+      initializer = [true, false, true, false]
+      state = AgregateState.PROCESS
+    }
+    if (stateCode === 4) {  // Ток и продувка
+      initializer = [true, true, true, false]
+      state = AgregateState.PROCESS
+    }
+
+    const [energy, argon, capdown, empty] = initializer
+
+
+    const chemicalKey = summary.filter(s => s.Tag === "CHEMICAL_KEY")[0].Value
     const chemicalNums = summary.filter(s => s.Tag === "CHEMICAL_NUMS")[0].Value.split(";")
     const chemicalTimes = summary.filter(s => s.Tag === "CHEMICAL_TIMES")[0].Value.split(";")
     const chemicals: Chemical[] = chemicalNums.map((num, idx) => ({
@@ -166,10 +206,11 @@ export class StapleSummaryHandler {
       samples,
       chemicalKey,
       chemicals,
-      argon: summary.filter(s => s.Tag === "ARGON_ON")[0].Value === "1",
-      energy: summary.filter(s => s.Tag === "ENERGY_ARC_ON")[0].Value === "1",
-      capdown: svodVertical === "2" || svodVertical === "0",
-      empty: false,
+      state,
+      argon,
+      energy,
+      capdown,
+      empty,
 
       dataDelayed: this.isDataDelayed(update),
       lastUpdate: moment().format("YYYY-MM-DD HH:mm:ss"),
