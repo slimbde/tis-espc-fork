@@ -1,5 +1,5 @@
 import { AgregateInfo } from "models/types/Agregates/Staples/AgregateInfo"
-import { AgregateState, ccmState, vdState } from "models/types/Agregates/Staples/AgregateState"
+import { AgregateState, ccmState } from "models/types/Agregates/Staples/AgregateState"
 import { Link } from "react-router-dom"
 import { Card, CardBody, CardHeader } from "reactstrap"
 import { AKPView } from "./views/akp"
@@ -11,38 +11,37 @@ import { DSPView } from "./views/dsp"
 
 export const Agregate: React.FC<AgregateInfo> = ({
   name,
-  heatId,
-  series,
-  steelGrade,
-  flowSpeed,
+  argon,
+  argonFlow,
+  argonPressure,
+  capdown,
   castingSpeed,
+  castedMeters,
+  castedTonns,
+  currentTemp,
+  eeHeatActive,
+  energy,
+  empty,
+  flushSteel,
+  flushSlag,
+  heatId,
   heatStart,
   heatTime,
   heatWeight,
   heatCurrentTime,
-  eeHeatActive,
   ladleId,
-  argonFlow,
-  argonTime,
-  argonPressure,
-  tgs,
-  streamCast,
+  series,
   slabWidth,
   slabThickness,
-  castedMeters,
-  castedTonns,
-  currentTemp,
-  energy,
-  argon,
-  capdown,
-  empty,
-  vacuum,
-  flushSteel,
-  flushSlag,
   state,
+  steelGrade,
+  streamCast,
+  tgs,
+  vacuum,
+  vacuumTime,
+  vacuumPressure,
 
   dataDelayed,
-  lastUpdate,
 }) => {
 
   const detailsLink = () => {
@@ -64,9 +63,6 @@ export const Agregate: React.FC<AgregateInfo> = ({
       case "МНЛЗ-1":
       case "МНЛЗ-2":
         return ccmState(streamCast, castingSpeed)
-      case "ВД-1поз":
-      case "ВД-2поз":
-        return vdState(energy, argon, empty)
       default: return state
     }
   }
@@ -133,7 +129,7 @@ export const Agregate: React.FC<AgregateInfo> = ({
           <div>{currentTemp}</div>
         </div>}
 
-        {ladleId && name?.indexOf("АК") !== -1 && <div>
+        {ladleId && name?.indexOf("МНЛ") === -1 && <div>
           <div>Номер с/к</div>
           <div>{ladleId}</div>
         </div>}
@@ -158,14 +154,14 @@ export const Agregate: React.FC<AgregateInfo> = ({
           <div>{heatWeight}</div>
         </div>}
 
-        {energy && <div>
-          <div>Энергия</div>
-          <div>Подана</div>
+        {vacuumTime && <div>
+          <div>Вакуум время</div>
+          <div>{vacuumTime}</div>
         </div>}
 
-        {argon && <div>
-          <div>Аргон</div>
-          <div>Включен</div>
+        {vacuumPressure && <div>
+          <div>P, мм.рт.ст</div>
+          <div>{vacuumPressure}</div>
         </div>}
 
         {vacuum && <div>

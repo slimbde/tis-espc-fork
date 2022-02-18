@@ -97,25 +97,23 @@ export const AKPDetails: React.FC = () => {
       })}
     </ListGroup>
 
-    {state.instantInfo?.chems && state.instantInfo?.chems.length > 0 &&
-      <div className={`chems ${state.agregateState}`}>
-        <div className="chems-header">
-          <div key={0}>№</div>
-          <div key={1}>Время</div>
-          {state.instantInfo?.chemKeys?.map(el => <div key={el}>{el}</div>)}
-        </div>
-        {state.instantInfo.chems.map(item =>
-          <div className="chems-row" key={`${item.num}${item.time}`}>
-            <div key={11} className="chems-item">{item.num}</div>
-            <div key={12} className="chems-item">{item.time}</div>
-            {item.elements.split(";").map((val, idx) => <div className="chems-item" key={`${val}${idx}`}>{val}</div>)}
-          </div>)}
+    <div className={`chems ${state.agregateState}`}>
+      {state.instantInfo?.chems && state.instantInfo?.chems.length > 0 && <div className="chems-header">
+        <div key={0}>№</div>
+        <div key={1}>Время</div>
+        {state.instantInfo?.chemKeys?.map(el => <div key={el}>{el}</div>)}
       </div>}
+      {state.instantInfo?.chems && state.instantInfo?.chems.length > 0 && state.instantInfo.chems.map(item =>
+        <div className="chems-row" key={`${item.num}${item.time}`}>
+          <div key={11} className="chems-item">{item.num}</div>
+          <div key={12} className="chems-item">{item.time}</div>
+          {item.elements.split(";").map((val, idx) => <div className="chems-item" key={`${val}${idx}`}>{val}</div>)}
+        </div>)}
+    </div>
 
-    {state.instantInfo?.events &&
-      <ListGroup className={`events ${state.agregateState}`} style={{ gridArea: "events" }}>
-        {state.instantInfo.events.map(key => <ListGroupItem key={key}>{key}</ListGroupItem>)}
-      </ListGroup>}
+    <ListGroup className={`events ${state.agregateState}`} style={{ gridArea: "events" }}>
+      {state.instantInfo?.events && state.instantInfo.events.length > 0 && state.instantInfo.events.map(key => <ListGroupItem key={key}>{key}</ListGroupItem>)}
+    </ListGroup>
 
 
     {state.mysql && <AKPView

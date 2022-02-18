@@ -4,6 +4,7 @@ import { setFluid } from "components/extra/SetFluid";
 import aHandler from "models/handlers/DbHandlers/AgregatesDbHandler";
 import { StapleSummaryHandler } from "models/handlers/StapleHandlers/StapleSummaryHandler";
 import { AgregateInfo } from "models/types/Agregates/Staples/AgregateInfo";
+import moment from "moment";
 import { useEffect, useState } from "react";
 import { Alert } from "reactstrap"
 import { Agregate } from "./Agregate";
@@ -63,6 +64,9 @@ export const Staples: React.FC = () => {
           vd1: sHandler.GetVDInfo(1),
           vd2: sHandler.GetVDInfo(2),
         }))
+
+        const time = document.querySelector(".title small")
+        time && (time.textContent = `${moment().format("HH:mm:ss")}`)
       })
       .catch(error => {
         blinkAlert(error, false)
@@ -85,7 +89,7 @@ export const Staples: React.FC = () => {
 
   return <div className="staples-wrapper">
     <Alert id="alert">Hello</Alert>
-    <div className="title display-5" style={{ gridArea: "title" }} >{state.title}</div>
+    <div className="title display-5" style={{ gridArea: "title" }}>{state.title}<small>sdf</small></div>
 
     {state.loading && <Loading />}
     {!state.loading && !state.loadError && <>

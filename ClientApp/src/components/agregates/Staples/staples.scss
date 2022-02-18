@@ -29,7 +29,15 @@
   }
 
   .display-5 {
-    margin-bottom: 0;
+    margin-bottom: 0.5rem;
+
+    small {
+      color: gray;
+      font-size: 0.7rem;
+      position: absolute;
+      left: 1.1rem;
+      top: 2.5rem;
+    }
   }
 
   .card {

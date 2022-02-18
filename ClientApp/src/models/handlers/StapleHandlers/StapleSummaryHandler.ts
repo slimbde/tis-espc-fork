@@ -228,7 +228,9 @@ export class StapleSummaryHandler {
     const currentTemp = summary.filter(s => s.Tag === "CURRENT_TEMP")[0].Value
     const heatCurrentTime = summary.filter(s => s.Tag === "HEAT_CURRENT_TIME")[0].Value
     const heatWeight = summary.filter(s => s.Tag === "HEAT_WEIGHT")[0].Value
+    const heatStart = summary.filter(s => s.Tag === "HEAT_START")[0].Value
     const ladleId = summary.filter(s => s.Tag === "LADLE_ID")[0].Value
+
 
     // Холодный простой
     let initializer: boolean[] = [false, false, false, true]
@@ -272,6 +274,7 @@ export class StapleSummaryHandler {
       energy,
       capdown,
       state,
+      heatStart,
 
       dataDelayed: this.isDataDelayed(update),
       lastUpdate: moment().format("YYYY-MM-DD HH:mm:ss"),
@@ -430,20 +433,62 @@ export class StapleSummaryHandler {
   GetVDInfo = (num: 1 | 2): AgregateInfo => {
     const summary: AgregateSummary[] = this.summary.filter(s => s.Name === `VD-2${num}`)
 
+    const update = summary.filter(s => s.Tag === "$DateTime")[0]
     const heatId = summary.filter(s => s.Tag === "HEAT_ID")[0]
-    const steelGrade = summary.filter(s => s.Tag === "STEEL_GRD")[0]
-    const vacuum = summary.filter(s => s.Tag === "VACUUM_ON")[0].Value === "True"
-    const capdown = summary.filter(s => s.Tag === "SVOD_LOW")[0].Value === "True"
+    const steelGrade = summary.filter(s => s.Tag === "STEEL_GRADE")[0]
+    const activeTank = +summary.filter(s => s.Tag === "TANK_ID")[0].Value
+    const currentTemp = summary.filter(s => s.Tag === "CURRENT_TEMP")[0].Value
+    const heatWeight = summary.filter(s => s.Tag === "HEAT_WEIGHT")[0].Value
+    const heatStart = summary.filter(s => s.Tag === "HEAT_START")[0].Value
+    const ladleId = summary.filter(s => s.Tag === "LADLE_ID")[0].Value
+    const vacuumTime = summary.filter(s => s.Tag === "VACUUM_TIME")[0].Value
+    const vacuumPressure = summary.filter(s => s.Tag === "VACUUM_PRESSURE")[0].Value
+
+    // Холодный простой
+    let initializer: boolean[] = [false, false, false, true]
+    let state = AgregateState.IDLE
+
+    const stateCode = +summary.filter(s => s.Tag === "STATE")[0].Value
+
+    if (activeTank === num) {
+      if (stateCode === 1) {  // Горячий простой
+        initializer = [false, false, true, false]
+        state = AgregateState.HOTIDLE
+      }
+      if (stateCode === 2) {  // Продувка
+        initializer = [false, true, true, false]
+        state = AgregateState.PROCESS
+      }
+      if (stateCode === 3) {  // Вакууь
+        initializer = [true, false, true, false]
+        state = AgregateState.PROCESS
+      }
+      if (stateCode === 4) {  // Вакуум и продувка
+        initializer = [true, true, true, false]
+        state = AgregateState.PROCESS
+      }
+    }
+
+    const [vacuum, argon, capdown, empty] = initializer
+
 
     return {
       name: `ВД-${num}поз`,
       heatId: heatId.Value.replace(/[^a-zA-Zа-яА-Я0-9]/g, ""),
       steelGrade: steelGrade.Value.replace(/[^a-zA-Zа-яА-Я0-9]/g, ""),
-      argon: summary.filter(s => s.Tag === "ARGON_ON")[0].Value === "True",
+      currentTemp,
+      heatWeight,
+      ladleId,
+      vacuumTime,
+      vacuumPressure,
+      argon,
       capdown,
       vacuum,
+      empty,
+      state,
+      heatStart,
 
-      dataDelayed: false,
+      dataDelayed: this.isDataDelayed(update),
       lastUpdate: moment().format("YYYY-MM-DD HH:mm:ss"),
     }
   }

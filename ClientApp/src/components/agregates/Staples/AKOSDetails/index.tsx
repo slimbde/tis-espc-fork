@@ -115,7 +115,8 @@ export const AKOSDetails: React.FC = () => {
     </ListGroup>
 
     <ListGroup className={`samples ${state.agregateState}`} style={{ gridArea: "samples" }}>
-      {state.samples && state.samples.map(pair => {
+      {state.samples && state.samples.length > 0 && state.samples.map(pair => {
+        if (pair === "") return <div key={1}></div>
         const split = pair.split("=")
         return <ListGroupItem key={pair}>
           <div>{split[0]}</div>

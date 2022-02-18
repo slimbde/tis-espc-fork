@@ -22,6 +22,8 @@ export type AgregateInfo = {
   slabWidth?: string
   steelGrade?: string
   tgs?: string
+  vacuumTime?: string
+  vacuumPressure?: string
   state?: AgregateState
 
   argon?: boolean

@@ -2,6 +2,15 @@
     
     require_once("./functions.php");
     
+    /*  STATE
+      0 "Холодный простой",
+      1 "Горячий простой",
+      2 "Продувка",
+      3 "Под током",
+      4 "Под током и продувка",
+    */
+    
+    
     
     //
     // assembles AKOS temperatures
@@ -107,17 +116,9 @@
         $values['CURRENT_TEMP'] = read_file("//14/dd/steel4diagn",82,2,"s");
         $values['ARGON_FLOW'] = read_file("//14/dd/Ar_i",0,2,"s");
         $values['ARGON_PRESSURE'] = round(read_file("//14/dd/Ar_c",19,4,"f"),1);
-        $values['ARGON_ON'] = read_file("//14/dd/akos_process",0,1,"c");
-        $values['ENERGY_ARC_ON'] = read_file("//14/dd/akos_process",1,1,"c");
         $values['SVOD_VERTICAL'] = read_file("//14/dd/mecanics",0,1,"c");
         $values['SVOD_HORIZONTAL'] = read_file("//14/dd/mecanics",1,1,"c");
         $values['HEAT_WEIGHT'] = read_file("//14/dd/mass",0,4,"f");
-        
-        $totalMinutes = intval(read_file("//14/dd/elpar_vu",33,2,"s"));
-        $hours = $totalMinutes >= 60 ? $totalMinutes % 60 : 0;
-        $minutes = $totalMinutes - $hours * 60;
-        $values['HEAT_CURRENT_TIME'] = assembleTime($hours, $minutes, 0);
-
         $values['HEAT_TAB'] = read_file("//14/dd/fusion",18,4,"l");
         $values['EE_HEAT_ACTIVE'] = read_file("//14/dd/elpar_vu",4,4,"l");
         $values['STOIK_SVOD'] = read_file("//14/dd/vacswitch",7,2,"s");
@@ -128,6 +129,29 @@
         $values['ARGON_TIME_DOWN'] = minToTime(read_file("//14/dd/Ar_i",25,2,"s"));
         $values['ARGON_FLOW_INST_PWD'] = read_file("//14/dd/pour_isa",0,4,"f");
         $values['STEAM_PIPE_VACUUM'] = round(read_file("//14/dd/funnel",0,4,"f"),1);
+        
+        $elparVuSumWorktime = intval(read_file("//14/dd/elpar_vu",33,2,"s"));
+        $akosProcessFlowProc = intval(read_file("//14/dd/akos_process",0,1,"c"));
+        $akosProcessCurrentProc = intval(read_file("//14/dd/akos_process",1,1,"c"));
+        
+        $values['ARGON_ON'] = $akosProcessFlowProc;
+        $values['ENERGY_ARC_ON'] = $akosProcessCurrentProc;
+        
+        $totalMinutes = $elparVuSumWorktime;
+        $hours = $totalMinutes >= 60 ? $totalMinutes % 60 : 0;
+        $minutes = $totalMinutes - $hours * 60;
+        $values['HEAT_CURRENT_TIME'] = assembleTime($hours, $minutes, 0);
+        
+        $i=1;
+        if($elparVuSumWorktime + $akosProcessFlowProc + $akosProcessCurrentProc === 0) $i=0;
+        
+        $processCode = $i*100 + $akosProcessFlowProc*10 + $akosProcessCurrentProc;
+        
+        $values["STATE"] = 0;
+        if($processCode == 100) $values["STATE"] = 1;
+        if($processCode == 110) $values["STATE"] = 2;
+        if($processCode == 101) $values["STATE"] = 3;
+        if($processCode == 111) $values["STATE"] = 4;
         
         $values['SAMPLES'] = getAKOStemps();
         $values = appendAKOSChemicals($values);

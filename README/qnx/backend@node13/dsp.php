@@ -2,6 +2,14 @@
     
     require_once("./functions.php");
     
+    /* STATE =  
+      "Холодный простой",             0
+      "Плавление завалки",            1
+      "Плавление первой подвалки",    2    
+      "Плавление второй подвалки",    3
+      "Доводка металла",              4
+      "Горячий простой"               5    
+    */
     
     //
     // assembles DSP gas info
@@ -158,8 +166,6 @@
         $values['HEAT_START'] = gmdate("H:i:s", read_file("//10/dds/smelt_start",14,4,"l"));
         $values['HEAT_TIME'] = gmdate("H:i:s", read_file("//10/dds/eenerg",0,4,"l"));
         $values['HEAT_CURRENT_TIME'] = gmdate("H:i:s", read_file("//10/dds/eenerg",4,4,"l"));
-        $values['ENERGY_ON']  = read_file("//10/dds/proc",1,1,"c");
-        $values['EE_HEAT_ACTIVE'] = read_file("//10/dds/eenerg",8,4,"l");
         $values['EE_HEAT_REACTIVE'] = read_file("//10/dds/eenerg",56,4,"l");
         $values['EE_TODAY_ACTIVE'] = round(read_file("//10/dds/eenerg",24,4,"l") * (1 - read_file("//10/dds/eenerg",40,4,"l") / read_file("//10/dds/eenerg",28,4,"l")));
         $values['EE_TODAY_REACTIVE'] = round(read_file("//10/dds/eenerg",32,4,"l") * (1 - read_file("//10/dds/eenerg",48,4,"l") / read_file("//10/dds/eenerg",36,4,"l")));
@@ -175,7 +181,18 @@
         $values['STOIK_CASE_FRMW'] = read_file("//10/dds/stoik",40,4,"l");
         $values['STOIK_SVOD_FRMW'] = read_file("//10/dds/stoik",48,4,"l");
         $values['ANGLE'] = read_file("//10/dds/pfenc1",76,4,"f");
-        //$values['ANGLE'] = read_file("//10/dds/pfenc4",4,4,"f");
+        
+        $procSmStat = intval(read_file("//10/dds/proc",0,1,"c"));
+        $eenergData02 = intval(read_file("//10/dds/eenerg",8,4,"l"));
+        $procEeInput = intval(read_file("//10/dds/proc",1,1,"c"));
+        
+        $processCode = 0;
+        if($procSmStat > 0) $processCode = round($eenergData02/15000 + 1);
+        if($processCode > 0 && $procEeInput === 0) $processCode = 5;
+        
+        $values['STATE'] = $processCode;
+        $values['ENERGY_ON']  = $procEeInput;
+        $values['EE_HEAT_ACTIVE'] = $eenergData02;
         
         $gas = getDSPgas();
         $values['GAS_SFG1'] = $gas['sfg1'];
