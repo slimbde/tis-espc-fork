@@ -89,7 +89,7 @@ export const Staples: React.FC = () => {
 
   return <div className="staples-wrapper">
     <Alert id="alert">Hello</Alert>
-    <div className="title display-5" style={{ gridArea: "title" }}>{state.title}<small>sdf</small></div>
+    <div className="title display-5" style={{ gridArea: "title" }}>{state.title}<small></small></div>
 
     {state.loading && <Loading />}
     {!state.loading && !state.loadError && <>

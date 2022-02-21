@@ -44,16 +44,16 @@ export const Agregate: React.FC<AgregateInfo> = ({
   dataDelayed,
 }) => {
 
-  const detailsLink = () => {
+  const detailsLink = (heatId?: string) => {
     switch (name) {
       case "МНЛЗ-1": return "staple/ccm1"
       case "МНЛЗ-2": return "staple/ccm2"
       case "ДСП": return "staple/dsp"
       case "АКОС": return "staple/akos"
-      case "АКП2-1поз": return "staple/akp/1"
-      case "АКП2-2поз": return "staple/akp/2"
-      case "ВД-1поз": return "staple/vd1"
-      case "ВД-2поз": return "staple/vd2"
+      case "АКП2-1поз": return `staple/akp/1/${heatId}`
+      case "АКП2-2поз": return `staple/akp/2/${heatId}`
+      case "ВД-1поз": return `staple/vd/1/${heatId}`
+      case "ВД-2поз": return `staple/vd/2/${heatId}`
       default: return "staple"
     }
   }
@@ -72,7 +72,7 @@ export const Agregate: React.FC<AgregateInfo> = ({
     <CardHeader className={cardStatusStyle()}>
       <div>{name}</div>
       <div>
-        {name === "МНЛЗ-2" || name === "МНЛЗ-1" || name === "ДСП" || name?.indexOf("АК") !== -1 ? <Link title="Посмотреть подробно" to={detailsLink}>{heatId}</Link> : <>{heatId}</>}
+        <Link title="Посмотреть подробно" to={detailsLink(heatId)}>{heatId}</Link>
         {series && <div title="Номер в серии">&nbsp;({series})</div>}
       </div>
 

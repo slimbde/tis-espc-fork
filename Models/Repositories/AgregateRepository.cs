@@ -182,61 +182,81 @@ namespace TIS_ESPC_FORK.Models.Repositories
         }
 
 
-        public async Task<IDictionary<string, object>> GetAKPInstantAsync(int stationCode)
+        public async Task<IDictionary<string, object>> GetAkpVodInstantAsync(string heatId, int areaId)
         {
             IDictionary<string, object> result = new Dictionary<string, object>();
 
             using (IDbConnection db = new OracleConnection(oraLFVODString))
             {
-                object code = new { CODE = stationCode };
+                object parameters = new { HEAT_ID = heatId, AREA_ID = areaId };
 
                 string stmt = @"SELECT
                                   R.CUSTOM_HEAT_ID              HEATID
-                                  ,I.STEEL_GRADE_ID             STEELGRADE
-                                  ,I.LADLE_ID                   LADLEID
+                                  ,R.STEEL_GRADE_ID             STEELGRADE
+                                  ,R.LADLE_ID                   LADLEID
                                   ,ROUND(P.EST_STEEL_WGT/1000)  HEATWEIGHT
-                                  ,(SELECT SUM(MATERIAL_REPORTED) FROM RTDB_LOG_MATERIALS WHERE STATION_CODE = :CODE AND MATERIAL_CLASS = 1) WIREA1
-                                  ,(SELECT SUM(MATERIAL_REPORTED) FROM RTDB_LOG_MATERIALS WHERE STATION_CODE = :CODE AND MATERIAL_CLASS = 4) METALBATCH
-                                FROM RTDB_INITIAL_DATA I
-                                JOIN REPORTS R ON R.REPORT_COUNTER = I.REPORT_COUNTER AND I.STATION_CODE = :CODE
-                                JOIN RTDB_PROCESS_DATA P ON P.STATION_CODE = :CODE";
+                                  ,R.STATION_CODE               STATION_CODE
+                                  ,(SELECT SUM(MATERIAL_REPORTED) FROM RTDB_LOG_MATERIALS WHERE STATION_CODE = R.STATION_CODE AND MATERIAL_CLASS = 1) WIREA1
+                                  ,(SELECT SUM(MATERIAL_REPORTED) FROM RTDB_LOG_MATERIALS WHERE STATION_CODE = R.STATION_CODE AND MATERIAL_CLASS = 4) METALBATCH
+                                FROM REPORTS R
+                                JOIN RTDB_PROCESS_DATA P ON P.STATION_CODE = R.STATION_CODE 
+                                    AND R.AREA_ID = :AREA_ID 
+                                    AND R.CUSTOM_HEAT_ID = :HEAT_ID";
 
-                result["heat"] = await db.QuerySingleAsync<LFHeatAttributes>(stmt, code);
+                result["heat"] = await db.QuerySingleAsync<LFHeatAttributes>(stmt, parameters);
 
-                stmt = @"SELECT
-                          P.TOTAL_POWER_ON          HEATCURRENTTIME
-                          ,P.STIRRING_PLUG1_TIME    ARGONTIME1
-                          ,P.STIRRING_PLUG2_TIME    ARGONTIME2
-                          ,P.TOTAL_PROCESS_TIME     HEATTIME  
-                          ,P.TOTAL_ENERGY           EEHEATACTIVE
-                          ,P.TOTAL_AR_CONS          ARGONFLOW
-                          ,A.CURRENT_1              ARGONFLOWINST1
-                          ,A.CURRENT_2              ARGONFLOWINST2
+                stmt = areaId == 600
+                    ? @"SELECT
+                            P.TOTAL_POWER_ON          HEATCURRENTTIME
+                            ,P.STIRRING_PLUG1_TIME    ARGONTIME1
+                            ,P.STIRRING_PLUG2_TIME    ARGONTIME2
+                            ,P.TOTAL_PROCESS_TIME     HEATTIME  
+                            ,P.TOTAL_ENERGY           EEHEATACTIVE
+                            ,P.TOTAL_AR_CONS          ARGONFLOW
+                            ,A.CURRENT_1              ARGONFLOWINST1
+                            ,A.CURRENT_2              ARGONFLOWINST2
                         FROM RTDB_PLC_DATA P
-                        JOIN RTDB_PLC_ACTUAL_DATA A ON A.STATION_CODE = P.STATION_CODE AND P.STATION_CODE = :CODE";
+                        JOIN REPORTS R ON R.CUSTOM_HEAT_ID = :HEAT_ID AND R.AREA_ID = :AREA_ID
+                        JOIN RTDB_PLC_ACTUAL_DATA A ON A.STATION_CODE = R.STATION_CODE AND P.STATION_CODE = R.STATION_CODE"
+                    
+                    : @"SELECT
+                            P.TOTAL_PUMP_VACUUM_TIME  HEATCURRENTTIME
+                            ,P.STIRRING_PLUG1_TIME    ARGONTIME1
+                            ,P.STIRRING_PLUG2_TIME    ARGONTIME2
+                            ,P.TOTAL_PROCESS_TIME     HEATTIME  
+                            ,P.TOTAL_STEP5_VAC_TIME   EEHEATACTIVE
+                            ,P.TOTAL_AR_CONS          ARGONFLOW
+                            ,A.CURRENT_1              ARGONFLOWINST1
+                            ,A.CURRENT_2              ARGONFLOWINST2
+                        FROM RTDB_PLC_DATA P
+                        JOIN REPORTS R ON R.CUSTOM_HEAT_ID = :HEAT_ID AND R.AREA_ID = :AREA_ID
+                        JOIN RTDB_PLC_ACTUAL_DATA A ON A.STATION_CODE = R.STATION_CODE AND P.STATION_CODE = R.STATION_CODE";
 
-                result["energo"] = await db.QuerySingleAsync<LFEnergoAttributes>(stmt, code);
+                result["energo"] = await db.QuerySingleAsync<LFEnergoAttributes>(stmt, parameters);
 
                 stmt = @"SELECT * FROM (
                             SELECT TO_CHAR(EVENT_DATE, 'HH24:MI ') || TEXT
                             FROM REP_EVENTS E
-                            JOIN RTDB_INITIAL_DATA I ON E.REPORT_COUNTER = I.REPORT_COUNTER 
-                            AND I.STATION_CODE = :CODE
-                            AND E.EVENT_CLASS < 2000
+                            JOIN REPORTS R ON R.CUSTOM_HEAT_ID = :HEAT_ID
+                                AND R.AREA_ID = :AREA_ID
+                                AND E.REPORT_COUNTER = R.REPORT_COUNTER
+                                AND E.EVENT_CLASS < 2000
                             ORDER BY EVENT_COUNTER DESC
                         )
                         WHERE ROWNUM < 7";
 
-                result["events"] = await db.QueryAsync<string>(stmt, code);
+                result["events"] = await db.QueryAsync<string>(stmt, parameters);
 
                 stmt = @"SELECT
-                            TO_CHAR(SAMPLE_DATE, 'HH24:MI') POINT
-                            ,TEMPERATURE_VALUE              VALUE
-                        FROM RTDB_LOG_SAMPLES
-                        WHERE STATION_CODE = :CODE
+                            TO_CHAR(L.SAMPLE_DATE, 'HH24:MI') POINT
+                            ,L.TEMPERATURE_VALUE              VALUE
+                        FROM RTDB_LOG_SAMPLES L
+                        JOIN REPORTS R ON R.CUSTOM_HEAT_ID = :HEAT_ID
+                          AND R.AREA_ID = :AREA_ID
+                          AND L.STATION_CODE = R.STATION_CODE
                         ORDER BY SAMPLE_DATE DESC";
 
-                string[] samples = (await db.QueryAsync<Temperature>(stmt, code)).Select(t => $"{t.Point}={t.Value}").ToArray();
+                string[] samples = (await db.QueryAsync<Temperature>(stmt, parameters)).Select(t => $"{t.Point}={t.Value}").ToArray();
                 result["samples"] = string.Join(";", samples);
 
                 stmt = @"SELECT
@@ -245,12 +265,16 @@ namespace TIS_ESPC_FORK.Models.Repositories
                           ,E.ELEMENT_NAME                                   ELEMENT
                           ,CASE WHEN E.VALUE < 0 THEN 0 ELSE E.VALUE END    VALUE
                         FROM REP_ELEMENTS E
-                        JOIN RTDB_INITIAL_DATA I ON I.REPORT_COUNTER = E.REPORT_COUNTER AND I.STATION_CODE = :CODE
+                        JOIN REPORTS R ON R.REPORT_COUNTER = E.REPORT_COUNTER 
+                          AND R.AREA_ID = :AREA_ID
+                          AND R.CUSTOM_HEAT_ID = :HEAT_ID
                           AND MOD(E.ELEMENT_SEQ,100) IN (0,1,2,3,4,5,6,7,8,9,10,17,18,23)
-                        JOIN REP_ANALYSIS A ON A.REPORT_COUNTER = E.REPORT_COUNTER AND A.ANALYSIS_COUNTER = E.ANALYSIS_COUNTER AND A.SAMPLE_ID != 'ESTIMATED'
+                        JOIN REP_ANALYSIS A ON A.REPORT_COUNTER = R.REPORT_COUNTER 
+                            AND A.ANALYSIS_COUNTER = E.ANALYSIS_COUNTER 
+                            AND A.SAMPLE_ID != 'ESTIMATED'
                         ORDER BY E.ANALYSIS_COUNTER, E.ELEMENT_SEQ";
 
-                result["chems"] = await db.QueryAsync<Chemistry>(stmt, code);
+                result["chems"] = await db.QueryAsync<Chemistry>(stmt, parameters);
             }
 
             using (IDbConnection db = new MySqlConnection(conString))
@@ -266,7 +290,14 @@ namespace TIS_ESPC_FORK.Models.Repositories
                                     AND dc.device = @device
                                     AND ds.dev_tag <> '';";
 
-                result["mysql"] = await db.QueryAsync<AgregateSummary>(stmt, new { device = stationCode == 12 ? 71 : 72 });
+                int device1 = areaId == 600 ? 71 : 69;
+                int device2 = areaId == 600 ? 72 : 70;
+
+                IEnumerable<AgregateSummary> tank1 = await db.QueryAsync<AgregateSummary>(stmt, new { device = device1 });
+
+                result["mysql"] = tank1.Count(row => row.Tag == "HEAT_ID" && row.Value == heatId) != 0
+                    ? tank1
+                    : await db.QueryAsync<AgregateSummary>(stmt, new { device = device2 });
             }
 
             return result;

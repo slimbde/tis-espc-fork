@@ -125,8 +125,8 @@ export class AgregatesDbHandler {
   }
 
 
-  async ReadAKPInstantAsync(tank: number): Promise<AKPInstantInfo> {
-    const resp = await fetch(`${this.backend}/${this.api}/ReadAgregateInfoAsync?filter=akp2${tank}`, {
+  async ReadAkpVodInstantAsync(heatId: number, areaId: number): Promise<AKPInstantInfo> {
+    const resp = await fetch(`${this.backend}/${this.api}/ReadAgregateInfoAsync?filter=akp;${heatId};${areaId}`, {
       credentials: "include"
     })
 

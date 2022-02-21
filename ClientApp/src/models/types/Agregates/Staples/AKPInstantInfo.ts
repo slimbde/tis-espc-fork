@@ -43,6 +43,17 @@ export enum AKPInstantEnergoDecoder {
   ArgonFlowInst2 = "Мгн. расход Ar L2, м³",
 }
 
+export enum VODInstantEnergoDecoder {
+  HeatCurrentTime = "Время работы насосов",
+  ArgonTime1 = "Время продувки L1",
+  ArgonTime2 = "Время продувки L2",
+  HeatTime = "Время плавки",
+  EeHeatActive = "Время вакуумирования",
+  ArgonFlow = "Расход Ar на продувку, м³",
+  ArgonFlowInst1 = "Мгн. расход Ar L1, м³",
+  ArgonFlowInst2 = "Мгн. расход Ar L2, м³",
+}
+
 
 export type AKPInstantInfo = {
   heat: AKPInstantHeatInfo

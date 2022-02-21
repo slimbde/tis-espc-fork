@@ -1,4 +1,4 @@
-import "./akpDetails.scss"
+import "./vodDetails.scss"
 import { blinkAlert } from "components/extra/Alert"
 import { useEffect, useState } from "react"
 import { Alert, ListGroup, ListGroupItem } from "reactstrap"
@@ -8,8 +8,9 @@ import aHandler from "models/handlers/DbHandlers/AgregatesDbHandler"
 import { AKPView } from "../views/akp"
 import { AgregateState } from "models/types/Agregates/Staples/AgregateState"
 import { useRouteMatch } from "react-router-dom"
-import { AKPInstantEnergoDecoder, AKPInstantHeatDecoder, AKPInstantInfo } from "models/types/Agregates/Staples/AKPInstantInfo"
+import { AKPInstantHeatDecoder, AKPInstantInfo, VODInstantEnergoDecoder } from "models/types/Agregates/Staples/AKPInstantInfo"
 import { AgregateInfo } from "models/types/Agregates/Staples/AgregateInfo"
+import moment from "moment"
 
 
 
@@ -22,14 +23,16 @@ type State = {
 
 
 
-export const AKPDetails: React.FC = () => {
+export const VODDetails: React.FC = () => {
   const match = useRouteMatch<{ TankId: string, HeatId: string }>()
   const [state, setState] = useState<State>({ agregateState: AgregateState.IDLE })
 
   const update = () => {
-    aHandler.ReadAkpVodInstantAsync(+match.params.HeatId, 600)
+    aHandler.ReadAkpVodInstantAsync(+match.params.HeatId, 800)
       .then(instantInfo => {
-        const mysql = new StapleSummaryHandler(instantInfo.mysql).GetAKPInfo(+match.params.TankId as (2 | 1))
+        const mysql = new StapleSummaryHandler(instantInfo.mysql).GetVDInfo(+match.params.TankId as (2 | 1))
+
+        instantInfo.energo.EeHeatActive = moment.utc(+instantInfo.energo.EeHeatActive! * 1000).format("HH:mm:ss")
 
         setState({
           ...state,
@@ -58,10 +61,10 @@ export const AKPDetails: React.FC = () => {
 
 
 
-  return <div className="akp-details-wrapper">
+  return <div className="vod-details-wrapper">
     <Alert id="alert">Hello</Alert>
     <div className={`title display-5 ${state.agregateState}`} style={{ gridArea: "title" }}>
-      АКП2-{match.params.TankId}<small>поз</small>
+      ВД-{match.params.TankId}<small>поз</small>
       <div className="last-update">{state.lastUpdate}</div>
     </div>
 
@@ -80,7 +83,7 @@ export const AKPDetails: React.FC = () => {
     <ListGroup className={`energo ${state.agregateState}`} style={{ gridArea: "energo" }}>
       {state.instantInfo?.energo && Object.keys(state.instantInfo?.energo).map(key =>
         <ListGroupItem key={key}>
-          <div>{(AKPInstantEnergoDecoder as any)[key]}</div>
+          <div>{(VODInstantEnergoDecoder as any)[key]}</div>
           <div>{(state.instantInfo?.energo as any)[key]}</div>
         </ListGroupItem>
       )}
@@ -122,7 +125,7 @@ export const AKPDetails: React.FC = () => {
       capdown={state.mysql.capdown!}
       empty={state.mysql.empty!}
       vacuum={state.mysql.vacuum!}
-      vd={false}
+      vd={true}
     />}
   </div>
 }

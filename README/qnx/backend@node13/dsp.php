@@ -14,7 +14,7 @@
     //
     // assembles DSP gas info
     //
-    function getDSPgas() {
+    function appendDSPgas($values) {
         $sfg1 = array();
         array_push($sfg1,round(read_file("//10/dds/c4_sfg",46,4,"f")));
         array_push($sfg1,round(read_file("//10/dds/exp_burn",32,4,"f")));
@@ -59,7 +59,7 @@
         array_push($mf,round(read_file("//10/dds/c4_mf",20,4,"f")));
         array_push($mf,round(read_file("//10/dds/exp_mf",0,4,"f")));
         array_push($mf,round(read_file("//10/dds/c4_mf",24,4,"f")));
-        array_push($mf,round(read_file("//10/dds/exp_mf",2,4,"f")));
+        array_push($mf,round(read_file("//10/dds/exp_mf",4,4,"f")));
         array_push($mf,round(read_file("//10/dds/c4_mf",28,8,"f")));
         array_push($mf,round(read_file("//10/dds/exp_mf",8,8,"f")));
         
@@ -77,17 +77,16 @@
                 $summ[$i] += $pk[$i];
         }
         
-        $result = array();
-        $result['sfg1'] = implode(";",$sfg1);
-        $result['sfg2'] = implode(";",$sfg2);
-        $result['sfg3'] = implode(";",$sfg3);
-        $result['sfg4'] = implode(";",$sfg4);
-        $result['sfg5'] = implode(";",$sfg5);
-        $result['mf'] = implode(";",$mf);
-        $result['pk'] = implode(";",$pk);
-        $result['summ'] = implode(";",$summ);
+        $values['GAS_SFG1'] = implode(";",$sfg1);
+        $values['GAS_SFG2'] = implode(";",$sfg2);
+        $values['GAS_SFG3'] = implode(";",$sfg3);
+        $values['GAS_SFG4'] = implode(";",$sfg4);
+        $values['GAS_SFG5'] = implode(";",$sfg5);
+        $values['GAS_MF'] = implode(";",$mf);
+        $values['GAS_PK'] = implode(";",$pk);
+        $values['GAS_SUMM'] = implode(";",$summ);
         
-        return $result;
+        return $values;
     }
     
 
@@ -194,15 +193,7 @@
         $values['ENERGY_ON']  = $procEeInput;
         $values['EE_HEAT_ACTIVE'] = $eenergData02;
         
-        $gas = getDSPgas();
-        $values['GAS_SFG1'] = $gas['sfg1'];
-        $values['GAS_SFG2'] = $gas['sfg2'];
-        $values['GAS_SFG3'] = $gas['sfg3'];
-        $values['GAS_SFG4'] = $gas['sfg4'];
-        $values['GAS_SFG5'] = $gas['sfg5'];
-        $values['GAS_MF'] = $gas['mf'];
-        $values['GAS_PK'] = $gas['pk'];
-        $values['GAS_SUMM'] = $gas['summ'];
+        $values = appendDSPgas($values);
         
         $values = appendDSPchemicals($values);
         

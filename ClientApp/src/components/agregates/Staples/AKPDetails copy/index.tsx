@@ -61,7 +61,7 @@ export const AKPDetails: React.FC = () => {
   return <div className="akp-details-wrapper">
     <Alert id="alert">Hello</Alert>
     <div className={`title display-5 ${state.agregateState}`} style={{ gridArea: "title" }}>
-      АКП2-{match.params.TankId}<small>поз</small>
+      АКП2-{match.params.TankId}
       <div className="last-update">{state.lastUpdate}</div>
     </div>
 

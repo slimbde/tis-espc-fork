@@ -459,7 +459,7 @@ export class StapleSummaryHandler {
         initializer = [false, true, true, false]
         state = AgregateState.PROCESS
       }
-      if (stateCode === 3) {  // Вакууь
+      if (stateCode === 3) {  // Вакуум
         initializer = [true, false, true, false]
         state = AgregateState.PROCESS
       }

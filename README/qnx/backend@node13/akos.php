@@ -22,7 +22,7 @@
         for($i=0; $i<10; ++$i) {
             $offset = $i*10;
             
-            $val = read_file("//14/dd/tsteel",$offset+2,4,"l");
+            $val = intval(read_file("//14/dd/tsteel",$offset+2,4,"l"));
             if($val == 0) break;
             
             array_push($values, $val);
@@ -33,7 +33,7 @@
         }
         
         $result = array();
-        for($j=0; $j<count($times); ++$j) {
+        for($j=0; $j<count($values); ++$j) {
             $pair = "$times[$j]=$values[$j]";
             array_push($result, $pair);
         }
@@ -136,11 +136,7 @@
         
         $values['ARGON_ON'] = $akosProcessFlowProc;
         $values['ENERGY_ARC_ON'] = $akosProcessCurrentProc;
-        
-        $totalMinutes = $elparVuSumWorktime;
-        $hours = $totalMinutes >= 60 ? $totalMinutes % 60 : 0;
-        $minutes = $totalMinutes - $hours * 60;
-        $values['HEAT_CURRENT_TIME'] = assembleTime($hours, $minutes, 0);
+        $values['HEAT_CURRENT_TIME'] = minToTime($elparVuSumWorktime);
         
         $i=1;
         if($elparVuSumWorktime + $akosProcessFlowProc + $akosProcessCurrentProc === 0) $i=0;

@@ -83,6 +83,12 @@
     }
     
     
+    function oleToTime($ole) {
+        //gmdate("d.m.Y H:i:s", $ole - 25569) * 24 * 3600); 
+        return gmdate("H:i:s", ($ole - 25569) * 24 * 3600); 
+    }
+    
+    
     function utf($string) {
         return mb_convert_encoding($string,"utf-8", "cp866");
     }

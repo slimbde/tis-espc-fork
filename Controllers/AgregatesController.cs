@@ -78,7 +78,7 @@ namespace TIS_ESPC_FORK.Controllers
         [Route("ReadAgregateSummaryAsync")]
         public async Task<IHttpActionResult> ReadAgregateSummaryAsync()
         {
-            try { return Ok(await aRepo.ListFor(2)); }
+            try { return Ok(await aRepo.ListFor(2)); } // 2 is just a placeholder
             catch (Exception ex) { return BadRequest(ex.Message); }
         }
 
@@ -90,11 +90,19 @@ namespace TIS_ESPC_FORK.Controllers
         {
             try
             {
-                switch (filter)
+                // 0-device, 1-heatId, 2-areaId
+                string[] split = filter.Split(';');
+
+                switch (split[0])
                 {
                     case "ccm2": return Ok(await aRepo.GetCCMInstantAsync());
-                    case "akp21": return Ok(await aRepo.GetAKPInstantAsync(12));
-                    case "akp22": return Ok(await aRepo.GetAKPInstantAsync(11));
+                    case "akp":
+                        if (split.Length == 2) throw new Exception("not enough parameters for LfVod handling");
+
+                        string heatId = split[1];
+                        int areaId = Convert.ToInt32(split[2]);
+
+                        return Ok(await aRepo.GetAkpVodInstantAsync(heatId, areaId));
                     default: throw new Exception("No filter provided");
                 }
             }
