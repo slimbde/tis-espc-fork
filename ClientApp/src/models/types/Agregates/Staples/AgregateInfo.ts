@@ -14,6 +14,7 @@ export type AgregateInfo = {
   heatId?: string
   heatStart?: string
   heatTime?: string
+  heatEnd?: string
   heatWeight?: string
   heatCurrentTime?: string
   ladleId?: string

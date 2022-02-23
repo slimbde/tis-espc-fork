@@ -24,8 +24,8 @@ export class StapleSummaryHandler {
     const eeHeatActive = dspSummary.filter(s => s.Tag === "EE_HEAT_ACTIVE")[0].Value
     const heatTime = dspSummary.filter(s => s.Tag === "HEAT_TIME")[0].Value
     const heatStart = dspSummary.filter(s => s.Tag === "HEAT_START")[0].Value
+    const heatEnd = dspSummary.filter(s => s.Tag === "HEAT_END")[0].Value
     const heatCurrentTime = dspSummary.filter(s => s.Tag === "HEAT_CURRENT_TIME")[0].Value
-
     const eeHeatReactive = dspSummary.filter(s => s.Tag === "EE_HEAT_REACTIVE")[0].Value
     const eeTodayActive = dspSummary.filter(s => s.Tag === "EE_TODAY_ACTIVE")[0].Value
     const eeTodayReactive = dspSummary.filter(s => s.Tag === "EE_TODAY_REACTIVE")[0].Value
@@ -91,11 +91,11 @@ export class StapleSummaryHandler {
       heatStart,
       eeHeatActive,
       heatTime,
+      heatEnd,
       heatCurrentTime,
       chemicalKey,
       chemicals,
       state,
-
       eeHeatReactive,
       eeTodayActive,
       eeTodayReactive,
@@ -144,6 +144,7 @@ export class StapleSummaryHandler {
     const steamPipeVacuum = summary.filter(s => s.Tag === "STEAM_PIPE_VACUUM")[0].Value
     const currentTemp = summary.filter(s => s.Tag === "CURRENT_TEMP")[0].Value
     const samples = summary.filter(s => s.Tag === "SAMPLES")[0].Value
+    const heatEnd = summary.filter(s => s.Tag === "HEAT_END")[0].Value
 
 
     // Холодный простой
@@ -187,6 +188,7 @@ export class StapleSummaryHandler {
       name: "АКОС",
       heatId,
       heatTab,
+      heatEnd,
       ladleId,
       steelGrade,
       heatWeight,
@@ -230,6 +232,7 @@ export class StapleSummaryHandler {
     const heatWeight = summary.filter(s => s.Tag === "HEAT_WEIGHT")[0].Value
     const heatStart = summary.filter(s => s.Tag === "HEAT_START")[0].Value
     const ladleId = summary.filter(s => s.Tag === "LADLE_ID")[0].Value
+    const heatEnd = summary.filter(s => s.Tag === "HEAT_END")[0].Value
 
 
     // Холодный простой
@@ -268,6 +271,7 @@ export class StapleSummaryHandler {
       currentTemp,
       heatCurrentTime,
       heatWeight,
+      heatEnd,
       ladleId,
       empty,
       argon,
@@ -303,6 +307,7 @@ export class StapleSummaryHandler {
     const heatId = summary.filter(s => s.Tag === "HEAT_ID")[0].Value
     const heatStart = summary.filter(s => s.Tag === "HEAT_START")[0].Value
     const heatTime = summary.filter(s => s.Tag === "HEAT_TIME")[0].Value
+    const heatEnd = summary.filter(s => s.Tag === "HEAT_END")[0].Value
     const heatWeight = summary.filter(s => s.Tag === "HEAT_WEIGHT")[0].Value
     const ladleArm = summary.filter(s => s.Tag === "LADLE_ARM")[0].Value
     const ladleId = summary.filter(s => s.Tag === "LADLE_ID")[0].Value
@@ -371,6 +376,7 @@ export class StapleSummaryHandler {
       heatId,
       heatStart,
       heatTime,
+      heatEnd,
       heatWeight,
       ladleArm,
       ladleId: `${ladleId} (${ladleStoik})`,
@@ -407,6 +413,7 @@ export class StapleSummaryHandler {
     const update = summary.filter(s => s.Tag === "$DateTime")[0]
     const heatStart = summary.filter(s => s.Tag === "TRK_WS_TIME_OPN")[0].Value
     const heatTime = moment.utc(moment().diff(moment(heatStart, "HH:mm:ss"))).format("HH:mm:ss")
+    const heatEnd = summary.filter(s => s.Tag === "HEAT_END")[0].Value
     const steelGrade = summary.filter(s => s.Tag === "STEEL_GRADE")[0].Value
     const heatWeight = summary.filter(s => s.Tag === "HEAT_WEIGHT")[0].Value
     const castedMeters = summary.filter(s => s.Tag === "CASTED_METERS")[0].Value
@@ -465,6 +472,7 @@ export class StapleSummaryHandler {
       series: series.Value,
       heatStart,
       heatTime,
+      heatEnd,
       heatWeight,
       castingSpeed: Math.round(+castingSpeed.Value * 100) / 100 + "",
       steelGrade,
@@ -496,6 +504,7 @@ export class StapleSummaryHandler {
     const ladleId = summary.filter(s => s.Tag === "LADLE_ID")[0].Value
     const vacuumTime = summary.filter(s => s.Tag === "VACUUM_TIME")[0].Value
     const vacuumPressure = summary.filter(s => s.Tag === "VACUUM_PRESSURE")[0].Value
+    const heatEnd = summary.filter(s => s.Tag === "HEAT_END")[0].Value
 
     // Холодный простой
     let initializer: boolean[] = [false, false, false, true]
@@ -540,6 +549,7 @@ export class StapleSummaryHandler {
       empty,
       state,
       heatStart,
+      heatEnd,
 
       dataDelayed: this.isDataDelayed(update),
       lastUpdate: moment().format("YYYY-MM-DD HH:mm:ss"),

@@ -27,6 +27,7 @@ export const Agregate: React.FC<AgregateInfo> = ({
   heatId,
   heatStart,
   heatTime,
+  heatEnd,
   heatWeight,
   heatCurrentTime,
   ladleId,
@@ -93,14 +94,19 @@ export const Agregate: React.FC<AgregateInfo> = ({
           <div>{castingSpeed}</div>
         </div>}
 
-        {heatStart && <div>
+        {heatStart && <div className="duration">
           <div>Начало</div>
           <div>{heatStart}</div>
         </div>}
 
         {heatTime && <div>
-          <div>Длительн.</div>
+          <div>Время</div>
           <div>{heatTime}</div>
+        </div>}
+
+        {heatEnd && <div className="duration">
+          <div>Конец</div>
+          <div>{heatEnd}</div>
         </div>}
 
         {castedMeters && <div>
@@ -138,7 +144,7 @@ export const Agregate: React.FC<AgregateInfo> = ({
           <div>{heatCurrentTime}</div>
         </div>}
 
-        {heatWeight && <div>
+        {heatWeight && name?.indexOf("МНЛЗ") === -1 && <div>
           <div>Вес Ме, тн</div>
           <div>{heatWeight}</div>
         </div>}

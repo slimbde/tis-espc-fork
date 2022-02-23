@@ -1,11 +1,13 @@
 ﻿using Dapper;
 using MySql.Data.MySqlClient;
 using Oracle.ManagedDataAccess.Client;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.Common;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using TIS_ESPC_FORK.Models.DTOs.Agregates.Staple;
 
@@ -218,7 +220,7 @@ namespace TIS_ESPC_FORK.Models.Repositories
                         FROM RTDB_PLC_DATA P
                         JOIN REPORTS R ON R.CUSTOM_HEAT_ID = :HEAT_ID AND R.AREA_ID = :AREA_ID
                         JOIN RTDB_PLC_ACTUAL_DATA A ON A.STATION_CODE = R.STATION_CODE AND P.STATION_CODE = R.STATION_CODE"
-                    
+
                     : @"SELECT
                             P.TOTAL_PUMP_VACUUM_TIME  HEATCURRENTTIME
                             ,P.STIRRING_PLUG1_TIME    ARGONTIME1
@@ -301,6 +303,97 @@ namespace TIS_ESPC_FORK.Models.Repositories
             }
 
             return result;
+        }
+
+
+        public static async Task UpdateHeatEndTimeAsync()
+        {
+            try
+            {
+                // get mysql heat for agregates 2,69,70,71,72
+                string stmt = @"SELECT      
+                                    dc.description              Name
+                                    ,ds.dev_tag                 Tag
+                                    ,ds.dev_value               Value
+                                    ,ds.dev_upd                 UpdatePoint
+                                FROM dev_state ds 
+                                JOIN dev_catalog dc 
+                                    ON ds.device = dc.device 
+                                    AND dc.device IN (2,69,70,71,72)
+                                    AND ds.dev_tag = 'HEAT_ID';";
+
+                IEnumerable<AgregateSummary> summary;
+                using (DbConnection db = new MySqlConnection(conString))
+                    summary = await db.QueryAsync<AgregateSummary>(stmt);
+
+                string ccm = summary.First(s => s.Name == "CCM-2").Value;
+                string vd1 = summary.First(s => s.Name == "VD-21").Value;
+                string vd2 = summary.First(s => s.Name == "VD-22").Value;
+                string akp1 = summary.First(s => s.Name == "EAKP-11").Value;
+                string akp2 = summary.First(s => s.Name == "EAKP-12").Value;
+
+                // get oracle current heat end time for LF VOD
+                stmt = @"SELECT
+                          DECODE(CUSTOM_HEAT_ID,:vd1,'VD-21',:vd2,'VD-22')  DEVICE
+                          ,CUSTOM_HEAT_ID                                   HEAT_ID
+                          ,CASE WHEN TO_CHAR(STOP_DATE,'YYYY')='1970' THEN NULL
+                            ELSE TO_CHAR(STOP_DATE,'HH24:MI:SS')
+                          END                                               HEAT_END
+                        FROM REPORTS R
+                        WHERE R.CUSTOM_HEAT_ID IN (:vd1,:vd2) AND AREA_ID = 800
+
+                        UNION ALL
+                        SELECT
+                          DECODE(CUSTOM_HEAT_ID,:akp1,'EAKP-11',:akp2,'EAKP-12')    DEVICE
+                          ,CUSTOM_HEAT_ID                                           HEAT_ID
+                          ,CASE WHEN TO_CHAR(STOP_DATE,'YYYY')='1970' THEN NULL
+                            ELSE TO_CHAR(STOP_DATE,'HH24:MI:SS')
+                          END                                                       HEAT_END
+                        FROM REPORTS R
+                        WHERE R.CUSTOM_HEAT_ID IN (:akp1,:akp2) AND AREA_ID = 600";
+
+                List<HeatEndTime> endTimeToUpdate = new List<HeatEndTime>();
+
+                using (IDbConnection db = new OracleConnection(oraLFVODString))
+                    endTimeToUpdate.AddRange(await db.QueryAsync<HeatEndTime>(stmt, new { vd1, vd2, akp1, akp2 }));
+
+                // get oracle current heat end time for CCM2
+                stmt = @"SELECT
+                          'CCM-2'   DEVICE
+                          ,HEAT_ID
+                          ,CASE WHEN TO_CHAR(STOP_DATE,'YYYY')='1970' THEN NULL
+                            ELSE TO_CHAR(STOP_DATE,'HH24:MI:SS')
+                          END       HEAT_END
+                        FROM REPORTS
+                        WHERE HEAT_ID = :ccm";
+
+                using (IDbConnection db = new OracleConnection(oraString))
+                    endTimeToUpdate.AddRange(await db.QueryAsync<HeatEndTime>(stmt, new { ccm }));
+
+                // send heat end time back to mysql
+                using (DbConnection db = new MySqlConnection(conString))
+                {
+                    foreach (HeatEndTime one in endTimeToUpdate)
+                    {
+                        try
+                        {
+                            stmt = $"call dev_update('{one.DEVICE}~HEAT_END={(one.HEAT_END ?? "").Replace(" ", "%20")}|');";
+                            await db.ExecuteAsync(stmt);
+                        }
+                        catch (Exception) { }
+                    }
+                }
+            }
+            catch (Exception ex) { Console.WriteLine(ex.Message); }
+        }
+
+
+
+        internal sealed class HeatEndTime
+        {
+            public string DEVICE { get; set; }
+            public string HEAT_ID { get; set; }
+            public string HEAT_END { get; set; }
         }
     }
 }
