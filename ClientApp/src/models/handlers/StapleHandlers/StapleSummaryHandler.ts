@@ -322,6 +322,31 @@ export class StapleSummaryHandler {
     const tundishShos = summary.filter(s => s.Tag === "TUNDISH_SHOS")[0].Value
     const tundishStoik = summary.filter(s => s.Tag === "TUNDISH_STOIK")[0].Value
 
+    // Холодный простой
+    let initializer: any[] = ["s00", false]
+    let state = AgregateState.IDLE
+
+    const stateCode = +summary.filter(s => s.Tag === "STATE")[0].Value
+
+    if (stateCode === 1) {  // Начало разливки
+      initializer = ["s10", false]
+      state = AgregateState.HOTIDLE
+    }
+    if (stateCode === 2) {  // Разливка
+      initializer = ["s10", true]
+      state = AgregateState.PROCESS
+    }
+    if (stateCode === 3) {  // Смена СК
+      initializer = ["s01", true]
+      state = AgregateState.PROCESS
+    }
+    if (stateCode === 4) {  // Смена СК
+      initializer = ["s11", true]
+      state = AgregateState.PROCESS
+    }
+
+    const [tgs, streamCast] = initializer
+
     const update = summary.filter(s => s.Tag === "$DateTime")[0]
 
 
@@ -358,15 +383,16 @@ export class StapleSummaryHandler {
       shiftResponsible,
       slabThickness,
       slabWidth,
+      state,
       steelGrade,
-      streamCast: +flowSpeed > 0.05 && +castingSpeed > 0.05,
+      //streamCast: +flowSpeed > 0.05 && +castingSpeed > 0.05,
+      streamCast,
+      tgs,
       teamId,
       tundishCar,
       tundishId: `${tundishId} (${tundishStoik})`,
       tundishShos,
       tundishStoik,
-
-      tgs: "s10",
 
       dataDelayed: this.isDataDelayed(update),
       lastUpdate: update.UpdatePoint,
@@ -389,22 +415,47 @@ export class StapleSummaryHandler {
     const slabWidth = summary.filter(s => s.Tag === "SLAB_WIDTH")[0].Value
     const currentTemp = summary.filter(s => s.Tag === "CURRENT_TEMP")[0].Value
 
+    // Холодный простой
+    let initializer: any[] = ["s00", false]
+    let state = AgregateState.IDLE
+
+    const stateCode = +summary.filter(s => s.Tag === "STATE")[0].Value
+
+    if (stateCode === 1) {  // Начало разливки
+      initializer = ["s10", false]
+      state = AgregateState.HOTIDLE
+    }
+    if (stateCode === 2) {  // Разливка
+      initializer = ["s10", true]
+      state = AgregateState.PROCESS
+    }
+    if (stateCode === 3) {  // Смена СК
+      initializer = ["s01", true]
+      state = AgregateState.PROCESS
+    }
+    if (stateCode === 4) {  // Смена СК
+      initializer = ["s11", true]
+      state = AgregateState.PROCESS
+    }
+
+    const [tgs, streamCast] = initializer
+
     const mldTk = +summary.filter(s => s.Tag === "L2S_WM_COM_MLD_TK")[0].Value
     const exitWidth = +summary.filter(s => s.Tag === "MWA_WS_EXIT_WIDTH")[0].Value
     const stlHot = +summary.filter(s => s.Tag === "L2S_WM_TRK_STL_HOT")[0].Value
 
-    const LD_1 = summary.filter(s => s.Tag === "TGS_BS_ARM1_LD_PRE")[0].Value === "1"
-    const LD_2 = summary.filter(s => s.Tag === "TGS_BS_ARM2_LD_PRE")[0].Value === "1"
-    const CAST_1 = summary.filter(s => s.Tag === "TGS_BS_A1_CAST_POS")[0].Value === "1"
-    const CAST_2 = summary.filter(s => s.Tag === "TGS_BS_A2_CAST_POS")[0].Value === "1"
+    //const LD_1 = summary.filter(s => s.Tag === "TGS_BS_ARM1_LD_PRE")[0].Value === "1"
+    //const LD_2 = summary.filter(s => s.Tag === "TGS_BS_ARM2_LD_PRE")[0].Value === "1"
+    //const CAST_1 = summary.filter(s => s.Tag === "TGS_BS_A1_CAST_POS")[0].Value === "1"
+    //const CAST_2 = summary.filter(s => s.Tag === "TGS_BS_A2_CAST_POS")[0].Value === "1"
 
-    let tgs
-    if (LD_1 && LD_2) tgs = "s11"
-    else if ((LD_1 && !LD_2 && CAST_1) || (!LD_1 && LD_2 && CAST_2)) tgs = "s10"
-    else if ((!LD_1 && LD_2 && CAST_1) || (LD_1 && !LD_2 && CAST_2)) tgs = "s01"
-    else if ((LD_1 && !LD_2)) tgs = "s10"
-    else if ((!LD_1 && LD_2)) tgs = "s01"
-    else tgs = "s00"
+    //let tgs
+    //if (LD_1 && LD_2) tgs = "s11"
+    //else if ((LD_1 && !LD_2 && CAST_1) || (!LD_1 && LD_2 && CAST_2)) tgs = "s10"
+    //else if ((!LD_1 && LD_2 && CAST_1) || (LD_1 && !LD_2 && CAST_2)) tgs = "s01"
+    //else if ((LD_1 && !LD_2)) tgs = "s10"
+    //else if ((!LD_1 && LD_2)) tgs = "s01"
+    //else tgs = "s00"
 
 
     return {
@@ -422,8 +473,10 @@ export class StapleSummaryHandler {
       slabWidth,
       slabThickness,
       currentTemp,
-      streamCast: summary.filter(s => s.Tag === "COM_BS_CAST_MODE")[0].Value !== "0",
+      //streamCast: summary.filter(s => s.Tag === "COM_BS_CAST_MODE")[0].Value !== "0",
+      streamCast,
       tgs,
+      state,
 
       dataDelayed: this.isDataDelayed(update),
       lastUpdate: update.UpdatePoint,

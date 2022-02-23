@@ -1,5 +1,5 @@
 import { AgregateInfo } from "models/types/Agregates/Staples/AgregateInfo"
-import { AgregateState, ccmState } from "models/types/Agregates/Staples/AgregateState"
+import { AgregateState } from "models/types/Agregates/Staples/AgregateState"
 import { Link } from "react-router-dom"
 import { Card, CardBody, CardHeader } from "reactstrap"
 import { AKPView } from "./views/akp"
@@ -58,18 +58,10 @@ export const Agregate: React.FC<AgregateInfo> = ({
     }
   }
 
-  const cardStatusStyle = () => {
-    switch (name) {
-      case "МНЛЗ-1":
-      case "МНЛЗ-2":
-        return ccmState(streamCast, castingSpeed)
-      default: return state
-    }
-  }
 
 
   return <Card className={`${dataDelayed ? "delayed" : ""}`}>
-    <CardHeader className={cardStatusStyle()}>
+    <CardHeader className={state}>
       <div>{name}</div>
       <div>
         <Link title="Посмотреть подробно" to={detailsLink(heatId)}>{heatId}</Link>
@@ -78,15 +70,12 @@ export const Agregate: React.FC<AgregateInfo> = ({
 
     </CardHeader>
 
-    <CardBody className={cardStatusStyle()}>
-      {name === "МНЛЗ-1" && <CCMView cast={streamCast!} head={`s10`} />}
-      {name === "МНЛЗ-2" && <CCMView cast={streamCast!} head={tgs!} />}
+    <CardBody className={state}>
+      {name?.indexOf("МНЛЗ") !== -1 && <CCMView cast={streamCast!} head={tgs!} />}
       {name === "ДСП" && <DSPView energy={energy!} coldIdle={state === AgregateState.IDLE} flushSteel={flushSteel!} flushSlag={flushSlag!} />}
       {name === "АКОС" && <AKPView energy={energy!} argon={argon!} capdown={capdown!} empty={empty!} />}
-      {name === "АКП2-1поз" && <AKPView energy={energy!} argon={argon!} capdown={capdown!} empty={empty!} />}
-      {name === "АКП2-2поз" && <AKPView energy={energy!} argon={argon!} capdown={capdown!} empty={empty!} />}
-      {name === "ВД-1поз" && <AKPView vd vacuum={vacuum} argon={argon!} capdown={capdown!} empty={empty!} />}
-      {name === "ВД-2поз" && <AKPView vd vacuum={vacuum} argon={argon!} capdown={capdown!} empty={empty!} />}
+      {name?.indexOf("АКП") !== -1 && <AKPView energy={energy!} argon={argon!} capdown={capdown!} empty={empty!} />}
+      {name?.indexOf("ВД") !== -1 && <AKPView vd vacuum={vacuum} argon={argon!} capdown={capdown!} empty={empty!} />}
 
       <div className="info">
         {steelGrade && <div>
