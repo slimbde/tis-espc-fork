@@ -1,0 +1,6 @@
+#!/bin/sh
+while true; do
+	php SpeedCCM1.php > logs/speedCCM1.http;
+	#echo $(date "+%Y-%m-%d %H:%M:%S") main send success;
+	sleep 5;
+done

@@ -1,0 +1,11 @@
+#!/bin/sh
+while true; do
+	php CCM1.php > logs/ccm1.log;
+	php CCM2.php > logs/ccm2.log;
+	php AKOS.php > logs/akos.log;
+	php AKP.php > logs/akp.log;
+	php DSP.php > logs/dsp.log;
+	php VOD.php > logs/vod.log;
+	#echo $(date "+%Y-%m-%d %H:%M:%S") main send success;
+	sleep 15;
+done

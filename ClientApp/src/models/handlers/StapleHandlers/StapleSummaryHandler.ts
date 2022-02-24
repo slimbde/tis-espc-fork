@@ -225,7 +225,6 @@ export class StapleSummaryHandler {
     const update = summary.filter(s => s.Tag === "$DateTime")[0]
     const heatId = summary.filter(s => s.Tag === "HEAT_ID")[0]
     const steelGrade = summary.filter(s => s.Tag === "STEEL_GRADE")[0]
-    const activeTank = +summary.filter(s => s.Tag === "TANK_ID")[0].Value
     const argonFlow = summary.filter(s => s.Tag === "ARGON_FLOW_DOWN")[0].Value
     const currentTemp = summary.filter(s => s.Tag === "CURRENT_TEMP")[0].Value
     const heatCurrentTime = summary.filter(s => s.Tag === "HEAT_CURRENT_TIME")[0].Value
@@ -241,23 +240,21 @@ export class StapleSummaryHandler {
 
     const stateCode = +summary.filter(s => s.Tag === "STATE")[0].Value
 
-    if (activeTank === num) {
-      if (stateCode === 1) {  // Горячий простой
-        initializer = [false, false, true, false]
-        state = AgregateState.HOTIDLE
-      }
-      if (stateCode === 2) {  // Продувка
-        initializer = [false, true, true, false]
-        state = AgregateState.PROCESS
-      }
-      if (stateCode === 3) {  // Под током
-        initializer = [true, false, true, false]
-        state = AgregateState.PROCESS
-      }
-      if (stateCode === 4) {  // Ток и продувка
-        initializer = [true, true, true, false]
-        state = AgregateState.PROCESS
-      }
+    if (stateCode === 1) {  // Горячий простой
+      initializer = [false, false, true, false]
+      state = AgregateState.HOTIDLE
+    }
+    if (stateCode === 2) {  // Продувка
+      initializer = [false, true, true, false]
+      state = AgregateState.PROCESS
+    }
+    if (stateCode === 3) {  // Под током
+      initializer = [true, false, true, false]
+      state = AgregateState.PROCESS
+    }
+    if (stateCode === 4) {  // Ток и продувка
+      initializer = [true, true, true, false]
+      state = AgregateState.PROCESS
     }
 
     const [energy, argon, capdown, empty] = initializer
@@ -266,7 +263,7 @@ export class StapleSummaryHandler {
     return {
       name: `АКП2-${num}поз`,
       heatId: heatId.Value.replace(/[^a-zA-Zа-яА-Я0-9]/g, ""),
-      steelGrade: steelGrade.Value.replace(/[^a-zA-Zа-яА-Я0-9]/g, ""),
+      steelGrade: steelGrade.Value.replace(/[^a-zA-Zа-яА-Я0-9-]/g, ""),
       argonFlow,
       currentTemp,
       heatCurrentTime,
@@ -327,30 +324,19 @@ export class StapleSummaryHandler {
     const tundishShos = summary.filter(s => s.Tag === "TUNDISH_SHOS")[0].Value
     const tundishStoik = summary.filter(s => s.Tag === "TUNDISH_STOIK")[0].Value
 
-    // Холодный простой
-    let initializer: any[] = ["s00", false]
-    let state = AgregateState.IDLE
+    // STATE
+    // 0 "Холодный простой",
+    // 1 "Разливка",
+    // 2 "Разливка и раскрой",
+    // 3 "Раскрой",
+    // 4 "Плавка на плавку"
 
     const stateCode = +summary.filter(s => s.Tag === "STATE")[0].Value
 
-    if (stateCode === 1) {  // Начало разливки
-      initializer = ["s10", false]
-      state = AgregateState.HOTIDLE
-    }
-    if (stateCode === 2) {  // Разливка
-      initializer = ["s10", true]
-      state = AgregateState.PROCESS
-    }
-    if (stateCode === 3) {  // Смена СК
-      initializer = ["s01", true]
-      state = AgregateState.PROCESS
-    }
-    if (stateCode === 4) {  // Смена СК
-      initializer = ["s11", true]
-      state = AgregateState.PROCESS
-    }
+    let initializer: any[] = ["s00", false, AgregateState.IDLE]
+    if (stateCode > 0) initializer = ["s10", true, AgregateState.PROCESS]
 
-    const [tgs, streamCast] = initializer
+    const [tgs, streamCast, state] = initializer
 
     const update = summary.filter(s => s.Tag === "$DateTime")[0]
 
@@ -391,7 +377,6 @@ export class StapleSummaryHandler {
       slabWidth,
       state,
       steelGrade,
-      //streamCast: +flowSpeed > 0.05 && +castingSpeed > 0.05,
       streamCast,
       tgs,
       teamId,
@@ -422,47 +407,34 @@ export class StapleSummaryHandler {
     const slabWidth = summary.filter(s => s.Tag === "SLAB_WIDTH")[0].Value
     const currentTemp = summary.filter(s => s.Tag === "CURRENT_TEMP")[0].Value
 
-    // Холодный простой
-    let initializer: any[] = ["s00", false]
-    let state = AgregateState.IDLE
+    // STATE
+    // 0 "Холодный простой",
+    // 1 "Разливка",
+    // 2 "Разливка и раскрой",
+    // 3 "Раскрой",
+    // 4 "Плавка на плавку"
 
     const stateCode = +summary.filter(s => s.Tag === "STATE")[0].Value
 
-    if (stateCode === 1) {  // Начало разливки
-      initializer = ["s10", false]
-      state = AgregateState.HOTIDLE
-    }
-    if (stateCode === 2) {  // Разливка
-      initializer = ["s10", true]
-      state = AgregateState.PROCESS
-    }
-    if (stateCode === 3) {  // Смена СК
-      initializer = ["s01", true]
-      state = AgregateState.PROCESS
-    }
-    if (stateCode === 4) {  // Смена СК
-      initializer = ["s11", true]
-      state = AgregateState.PROCESS
-    }
-
-    const [tgs, streamCast] = initializer
+    const streamCast = stateCode > 0
+    const state = streamCast ? AgregateState.PROCESS : AgregateState.IDLE
 
     const mldTk = +summary.filter(s => s.Tag === "L2S_WM_COM_MLD_TK")[0].Value
     const exitWidth = +summary.filter(s => s.Tag === "MWA_WS_EXIT_WIDTH")[0].Value
     const stlHot = +summary.filter(s => s.Tag === "L2S_WM_TRK_STL_HOT")[0].Value
 
-    //const LD_1 = summary.filter(s => s.Tag === "TGS_BS_ARM1_LD_PRE")[0].Value === "1"
-    //const LD_2 = summary.filter(s => s.Tag === "TGS_BS_ARM2_LD_PRE")[0].Value === "1"
-    //const CAST_1 = summary.filter(s => s.Tag === "TGS_BS_A1_CAST_POS")[0].Value === "1"
-    //const CAST_2 = summary.filter(s => s.Tag === "TGS_BS_A2_CAST_POS")[0].Value === "1"
+    const LD_1 = summary.filter(s => s.Tag === "TGS_BS_ARM1_LD_PRE")[0].Value === "1"
+    const LD_2 = summary.filter(s => s.Tag === "TGS_BS_ARM2_LD_PRE")[0].Value === "1"
+    const CAST_1 = summary.filter(s => s.Tag === "TGS_BS_A1_CAST_POS")[0].Value === "1"
+    const CAST_2 = summary.filter(s => s.Tag === "TGS_BS_A2_CAST_POS")[0].Value === "1"
 
-    //let tgs
-    //if (LD_1 && LD_2) tgs = "s11"
-    //else if ((LD_1 && !LD_2 && CAST_1) || (!LD_1 && LD_2 && CAST_2)) tgs = "s10"
-    //else if ((!LD_1 && LD_2 && CAST_1) || (LD_1 && !LD_2 && CAST_2)) tgs = "s01"
-    //else if ((LD_1 && !LD_2)) tgs = "s10"
-    //else if ((!LD_1 && LD_2)) tgs = "s01"
-    //else tgs = "s00"
+    let tgs
+    if (LD_1 && LD_2) tgs = "s11"
+    else if ((LD_1 && !LD_2 && CAST_1) || (!LD_1 && LD_2 && CAST_2)) tgs = "s10"
+    else if ((!LD_1 && LD_2 && CAST_1) || (LD_1 && !LD_2 && CAST_2)) tgs = "s01"
+    else if ((LD_1 && !LD_2)) tgs = "s10"
+    else if ((!LD_1 && LD_2)) tgs = "s01"
+    else tgs = "s00"
 
 
     return {
@@ -497,7 +469,6 @@ export class StapleSummaryHandler {
     const update = summary.filter(s => s.Tag === "$DateTime")[0]
     const heatId = summary.filter(s => s.Tag === "HEAT_ID")[0]
     const steelGrade = summary.filter(s => s.Tag === "STEEL_GRADE")[0]
-    const activeTank = +summary.filter(s => s.Tag === "TANK_ID")[0].Value
     const currentTemp = summary.filter(s => s.Tag === "CURRENT_TEMP")[0].Value
     const heatWeight = summary.filter(s => s.Tag === "HEAT_WEIGHT")[0].Value
     const heatStart = summary.filter(s => s.Tag === "HEAT_START")[0].Value
@@ -512,23 +483,21 @@ export class StapleSummaryHandler {
 
     const stateCode = +summary.filter(s => s.Tag === "STATE")[0].Value
 
-    if (activeTank === num) {
-      if (stateCode === 1) {  // Горячий простой
-        initializer = [false, false, true, false]
-        state = AgregateState.HOTIDLE
-      }
-      if (stateCode === 2) {  // Продувка
-        initializer = [false, true, true, false]
-        state = AgregateState.PROCESS
-      }
-      if (stateCode === 3) {  // Вакуум
-        initializer = [true, false, true, false]
-        state = AgregateState.PROCESS
-      }
-      if (stateCode === 4) {  // Вакуум и продувка
-        initializer = [true, true, true, false]
-        state = AgregateState.PROCESS
-      }
+    if (stateCode === 1) {  // Горячий простой
+      initializer = [false, false, true, false]
+      state = AgregateState.HOTIDLE
+    }
+    if (stateCode === 2) {  // Продувка
+      initializer = [false, true, true, false]
+      state = AgregateState.PROCESS
+    }
+    if (stateCode === 3) {  // Вакуум
+      initializer = [true, false, true, false]
+      state = AgregateState.PROCESS
+    }
+    if (stateCode === 4) {  // Вакуум и продувка
+      initializer = [true, true, true, false]
+      state = AgregateState.PROCESS
     }
 
     const [vacuum, argon, capdown, empty] = initializer
@@ -537,7 +506,7 @@ export class StapleSummaryHandler {
     return {
       name: `ВД-${num}поз`,
       heatId: heatId.Value.replace(/[^a-zA-Zа-яА-Я0-9]/g, ""),
-      steelGrade: steelGrade.Value.replace(/[^a-zA-Zа-яА-Я0-9]/g, ""),
+      steelGrade: steelGrade.Value.replace(/[^a-zA-Zа-яА-Я0-9-]/g, ""),
       currentTemp,
       heatWeight,
       ladleId,

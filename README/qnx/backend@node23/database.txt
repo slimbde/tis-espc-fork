@@ -1,0 +1,6 @@
+login:      readall
+pass:       readall
+ip:         10.2.19.223
+server:     MatEspc6
+
+heat info   DBA.xmelt

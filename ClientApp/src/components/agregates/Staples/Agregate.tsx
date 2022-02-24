@@ -99,7 +99,7 @@ export const Agregate: React.FC<AgregateInfo> = ({
           <div>{heatStart}</div>
         </div>}
 
-        {heatTime && <div>
+        {heatTime !== "00:00:00" && !!heatTime && <div>
           <div>Время</div>
           <div>{heatTime}</div>
         </div>}

@@ -16,6 +16,8 @@ namespace TIS_ESPC_FORK.Models.Repositories
         Task<IEnumerable<HeatVODProcess>> HeatVODProcessesFor(string heatId);
         Task<IEnumerable<HeatCCMProcess>> HeatCCMProcessesFor(string heatId);
         Task<IEnumerable<HeatCCMQuality>> HeatCCMQualityFor(string heatId);
+        Task<int> StartCCM1Heat(string heatId);
+        Task<int> StopCCM1Heat(string heatId, double avgSpeed, string time);
     }
 
 
@@ -274,6 +276,46 @@ namespace TIS_ESPC_FORK.Models.Repositories
 
             using (DbConnection db = new OracleConnection(conStringCCM))
                 return await db.QueryAsync<HeatCCMQuality>(stmt, new { heatId });
+        }
+
+        public async Task<int> StartCCM1Heat(string heatId)
+        {
+
+            using (DbConnection db = new OracleConnection(conStringCCM))
+            {
+                string stmt = @"SELECT COUNT(*) FROM REP_CCM1_CASTING_SPEED WHERE HEAT_ID=:heatId";
+                int exists = await db.ExecuteScalarAsync<int>(stmt, new { heatId });
+
+                if (exists == 0)
+                {
+                    stmt = @"INSERT INTO REP_CCM1_CASTING_SPEED (REPORT_COUNTER, HEAT_ID, START_TIME)
+                                VALUES (
+                                    (SELECT MAX(REPORT_COUNTER)+1 FROM REP_CCM1_CASTING_SPEED)
+                                    ,:heatId
+                                    ,SYSDATE
+                                )";
+
+                    return await db.ExecuteAsync(stmt, new { heatId });
+                }
+
+                return 0;
+            }
+        }
+
+        public async Task<int> StopCCM1Heat(string heatId, double avgSpeed, string time)
+        {
+
+            using (DbConnection db = new OracleConnection(conStringCCM))
+            {
+                string stmt = @"UPDATE REP_CCM1_CASTING_SPEED
+                                SET
+                                    RECORD_TIME = SYSDATE
+                                    ,AVG_SPEED = :avgSpeed
+                                    ,RUNNING_TIME= :time
+                                WHERE HEAT_ID = :heatId";
+
+                return await db.ExecuteAsync(stmt, new { heatId, avgSpeed, time });
+            }
         }
     }
 }
