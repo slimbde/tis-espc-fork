@@ -57,7 +57,7 @@
                 $values["LADLE_ID"] = $this->trimReplace($this->read_file($vodASUTP,22,10,"A10"));
                 $values["VACUUM_PRESSURE"] = round($this->read_file($vodMSPstatus,72,2,"s")/10,1);
                 $values['VACUUM_TIME'] = gmdate("H:i:s", $this->read_file($vodMSPstatus,132,2,"s"));
-                $values['HEAT_START'] = $this->oleToTime(doubleval($this->read_file($vodHeatInfo,249,8,"d")));
+                //$values['HEAT_START'] = $this->oleToTime(doubleval($this->read_file($vodHeatInfo,249,8,"d")));
                 
                 if($tank === $activeTank) {
                     $values["HEAT_WEIGHT"] = round($this->read_file("//16/dd/VOD_msp_est_data",22,2,"s")/100,1);

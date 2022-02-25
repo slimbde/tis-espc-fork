@@ -32,11 +32,11 @@ namespace TIS_ESPC_FORK.Controllers
 
         [HttpGet]
         [Route("StopCCM1Heat")]
-        public async Task<IHttpActionResult> StopCCM1Heat(string heatId, double avgSpeed, string time)
+        public async Task<IHttpActionResult> StopCCM1Heat(string heatId, double avgSpeed, string time, double performance)
         {
             try
             {
-                int rowsUpdated = await pRepo.StopCCM1Heat(heatId, avgSpeed, time);
+                int rowsUpdated = await pRepo.StopCCM1Heat(heatId, avgSpeed, time, performance);
 
                 if (rowsUpdated > 0)
                     return Ok($"StopCCM1Heat {heatId} success");

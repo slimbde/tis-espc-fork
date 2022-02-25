@@ -1,0 +1,5 @@
+ip          10.2.19.215
+server      n_work
+db          n_work
+user        dsp
+pass        sql

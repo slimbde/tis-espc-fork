@@ -48,9 +48,9 @@
                 $this->sendToTis($params);
             }
             
-            $message = "start heat: $newHeatId";
-            $params["LAST_MSG"] = $message;
-            $this->trace($message);
+            $params['SLAB_WIDTH'] = $this->read_file("//20/dd/fusion_struct_1",822,4,"l");
+            $params['SLAB_THICKNESS'] = $this->read_file("//20/dd/fusion_struct_1",826,4,"l");
+            
             return $params;
         }
         
@@ -65,10 +65,7 @@
             $heatId = $params["HEAT_ID"];
             $avgSpeed = $params["AVG_SPEED"];
             
-            $message = "stop heat: $heatId, avgSpeed:$avgSpeed";
-            $params["LAST_MSG"] = $message;
             $params["END_POINT"] = date( "Y-m-d H:i:s" );
-            $this->trace($message);
             return $params;
         }
         
@@ -119,7 +116,9 @@
             );
             
             $transition = "$prevProcessCode-$processCode";
-            return $transitions[$transition];
+            $action = $transitions[$transition];
+
+            return $action;
         }
         
         
@@ -135,11 +134,17 @@
             $duration = date('H:i:s',$interval);
             
             $heatId = $params["HEAT_ID"];
-            $avgSpeed = $params["AVG_SPEED"];
+            $avgSpeed = doubleval($params["AVG_SPEED"]);
+            $width = intval($params["SLAB_WIDTH"]);
+            $thickness = intval($params["SLAB_THICKNESS"]);
             
-            $data = $avgSpeed === 0 
+            $performance = round($width * $thickness / 1000000 * 7.85 * 60 * $avgSpeed, 3); 
+            
+            $data = $avgSpeed === 0. 
                 ? "StartCCM1Heat?heatId=$heatId"
-                : "StopCCM1Heat?heatId=$heatId&avgSpeed=$avgSpeed&time=$duration";
+                : "StopCCM1Heat?heatId=$heatId&avgSpeed=$avgSpeed&time=$duration&performance=$performance";
+                
+            $this->trace($data);
             
             $host="10.2.10.84";
             $fp = fsockopen( $host, 83, $errno, $errstr, 30 ) or die("$errno ($errstr)\n");

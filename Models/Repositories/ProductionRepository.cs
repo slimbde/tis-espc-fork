@@ -17,7 +17,7 @@ namespace TIS_ESPC_FORK.Models.Repositories
         Task<IEnumerable<HeatCCMProcess>> HeatCCMProcessesFor(string heatId);
         Task<IEnumerable<HeatCCMQuality>> HeatCCMQualityFor(string heatId);
         Task<int> StartCCM1Heat(string heatId);
-        Task<int> StopCCM1Heat(string heatId, double avgSpeed, string time);
+        Task<int> StopCCM1Heat(string heatId, double avgSpeed, string time, double performance);
     }
 
 
@@ -302,7 +302,7 @@ namespace TIS_ESPC_FORK.Models.Repositories
             }
         }
 
-        public async Task<int> StopCCM1Heat(string heatId, double avgSpeed, string time)
+        public async Task<int> StopCCM1Heat(string heatId, double avgSpeed, string time, double performance)
         {
 
             using (DbConnection db = new OracleConnection(conStringCCM))
@@ -311,10 +311,11 @@ namespace TIS_ESPC_FORK.Models.Repositories
                                 SET
                                     RECORD_TIME = SYSDATE
                                     ,AVG_SPEED = :avgSpeed
-                                    ,RUNNING_TIME= :time
+                                    ,RUNNING_TIME = :time
+                                    ,PERFORMANCE = :performance
                                 WHERE HEAT_ID = :heatId";
 
-                return await db.ExecuteAsync(stmt, new { heatId, avgSpeed, time });
+                return await db.ExecuteAsync(stmt, new { heatId, avgSpeed, time, performance });
             }
         }
     }

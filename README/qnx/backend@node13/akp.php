@@ -64,12 +64,12 @@
                     $values["HEAT_WEIGHT"] = round($this->read_file("//16/dd/LF_msp_est_data",22,2,"s")/100,1);
                     $values["CURRENT_TEMP"] = intval($this->read_file("//16/dd/LF_msp_est_data",20,2,"s"));
                     
-                    $bgnHeatId = $this->trimReplace($this->read_file($lfHeatInfo,34,20,"A20"));
+                    //$bgnHeatId = $this->trimReplace($this->read_file($lfHeatInfo,34,20,"A20"));
                     
-                    $timeTank = $this->oleToTime(doubleval($this->read_file($lfHeatInfo,249,8,"d")));
-                    $timeNonActivetank = $this->oleToTime(doubleval($this->read_file($lfHeatNonActiveInfo,249,8,"d")));
+                    //$timeTank = $this->oleToTime(doubleval($this->read_file($lfHeatInfo,249,8,"d")));
+                    //$timeNonActivetank = $this->oleToTime(doubleval($this->read_file($lfHeatNonActiveInfo,249,8,"d")));
                     
-                    $values['HEAT_START'] = $values["HEAT_ID"] === $bgnHeatId ? $timeTank : $timeNonActivetank;
+                    //$values['HEAT_START'] = $values["HEAT_ID"] === $bgnHeatId ? $timeTank : $timeNonActivetank;
                 }
                 
                 $argon1 = $this->read_file($lfStatus,56,2,"s")*6/100;

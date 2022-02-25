@@ -14,6 +14,11 @@
           "Горячий простой"               5    
         */
         
+        
+        var $fileToStash = "dspStash.dat";
+        
+        
+        
         //
         // assembles DSP gas info
         //
@@ -121,18 +126,15 @@
                 $chemValues[$i/90] = implode(";",$vals);
             }
             
-            $fileToStash = "dspChemStash.dat";
+            
+            $stash = $this->fileReadParams($this->fileToStash,$stash);
             
             if(count($nums) > 0) {
                 // stash first probe to make it available any time
-                $chemToStash = array();
-                $chemToStash['CHEMICAL_NUMS'] = $nums[0];
-                $chemToStash['CHEMICAL_TIMES'] = $times[0];
-                $chemToStash['CHEMICAL_0'] = $chemValues[0];
-                $this->fileWriteParams($fileToStash, $chemToStash);
-                
-                $names = array('C','Mn','Si','S','P','Cr','Ni','Cu','Al','Ti','Mo','V','W','N');
-                $values['CHEMICAL_KEY'] = implode(";",$names);
+                $stash['CHEMICAL_NUMS'] = $nums[0];
+                $stash['CHEMICAL_TIMES'] = $times[0];
+                $stash['CHEMICAL_0'] = $chemValues[0];
+                $this->fileWriteParams($this->fileToStash, $stash);
                 
                 $values['CHEMICAL_NUMS'] = implode(";",$nums);
                 $values['CHEMICAL_TIMES'] = implode(";",$times);
@@ -143,11 +145,39 @@
                 }
             }
             // if probes are gone we still are able to use the last one from stash
-            else $values = $this->fileReadParams($fileToStash,$values);
+            else {
+                $values['CHEMICAL_NUMS'] = $stash["CHEMICAL_NUMS"];
+                $values['CHEMICAL_TIMES'] = $stash["CHEMICAL_TIMES"];
+                $values['CHEMICAL_0'] = $stash["CHEMICAL_0"];
+            }
+                
+            $names = array('C','Mn','Si','S','P','Cr','Ni','Cu','Al','Ti','Mo','V','W','N');
+            $values['CHEMICAL_KEY'] = implode(";",$names);
             
             return $values;
         }
         
+        
+        
+        
+        //
+        // fills target array with heat end point
+        //
+        function checkHeatEnd($values,$procSmStat) {
+            $stash = $this->fileReadParams($this->fileToStash,$stash);
+            
+            if($procSmStat !== 0) {
+                $stash["HEAT_END"] = "";
+            }
+            else if($stash["HEAT_END"] === "" || !isset($stash["HEAT_END"])) {
+                $stash["HEAT_END"] = date("H:i:s");
+            }
+            
+            $this->fileWriteParams($this->fileToStash,$stash);
+            
+            $values["HEAT_END"] = $stash["HEAT_END"];
+            return $values;
+        }
         
         
         
@@ -189,10 +219,12 @@
             $procEeInput = intval($this->read_file("//10/dds/proc",1,1,"c"));
             
             $processCode = 0;
-            if($procSmStat > 0) $processCode = round($eenergData02/15000 + 1);
+            if($procSmStat > 0) $processCode = round($eenergData02/15000. + 1);
             if($processCode > 0 && $procEeInput === 0) $processCode = 5;
             
             $values['STATE'] = $processCode;
+            $values = $this->checkHeatEnd($values,$procSmStat);
+            
             $values['ENERGY_ON']  = $procEeInput;
             $values['EE_HEAT_ACTIVE'] = $eenergData02;
             

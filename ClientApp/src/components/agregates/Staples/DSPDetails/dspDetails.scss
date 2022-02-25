@@ -51,7 +51,7 @@
       background-color: $state-hot-idle;
     }
 
-    &.state-heating::after {
+    &.state-process::after {
       content: "Плавление";
       background-color: $state-process;
     }
@@ -71,7 +71,7 @@
     background-color: $state-idle !important;
   }
 
-  .state-heating::before,
+  .state-process::before,
   .state-flush-steel::before,
   .state-flush-slag::before {
     background-color: $state-process !important;

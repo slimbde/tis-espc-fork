@@ -75,16 +75,14 @@
                 $chemValues[$i/90] = implode(";",$vals);
             }
             
+            $stash = $this->fileReadParams("akosChemStash.dat",$stash);
+            
             if(count($nums) > 0) {
                 // stash first probe to make it available any time
-                $chemToStash = array();
-                $chemToStash['CHEMICAL_NUMS'] = $nums[0];
-                $chemToStash['CHEMICAL_TIMES'] = $times[0];
-                $chemToStash['CHEMICAL_0'] = $chemValues[0];
-                $this->fileWriteParams("akosChemStash.dat", $chemToStash);
-                
-                $names = array('C','Mn','Si','S','P','Cr','Ni','Cu','Al','Ti','Mo','V','W','N');
-                $values['CHEMICAL_KEY'] = implode(";",$names);
+                $stash['CHEMICAL_NUMS'] = $nums[0];
+                $stash['CHEMICAL_TIMES'] = $times[0];
+                $stash['CHEMICAL_0'] = $chemValues[0];
+                $this->fileWriteParams("akosChemStash.dat", $stash);
                 
                 $values['CHEMICAL_NUMS'] = implode(";",$nums);
                 $values['CHEMICAL_TIMES'] = implode(";",$times);
@@ -95,7 +93,14 @@
                 }
             }
             // if probes are gone we still are able to use the last one from stash
-            else $values = $this->fileReadParams("akosChemStash.dat",$values);
+            else {
+                $values['CHEMICAL_NUMS'] = $stash['CHEMICAL_NUMS'];
+                $values['CHEMICAL_TIMES'] = $stash['CHEMICAL_TIMES'];
+                $values['CHEMICAL_0'] = $stash['CHEMICAL_0'];
+            }
+                
+            $names = array('C','Mn','Si','S','P','Cr','Ni','Cu','Al','Ti','Mo','V','W','N');
+            $values['CHEMICAL_KEY'] = implode(";",$names);
             
             return $values;
         }

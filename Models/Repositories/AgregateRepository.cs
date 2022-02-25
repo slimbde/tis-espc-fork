@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using MySql.Data.MySqlClient;
+using Newtonsoft.Json;
 using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
@@ -310,7 +311,7 @@ namespace TIS_ESPC_FORK.Models.Repositories
         {
             try
             {
-                // get mysql heat for agregates 2,69,70,71,72
+                // get mysql heat for agregates 2,69,70,71,72,73
                 string stmt = @"SELECT      
                                     dc.description              Name
                                     ,ds.dev_tag                 Tag
@@ -319,7 +320,7 @@ namespace TIS_ESPC_FORK.Models.Repositories
                                 FROM dev_state ds 
                                 JOIN dev_catalog dc 
                                     ON ds.device = dc.device 
-                                    AND dc.device IN (2,69,70,71,72)
+                                    AND dc.device IN (2,69,70,71,72,73)
                                     AND ds.dev_tag = 'HEAT_ID';";
 
                 IEnumerable<AgregateSummary> summary;
@@ -331,11 +332,13 @@ namespace TIS_ESPC_FORK.Models.Repositories
                 string vd2 = summary.First(s => s.Name == "VD-22").Value;
                 string akp1 = summary.First(s => s.Name == "EAKP-11").Value;
                 string akp2 = summary.First(s => s.Name == "EAKP-12").Value;
+                string akos = summary.First(s => s.Name == "EAKP-2").Value;
 
                 // get oracle current heat end time for LF VOD
                 stmt = @"SELECT
                           DECODE(CUSTOM_HEAT_ID,:vd1,'VD-21',:vd2,'VD-22')  DEVICE
                           ,CUSTOM_HEAT_ID                                   HEAT_ID
+                          ,TO_CHAR(START_DATE,'HH24:MI:SS')                 HEAT_START
                           ,CASE WHEN TO_CHAR(STOP_DATE,'YYYY')='1970' THEN NULL
                             ELSE TO_CHAR(STOP_DATE,'HH24:MI:SS')
                           END                                               HEAT_END
@@ -346,38 +349,46 @@ namespace TIS_ESPC_FORK.Models.Repositories
                         SELECT
                           DECODE(CUSTOM_HEAT_ID,:akp1,'EAKP-11',:akp2,'EAKP-12')    DEVICE
                           ,CUSTOM_HEAT_ID                                           HEAT_ID
+                          ,TO_CHAR(START_DATE,'HH24:MI:SS')                         HEAT_START
                           ,CASE WHEN TO_CHAR(STOP_DATE,'YYYY')='1970' THEN NULL
                             ELSE TO_CHAR(STOP_DATE,'HH24:MI:SS')
                           END                                                       HEAT_END
                         FROM REPORTS R
                         WHERE R.CUSTOM_HEAT_ID IN (:akp1,:akp2) AND AREA_ID = 600";
 
-                List<HeatEndTime> endTimeToUpdate = new List<HeatEndTime>();
+                List<dynamic> endTimeToUpdate = new List<dynamic>();
 
                 using (IDbConnection db = new OracleConnection(oraLFVODString))
-                    endTimeToUpdate.AddRange(await db.QueryAsync<HeatEndTime>(stmt, new { vd1, vd2, akp1, akp2 }));
+                    endTimeToUpdate.AddRange(await db.QueryAsync<dynamic>(stmt, new { vd1, vd2, akp1, akp2 }));
 
                 // get oracle current heat end time for CCM2
                 stmt = @"SELECT
-                          'CCM-2'   DEVICE
+                          'CCM-2'                               DEVICE
                           ,HEAT_ID
+                          ,TO_CHAR(START_DATE,'HH24:MI:SS')     HEAT_START
                           ,CASE WHEN TO_CHAR(STOP_DATE,'YYYY')='1970' THEN NULL
                             ELSE TO_CHAR(STOP_DATE,'HH24:MI:SS')
-                          END       HEAT_END
+                          END                                   HEAT_END
                         FROM REPORTS
                         WHERE HEAT_ID = :ccm";
 
                 using (IDbConnection db = new OracleConnection(oraString))
-                    endTimeToUpdate.AddRange(await db.QueryAsync<HeatEndTime>(stmt, new { ccm }));
+                    endTimeToUpdate.AddRange(await db.QueryAsync<dynamic>(stmt, new { ccm }));
+
+                // get node23 current heat end time for DSP, AKOS
+                endTimeToUpdate.AddRange(await getNode23HeatInfoAsync());
 
                 // send heat end time back to mysql
                 using (DbConnection db = new MySqlConnection(conString))
                 {
-                    foreach (HeatEndTime one in endTimeToUpdate)
+                    foreach (dynamic one in endTimeToUpdate)
                     {
                         try
                         {
-                            stmt = $"call dev_update('{one.DEVICE}~HEAT_END={(one.HEAT_END ?? "").Replace(" ", "%20")}|');";
+                            string start = (one.HEAT_START ?? "").Replace(" ", "%20");
+                            string end = (one.HEAT_END ?? "").Replace(" ", "%20");
+
+                            stmt = $"call dev_update('{one.DEVICE}~HEAT_START={start}|HEAT_END={end}|');";
                             await db.ExecuteAsync(stmt);
                         }
                         catch (Exception) { }
@@ -389,11 +400,34 @@ namespace TIS_ESPC_FORK.Models.Repositories
 
 
 
-        internal sealed class HeatEndTime
+
+        async static Task<dynamic> getNode23HeatInfoAsync()
         {
-            public string DEVICE { get; set; }
-            public string HEAT_ID { get; set; }
-            public string HEAT_END { get; set; }
+            string now = DateTime.Now.ToString("yyyyMMdd");
+            string url = $"http://10.2.19.223/tis/smelt/?date={now}&agregate=akoc";
+
+            WebClient client = new WebClient();
+            client.Credentials = new NetworkCredential("admin", "321876");
+
+            string response = await client.DownloadStringTaskAsync(url);
+
+            IEnumerable<dynamic> set = JsonConvert
+                .DeserializeObject<IEnumerable<dynamic>>(response)
+                .ToLookup(one => one.AGREGATE == "AKOC" ? "EAKP-2" : "AF")
+                .Select(group =>
+                {
+                    dynamic last = group.Last();
+
+                    return new
+                    {
+                        DEVICE = group.Key,
+                        HEAT_ID = last.HEAT_ID.ToString(),
+                        HEAT_START = string.IsNullOrEmpty(last.START_POINT.ToString()) ? "" : last.START_POINT.ToString().Substring(11, 8),
+                        HEAT_END = string.IsNullOrEmpty(last.END_POINT.ToString()) ? "" : last.END_POINT.ToString().Substring(11, 8),
+                    } as dynamic;
+                });
+
+            return set;
         }
     }
 }
