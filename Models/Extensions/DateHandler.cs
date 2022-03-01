@@ -9,25 +9,13 @@ namespace TIS_ESPC_FORK.Models.Extensions
         /// </summary>
         public static DateTime[] GetMetallurgicalRange(string date)
         {
-            DateTime point = GetMetallurgicalDate(date);
+            DateTime point = DateTime.Parse(date);
 
             DateTime[] result = new DateTime[2];
             result[0] = point - TimeSpan.FromHours(4.5);
             result[1] = point + TimeSpan.FromHours(19.5);
 
             return result;
-        }
-
-        /// <summary>
-        /// Calculates metallurgical date. yyyy-MM-dd
-        /// </summary>
-        public static DateTime GetMetallurgicalDate(string date)
-        {
-            DateTime point = DateTime.Parse(date);
-            if (DateTime.Now.TimeOfDay > TimeSpan.FromHours(19.5))
-                return DateTime.Now.AddDays(1).Date;
-
-            return point.Date;
         }
     }
 }

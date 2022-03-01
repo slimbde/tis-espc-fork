@@ -10,6 +10,7 @@ import pHandler from "models/handlers/DbHandlers/ProductionDbHandler"
 import Controls from "./Controls"
 import { blinkAlert } from "components/extra/Alert"
 import { ChartItem, populateChart } from "./PopulateChart"
+import { MetallurgicalDate } from "components/extra/MetallurgicalDate"
 
 xrange(Highcharts)
 
@@ -36,24 +37,36 @@ export const Schedule: React.FC = () => {
   })
 
 
+
   useEffect(() => {
-    document.title = "ТИС ЭСПЦ: График работы"
+    const interval = setInterval(update, 5 * 60 * 1000)
+    document.title = "График работы"
+    return () => clearInterval(interval)
+    //eslint-disable-next-line
   }, [])
 
 
-
   useEffect(() => {
+    console.log(state.date)
+    update(false)
+    //eslint-disable-next-line
+  }, [state.date])
+
+
+  const update = (interval: Boolean = true) => {
+    if (state.date !== MetallurgicalDate() && interval) return
+
     setState(state => ({ ...state, loading: true }))
     chartRef.current!.classList.add("blur")
     controlsRef.current?.classList.add("disabled")
 
-    pHandler.GetScheduleHeatInfoAsync(moment(state.date).format("YYYY-MM-DD"))
+    pHandler.GetScheduleHeatInfoAsync(state.date)
       .then(response => {
         if (response.length === 0) throw new Error("Нет данных")
 
         // when highcharts draws the chart there must be at least one point to draw the device to make it visible
         // so we add the placeholder to keep the idle device visible
-        const fillerTime = state.metallurgicalDate + " 00:00:00"
+        const fillerTime = state.date + " 00:00:00"
         const fillerAKOC = [{ START_POINT: fillerTime, END_POINT: fillerTime, HEAT_ID: "", AGREGATE: "AKOC" }]
         const fillerAKOC2 = [{ START_POINT: fillerTime, END_POINT: fillerTime, HEAT_ID: "", AGREGATE: "AKOC2" }]
         const fillerDSP = [{ START_POINT: fillerTime, END_POINT: fillerTime, HEAT_ID: "", AGREGATE: "DSP" }]
@@ -96,14 +109,13 @@ export const Schedule: React.FC = () => {
         controlsRef.current?.classList.remove("disabled")
         setState(state => ({ ...state, loading: false, }))
       })
+  }
 
-    //eslint-disable-next-line
-  }, [state.date])
 
 
   const dateChange = (e: React.ChangeEvent<HTMLInputElement>) => setState({ ...state, date: moment(e.target.value).format("YYYY-MM-DD") })
   const back = () => setState(state => ({ ...state, date: moment(state.date).subtract(1, "day").format("YYYY-MM-DD") }))
-  const forth = () => setState(state => ({ ...state, date: state.date !== state.metallurgicalDate ? moment(state.date).add(1, "day").format("YYYY-MM-DD") : moment(state.date).format("YYYY-MM-DD") }))
+  const forth = () => setState(state => ({ ...state, date: state.date !== moment(state.metallurgicalDate).format("YYYY-MM-DD") ? moment(state.date).add(1, "day").format("YYYY-MM-DD") : state.date }))
   const reset = () => setState(state => ({ ...state, date: state.metallurgicalDate }))
 
 

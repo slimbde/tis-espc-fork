@@ -1,11 +1,12 @@
 import { blinkAlert } from "components/extra/Alert";
 import { Loading } from "components/extra/Loading";
 import { setFluid } from "components/extra/SetFluid";
+import { UpdateCam } from "components/extra/UpdateCam";
 import aHandler from "models/handlers/DbHandlers/AgregatesDbHandler";
 import { StapleSummaryHandler } from "models/handlers/StapleHandlers/StapleSummaryHandler";
 import { AgregateInfo } from "models/types/Agregates/Staples/AgregateInfo";
 import moment from "moment";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Alert } from "reactstrap"
 import { Agregate } from "./Agregate";
 import "./staples.scss"
@@ -29,6 +30,7 @@ type State = {
 
 
 export const Staples: React.FC = () => {
+  const camLink = useRef<HTMLImageElement>(null)
 
   const [state, setState] = useState<State>({
     loading: true,
@@ -46,8 +48,10 @@ export const Staples: React.FC = () => {
 
 
   useEffect(() => {
-    document.title = "ТИС ЭСПЦ: Агрегаты"
+    document.title = "Агрегаты"
     setFluid(true)
+
+    UpdateCam("http://10.2.19.234/oneshotimage1", camLink.current!)
 
     const update = () => aHandler.ReadStapleSummaryAsync()
       .then(summary => {
@@ -94,15 +98,19 @@ export const Staples: React.FC = () => {
 
     {state.loading && <Loading />}
     {!state.loading && !state.loadError && <>
-      <Agregate {...state.dsp}></Agregate>
       <Agregate {...state.akp1}></Agregate>
       <Agregate {...state.akp2}></Agregate>
       <Agregate {...state.mnlz1}></Agregate>
-      <Agregate {...state.akos}></Agregate>
+      <Agregate {...state.mnlz2}></Agregate>
       <Agregate {...state.vd1}></Agregate>
       <Agregate {...state.vd2}></Agregate>
-      <Agregate {...state.mnlz2}></Agregate>
+      <Agregate {...state.dsp}></Agregate>
+      <Agregate {...state.akos}></Agregate>
     </>}
+
+    <div className="cam">
+      <img alt="AKOC" width="100%" ref={camLink}></img>
+    </div>
 
   </div >
 }

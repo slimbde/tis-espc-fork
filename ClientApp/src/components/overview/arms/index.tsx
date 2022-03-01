@@ -38,7 +38,7 @@ export const ARMOverview: React.FC = () => {
   })
 
   useEffect(() => {
-    document.title = "ТИС ЭСПЦ: Мониторинг"
+    document.title = "Мониторинг"
     const interval = setInterval(() => {
       const random = Math.random()
       setState({

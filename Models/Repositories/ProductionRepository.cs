@@ -326,7 +326,7 @@ namespace TIS_ESPC_FORK.Models.Repositories
 
         public async Task<IEnumerable<dynamic>> GetSchedule(string date)
         {
-            string mDate = DateHandler.GetMetallurgicalDate(date).ToString("yyyyMMdd");
+            string mDate = DateTime.Parse(date).ToString("yyyyMMdd");
             string url = $"http://10.2.19.223/tis/smelt/?date={mDate}&agregate=akoc:dsp:akoc2:vod";
 
             // collect staple agregates info

@@ -76,7 +76,7 @@ export const Production: React.FC = () => {
   })
 
   useEffect(() => {
-    document.title = "ТИС ЭСПЦ: Производство"
+    document.title = "Производство"
     setFluid(true)
     return setFluid
   }, [])

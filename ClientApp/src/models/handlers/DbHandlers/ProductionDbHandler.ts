@@ -1,3 +1,4 @@
+import { MetallurgicalDate } from "components/extra/MetallurgicalDate"
 import { CCMHeat } from "models/types/Technology/Production/CCMHeat"
 import { HeatCCMProcess } from "models/types/Technology/Production/HeatCCMProcess"
 import { HeatCCMQuality } from "models/types/Technology/Production/HeatCCMQuality"
@@ -7,6 +8,7 @@ import { LFHeat } from "models/types/Technology/Production/LFHeat"
 import { ProductionFilter } from "models/types/Technology/Production/ProductionFilter"
 import { VODHeat } from "models/types/Technology/Production/VODHeat"
 import { ScheduleHeatInfo } from "models/types/Technology/Schedule/ScheduleHeatInfo"
+
 
 
 export class ProductionDbHandler {
@@ -101,8 +103,9 @@ export class ProductionDbHandler {
     if (resp.status >= 400)
       throw new Error(`[${this.api}DbHandler]: ${await resp.text()}`)
 
-    const result = await resp.json()
-    this.interimCache.set(date, result)
+    const result = await resp.json();
+    if (date !== MetallurgicalDate())
+      this.interimCache.set(date, result)
 
     return result
   }
