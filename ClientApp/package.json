@@ -10,7 +10,7 @@
     "@types/reactstrap": "^8.7.2",
     "babel-polyfill": "^6.26.0",
     "bootstrap": "4.6",
-    "highcharts": "^9.2.2",
+    "highcharts": "^9.3.3",
     "history": "^4.10.1",
     "moment": "^2.29.1",
     "node-sass": "^6.0.1",

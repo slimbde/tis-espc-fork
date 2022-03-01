@@ -9,8 +9,10 @@ type LayoutProps = {
   children?: React.ReactElement
 }
 
-const Layout: React.FC<LayoutProps> = (props: LayoutProps) =>
-  <>
+const Layout: React.FC<LayoutProps> = (props: LayoutProps) => {
+  document.title = "ТИС ЭСПЦ"
+
+  return <>
     <NavMenu />
     <main>
       <div id="shade"></div>
@@ -18,6 +20,7 @@ const Layout: React.FC<LayoutProps> = (props: LayoutProps) =>
       <Footer />
     </main>
   </>
+}
 
 
 export default Layout

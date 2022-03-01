@@ -1,12 +1,16 @@
 ﻿using Dapper;
+using Newtonsoft.Json;
 using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data;
 using System.Data.Common;
+using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using TIS_ESPC_FORK.Models.DTOs.Production;
-
+using TIS_ESPC_FORK.Models.Extensions;
 
 namespace TIS_ESPC_FORK.Models.Repositories
 {
@@ -18,6 +22,7 @@ namespace TIS_ESPC_FORK.Models.Repositories
         Task<IEnumerable<HeatCCMQuality>> HeatCCMQualityFor(string heatId);
         Task<int> StartCCM1Heat(string heatId);
         Task<int> StopCCM1Heat(string heatId, double avgSpeed, string time, double performance);
+        Task<IEnumerable<dynamic>> GetSchedule(string date);
     }
 
 
@@ -317,6 +322,63 @@ namespace TIS_ESPC_FORK.Models.Repositories
 
                 return await db.ExecuteAsync(stmt, new { heatId, avgSpeed, time, performance });
             }
+        }
+
+        public async Task<IEnumerable<dynamic>> GetSchedule(string date)
+        {
+            string mDate = DateHandler.GetMetallurgicalDate(date).ToString("yyyyMMdd");
+            string url = $"http://10.2.19.223/tis/smelt/?date={mDate}&agregate=akoc:dsp:akoc2:vod";
+
+            // collect staple agregates info
+            WebClient client = new WebClient();
+            client.Credentials = new NetworkCredential("admin", "321876");
+
+            string response = await client.DownloadStringTaskAsync(url);
+
+            IEnumerable<dynamic> set = JsonConvert.DeserializeObject<IEnumerable<dynamic>>(response);
+
+            // collect ccm1 info
+            using (IDbConnection db = new OracleConnection(conStringCCM))
+            {
+                DateTime[] range = DateHandler.GetMetallurgicalRange(date);
+
+                string stmt = @"WITH r AS (
+                                        SELECT
+                                            TO_DATE(:begin,'YYYYMMDDHH24MISS')  begin
+                                            ,TO_DATE(:end,'YYYYMMDDHH24MISS')   end
+                                        FROM DUAL
+                                    )
+                                    SELECT
+                                      'CCM1'        AGREGATE
+                                      ,HEAT_ID
+                                      ,TO_CHAR(START_TIME,'YYYY-MM-DD HH24:MI:SS')      START_POINT
+                                      ,TO_CHAR(RECORD_TIME,'YYYY-MM-DD HH24:MI:SS')     END_POINT
+                                    FROM REP_CCM1_CASTING_SPEED, r
+                                    WHERE START_TIME >= r.begin AND START_TIME < r.end
+
+                                    UNION ALL SELECT
+                                      'CCM2'                                            AGREGATE
+                                      ,HEAT_ID
+                                      ,TO_CHAR(START_DATE,'YYYY-MM-DD HH24:MI:SS')      START_POINT
+                                      ,CASE WHEN STOP_DATE = TO_DATE('01011970000000','DDMMYYYYHH24MISS') 
+                                            THEN NULL 
+                                            ELSE TO_CHAR(STOP_DATE,'YYYY-MM-DD HH24:MI:SS')
+                                       END                                              END_POINT
+                                    FROM REPORTS, r
+                                    WHERE START_DATE >= r.begin AND START_DATE < r.end
+                                    ORDER BY AGREGATE,START_POINT";
+
+                IEnumerable<dynamic> ccmInfo = (await db.QueryAsync<dynamic>(stmt, new
+                {
+                    // we expand the range on purpose. To show heats started before shift start
+                    begin = range[0].AddHours(-5).ToString("yyyyMMddHHmmss"),
+                    end = range[1].ToString("yyyyMMddHHmmss"),
+                }));
+
+                set = set.Concat(ccmInfo);
+            }
+
+            return set;
         }
     }
 }

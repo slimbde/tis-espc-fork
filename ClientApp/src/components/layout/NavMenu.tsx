@@ -68,6 +68,7 @@ class NavMenu extends Component<NavProps> {
                   <DropdownToggle nav className={location.indexOf("/technology") > -1 ? "active" : ""}>Технология</DropdownToggle>
                   <DropdownMenu right>
                     <DropdownItem><NavLink tag={Link} to="/technology/production">Производство</NavLink></DropdownItem>
+                    <DropdownItem><NavLink tag={Link} to="/technology/schedule">График работы</NavLink></DropdownItem>
                   </DropdownMenu>
                 </UncontrolledDropdown>}
 

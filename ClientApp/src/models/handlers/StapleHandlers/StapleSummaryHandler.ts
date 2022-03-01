@@ -337,6 +337,8 @@ export class StapleSummaryHandler {
 
     let initializer: any[] = ["s00", false, AgregateState.IDLE]
     if (stateCode > 0) initializer = ["s10", true, AgregateState.PROCESS]
+    if (stateCode === 3) initializer = ["s00", true, AgregateState.PROCESS]
+    if (stateCode === 4) initializer = ["s11", true, AgregateState.PROCESS]
 
     const [tgs, streamCast, state] = initializer
 
@@ -399,8 +401,8 @@ export class StapleSummaryHandler {
     const castingSpeed = summary.filter(s => s.Tag === "CASTING_SPEED")[0]
     const update = summary.filter(s => s.Tag === "$DateTime")[0]
     const heatStart = summary.filter(s => s.Tag === "HEAT_START")[0].Value
-    const heatTime = moment.utc(moment().diff(moment(heatStart, "HH:mm:ss"))).format("HH:mm:ss")
     const heatEnd = summary.filter(s => s.Tag === "HEAT_END")[0].Value
+    const heatTime = heatEnd === "" ? moment.utc(moment().diff(moment(heatStart, "HH:mm:ss"))).format("HH:mm:ss") : undefined
     const steelGrade = summary.filter(s => s.Tag === "STEEL_GRADE")[0].Value
     const heatWeight = summary.filter(s => s.Tag === "HEAT_WEIGHT")[0].Value
     const castedMeters = summary.filter(s => s.Tag === "CASTED_METERS")[0].Value

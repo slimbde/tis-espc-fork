@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import { Modal, ModalBody, ModalHeader, Table } from "reactstrap"
 import pHandler from "models/handlers/DbHandlers/ProductionDbHandler"
-import { HeatCCMQuality } from "models/types/Production/HeatCCMQuality"
+import { HeatCCMQuality } from "models/types/Technology/Production/HeatCCMQuality"
 import { Loading } from "components/extra/Loading"
 
 

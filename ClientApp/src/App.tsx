@@ -21,6 +21,7 @@ import { DSPDetails } from "components/agregates/Staples/DSPDetails";
 import { AKOSDetails } from "components/agregates/Staples/AKOSDetails";
 import { AKPDetails } from "components/agregates/Staples/AKPDetails";
 import { VODDetails } from "components/agregates/Staples/VODDetails";
+import { Schedule } from "components/technology/schedule";
 
 
 
@@ -72,7 +73,8 @@ const App: React.FC = () => {
   const technologistRoutes = [
     ...userRoutes,
     <Route path="/technology/production" component={Production} key="production" />,
-    <Route path="/agregates/dryers/:ID/:VIEW" component={Dryers} key="dryer" />,
+    <Route path="/technology/schedule/" component={Schedule} key="schedule" />,
+    <Route exact path="/agregates/dryers/:ID/:VIEW" component={Dryers} key="dryer" />,
     <Route exact path="/agregates/staple" component={Staples} key="staple" />,
     <Route exact path="/agregates/staple/ccm1" component={CCM1Details} key="ccm1details" />,
     <Route exact path="/agregates/staple/ccm2" component={CCM2Details} key="ccm2details" />,

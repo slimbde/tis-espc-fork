@@ -62,5 +62,14 @@ namespace TIS_ESPC_FORK.Controllers
             try { return Ok(await pRepo.HeatCCMQualityFor(heatId)); }
             catch (Exception ex) { return BadRequest(ex.Message); }
         }
+
+
+        [HttpGet]
+        [Route("api/Production/GetScheduleAsync")]
+        public async Task<IHttpActionResult> GetScheduleAsync(string date)
+        {
+            try { return Ok(await pRepo.GetSchedule(date)); }
+            catch (Exception ex) { return BadRequest(ex.Message); }
+        }
     }
 }

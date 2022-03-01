@@ -1,11 +1,11 @@
 import "./LF.scss"
-import { LFHeat } from "models/types/Production/LFHeat";
+import { LFHeat } from "models/types/Technology/Production/LFHeat";
 import { Table } from "reactstrap";
 import { Link } from "react-router-dom";
 import moment from "moment";
 import { useState } from "react";
 import { HeatEventModal } from "../HeatEventModal";
-import { AreaId } from "models/types/Production/AreaId";
+import { AreaId } from "models/types/Technology/Production/AreaId";
 
 type Props = {
   shift: number

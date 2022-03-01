@@ -4,8 +4,8 @@ import { Link } from "react-router-dom";
 import moment from "moment";
 import { useState } from "react";
 import { HeatEventModal } from "../HeatEventModal";
-import { AreaId } from "models/types/Production/AreaId";
-import { CCMHeat } from "models/types/Production/CCMHeat";
+import { AreaId } from "models/types/Technology/Production/AreaId";
+import { CCMHeat } from "models/types/Technology/Production/CCMHeat";
 import { HeatCCMProcessModal } from "./HeatCCMProcessModal";
 import { HeatCCMQualityModal } from "./HeatCCMQualityModal";
 

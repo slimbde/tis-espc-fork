@@ -1,11 +1,12 @@
-import { CCMHeat } from "models/types/Production/CCMHeat"
-import { HeatCCMProcess } from "models/types/Production/HeatCCMProcess"
-import { HeatCCMQuality } from "models/types/Production/HeatCCMQuality"
-import { HeatEvent } from "models/types/Production/HeatEvent"
-import { HeatVODProcess } from "models/types/Production/HeatVODProcess"
-import { LFHeat } from "models/types/Production/LFHeat"
-import { ProductionFilter } from "models/types/Production/ProductionFilter"
-import { VODHeat } from "models/types/Production/VODHeat"
+import { CCMHeat } from "models/types/Technology/Production/CCMHeat"
+import { HeatCCMProcess } from "models/types/Technology/Production/HeatCCMProcess"
+import { HeatCCMQuality } from "models/types/Technology/Production/HeatCCMQuality"
+import { HeatEvent } from "models/types/Technology/Production/HeatEvent"
+import { HeatVODProcess } from "models/types/Technology/Production/HeatVODProcess"
+import { LFHeat } from "models/types/Technology/Production/LFHeat"
+import { ProductionFilter } from "models/types/Technology/Production/ProductionFilter"
+import { VODHeat } from "models/types/Technology/Production/VODHeat"
+import { ScheduleHeatInfo } from "models/types/Technology/Schedule/ScheduleHeatInfo"
 
 
 export class ProductionDbHandler {
@@ -21,6 +22,10 @@ export class ProductionDbHandler {
 
     return this.instance
   }
+
+
+  private interimCache: Map<string, ScheduleHeatInfo[]> = new Map()
+
 
 
   async GetListForAsync(filter: ProductionFilter): Promise<LFHeat[] | VODHeat[] | CCMHeat[]> {
@@ -82,6 +87,24 @@ export class ProductionDbHandler {
       throw new Error(`[${this.api}DbHandler]: ${await resp.text()}`)
 
     return await resp.json()
+  }
+
+
+  async GetScheduleHeatInfoAsync(date: string): Promise<ScheduleHeatInfo[]> {
+    if (this.interimCache.has(date))
+      return this.interimCache.get(date)!
+
+    const resp = await fetch(`${this.backend}/${this.api}/getScheduleAsync?date=${date}`, {
+      credentials: "include",
+    })
+
+    if (resp.status >= 400)
+      throw new Error(`[${this.api}DbHandler]: ${await resp.text()}`)
+
+    const result = await resp.json()
+    this.interimCache.set(date, result)
+
+    return result
   }
 }
 

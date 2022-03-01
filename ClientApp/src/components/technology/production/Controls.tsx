@@ -1,4 +1,4 @@
-import { AreaId } from "models/types/Production/AreaId";
+import { AreaId } from "models/types/Technology/Production/AreaId";
 import React from "react";
 import { Button, ButtonGroup, Input, InputGroup, InputGroupAddon } from "reactstrap";
 

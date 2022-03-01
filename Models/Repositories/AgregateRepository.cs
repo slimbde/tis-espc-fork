@@ -206,7 +206,7 @@ namespace TIS_ESPC_FORK.Models.Repositories
                                     AND R.AREA_ID = :AREA_ID 
                                     AND R.CUSTOM_HEAT_ID = :HEAT_ID";
 
-                result["heat"] = await db.QuerySingleAsync<LFHeatAttributes>(stmt, parameters);
+                result["heat"] = (await db.QueryAsync<LFHeatAttributes>(stmt, parameters)).First();
 
                 stmt = areaId == 600
                     ? @"SELECT
@@ -235,7 +235,7 @@ namespace TIS_ESPC_FORK.Models.Repositories
                         JOIN REPORTS R ON R.CUSTOM_HEAT_ID = :HEAT_ID AND R.AREA_ID = :AREA_ID
                         JOIN RTDB_PLC_ACTUAL_DATA A ON A.STATION_CODE = R.STATION_CODE AND P.STATION_CODE = R.STATION_CODE";
 
-                result["energo"] = await db.QuerySingleAsync<LFEnergoAttributes>(stmt, parameters);
+                result["energo"] = (await db.QueryAsync<LFEnergoAttributes>(stmt, parameters)).First();
 
                 stmt = @"SELECT * FROM (
                             SELECT TO_CHAR(EVENT_DATE, 'HH24:MI ') || TEXT

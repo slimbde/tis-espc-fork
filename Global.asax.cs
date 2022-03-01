@@ -18,7 +18,7 @@ namespace TIS_ESPC_FORK
         {
             GlobalConfiguration.Configure(WebApiConfig.Register);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
-            AgregateRepository.UpdateHeatEndTimeAsync().Wait();
+
             cSource = new CancellationTokenSource();
 
             try

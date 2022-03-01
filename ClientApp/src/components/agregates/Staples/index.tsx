@@ -46,6 +46,7 @@ export const Staples: React.FC = () => {
 
 
   useEffect(() => {
+    document.title = "ТИС ЭСПЦ: Агрегаты"
     setFluid(true)
 
     const update = () => aHandler.ReadStapleSummaryAsync()

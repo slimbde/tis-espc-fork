@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import { Modal, ModalBody, ModalHeader, Table } from "reactstrap"
 import pHandler from "models/handlers/DbHandlers/ProductionDbHandler"
-import { HeatCCMProcess } from "models/types/Production/HeatCCMProcess"
+import { HeatCCMProcess } from "models/types/Technology/Production/HeatCCMProcess"
 
 
 type Props = {

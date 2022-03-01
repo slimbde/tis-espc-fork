@@ -1,11 +1,11 @@
 import "./VOD.scss"
 import moment from "moment";
-import { VODHeat } from "models/types/Production/VODHeat";
+import { VODHeat } from "models/types/Technology/Production/VODHeat";
 import { Table } from "reactstrap";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { HeatEventModal } from "../HeatEventModal";
-import { AreaId } from "models/types/Production/AreaId";
+import { AreaId } from "models/types/Technology/Production/AreaId";
 import { HeatVODProcessModal } from "./HeatVODProcessModal";
 
 type Props = {

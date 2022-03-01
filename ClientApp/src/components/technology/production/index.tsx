@@ -6,14 +6,14 @@ import pHandler from "models/handlers/DbHandlers/ProductionDbHandler"
 import Controls from "./Controls"
 import { LFTable } from "./LFTable"
 import { Alert } from "reactstrap"
-import { LFHeat } from "models/types/Production/LFHeat"
+import { LFHeat } from "models/types/Technology/Production/LFHeat"
 import { Loading } from "components/extra/Loading"
-import { AreaId, getAreaName } from "models/types/Production/AreaId"
+import { AreaId, getAreaName } from "models/types/Technology/Production/AreaId"
 import { setFluid } from "components/extra/SetFluid"
 import { blinkAlert } from "components/extra/Alert"
-import { ProductionFilter } from "models/types/Production/ProductionFilter"
-import { VODHeat } from "models/types/Production/VODHeat"
-import { CCMHeat } from "models/types/Production/CCMHeat"
+import { ProductionFilter } from "models/types/Technology/Production/ProductionFilter"
+import { VODHeat } from "models/types/Technology/Production/VODHeat"
+import { CCMHeat } from "models/types/Technology/Production/CCMHeat"
 import { VODTable } from "./VODTable"
 import { CCMTable } from "./CCMTable"
 
@@ -76,6 +76,7 @@ export const Production: React.FC = () => {
   })
 
   useEffect(() => {
+    document.title = "ТИС ЭСПЦ: Производство"
     setFluid(true)
     return setFluid
   }, [])

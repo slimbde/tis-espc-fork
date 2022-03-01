@@ -1,0 +1,55 @@
+@import "variables.scss";
+
+.schedule-wrapper {
+  position: relative;
+  padding: 1.5rem;
+  display: grid;
+  grid-template-columns: 550px 1fr;
+  grid-template-rows: 60px 31px 1fr;
+  grid-template-areas:
+    "title alert"
+    "navigation none"
+    "main main";
+
+  .title {
+    grid-area: title;
+    margin-left: 4rem;
+  }
+
+  #alert {
+    grid-area: alert;
+    margin-bottom: 0;
+  }
+
+  #loading {
+    grid-area: navigation;
+    right: 0;
+  }
+
+  .navigation {
+    grid-area: navigation;
+    margin-left: 4rem;
+    width: 400px;
+    display: flex;
+    justify-content: space-between;
+
+    .input-group {
+      width: 210px;
+    }
+  }
+
+  .main {
+    grid-area: main;
+    position: relative;
+    height: 450px;
+
+    .chart-heat {
+      font-weight: 500;
+      font-size: 0.6rem;
+    }
+  }
+
+  .blur {
+    filter: blur(3px);
+  }
+}
