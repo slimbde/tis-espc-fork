@@ -1,0 +1,4 @@
+# this is a convenient tool to move your stuff to the /ram
+RAM=//15/ram/home/tis
+
+cp schedule.php $RAM/schedule.php

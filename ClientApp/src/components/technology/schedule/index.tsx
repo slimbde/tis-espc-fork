@@ -5,12 +5,13 @@ import xrange from "highcharts/modules/xrange"
 import { useEffect, useRef, useState } from "react"
 import { Alert } from "reactstrap"
 import { Loading } from "components/extra/Loading"
-import { ScheduleAgregateDecoder, ScheduleHeatInfo } from "models/types/Technology/Schedule/ScheduleHeatInfo"
+import { ScheduleAgregateDecoder, ScheduleColorDecoder, ScheduleHeatInfo } from "models/types/Technology/Schedule/ScheduleHeatInfo"
 import pHandler from "models/handlers/DbHandlers/ProductionDbHandler"
 import Controls from "./Controls"
 import { blinkAlert } from "components/extra/Alert"
 import { ChartItem, populateChart } from "./PopulateChart"
 import { MetallurgicalDate } from "components/extra/MetallurgicalDate"
+import { setFluid } from "components/extra/SetFluid"
 
 xrange(Highcharts)
 
@@ -19,6 +20,7 @@ type State = {
   loading: boolean
   date: string
   metallurgicalDate: string
+  scheduleInfo: any
 }
 
 
@@ -29,25 +31,30 @@ type State = {
 export const Schedule: React.FC = () => {
   const chartRef = useRef<HTMLDivElement>(null)
   const controlsRef = useRef<HTMLDivElement>(null)
+  const infoRef = useRef<HTMLDivElement>(null)
 
   const [state, setState] = useState<State>({
     loading: true,
     date: moment().isAfter(moment().format("YYYY-MM-DD") + " 19:30:00") ? moment().startOf("day").add(1, "day").format("YYYY-MM-DD") : moment().startOf("day").format("YYYY-MM-DD"),
     metallurgicalDate: moment().isAfter(moment().format("YYYY-MM-DD") + " 19:30:00") ? moment().startOf("day").add(1, "day").format("YYYY-MM-DD") : moment().startOf("day").format("YYYY-MM-DD"),
+    scheduleInfo: []
   })
 
 
 
   useEffect(() => {
+    setFluid(true)
     const interval = setInterval(update, 5 * 60 * 1000)
     document.title = "График работы"
-    return () => clearInterval(interval)
+    return () => {
+      clearInterval(interval)
+      setFluid()
+    }
     //eslint-disable-next-line
   }, [])
 
 
   useEffect(() => {
-    console.log(state.date)
     update(false)
     //eslint-disable-next-line
   }, [state.date])
@@ -57,6 +64,7 @@ export const Schedule: React.FC = () => {
     if (state.date !== MetallurgicalDate() && interval) return
 
     setState(state => ({ ...state, loading: true }))
+    infoRef.current?.classList.add("blur")
     chartRef.current!.classList.add("blur")
     controlsRef.current?.classList.add("disabled")
 
@@ -67,17 +75,28 @@ export const Schedule: React.FC = () => {
         // when highcharts draws the chart there must be at least one point to draw the device to make it visible
         // so we add the placeholder to keep the idle device visible
         const fillerTime = state.date + " 00:00:00"
-        const fillerAKOC = [{ START_POINT: fillerTime, END_POINT: fillerTime, HEAT_ID: "", AGREGATE: "AKOC" }]
-        const fillerAKOC2 = [{ START_POINT: fillerTime, END_POINT: fillerTime, HEAT_ID: "", AGREGATE: "AKOC2" }]
+        const fillerAKOS = [{ START_POINT: fillerTime, END_POINT: fillerTime, HEAT_ID: "", AGREGATE: "AKOS" }]
+        const fillerAKP21 = [{ START_POINT: fillerTime, END_POINT: fillerTime, HEAT_ID: "", AGREGATE: "AKP21" }]
+        const fillerAKP22 = [{ START_POINT: fillerTime, END_POINT: fillerTime, HEAT_ID: "", AGREGATE: "AKP22" }]
         const fillerDSP = [{ START_POINT: fillerTime, END_POINT: fillerTime, HEAT_ID: "", AGREGATE: "DSP" }]
-        const fillerVOD = [{ START_POINT: fillerTime, END_POINT: fillerTime, HEAT_ID: "", AGREGATE: "VOD" }]
-        const fillerCCM1 = [{ START_POINT: fillerTime, END_POINT: fillerTime, HEAT_ID: "", AGREGATE: "CCM1" }]
-        const fillerCCM2 = [{ START_POINT: fillerTime, END_POINT: fillerTime, HEAT_ID: "", AGREGATE: "CCM2" }]
+        const fillerVOD1 = [{ START_POINT: fillerTime, END_POINT: fillerTime, HEAT_ID: "", AGREGATE: "VOD1" }]
+        const fillerVOD2 = [{ START_POINT: fillerTime, END_POINT: fillerTime, HEAT_ID: "", AGREGATE: "VOD2" }]
+        const fillerCCM1 = [{ START_POINT: fillerTime, END_POINT: fillerTime, HEAT_ID: "", AGREGATE: "MNLS1" }]
+        const fillerCCM2 = [{ START_POINT: fillerTime, END_POINT: fillerTime, HEAT_ID: "", AGREGATE: "MNLS2" }]
 
         const lookup = response.reduce((acc: any, curr: ScheduleHeatInfo) => {
           acc[curr.AGREGATE].push(curr)
           return acc
-        }, { AKOC: fillerAKOC, AKOC2: fillerAKOC2, DSP: fillerDSP, VOD: fillerVOD, CCM1: fillerCCM1, CCM2: fillerCCM2 })
+        }, {
+          AKOS: fillerAKOS,
+          AKP21: fillerAKP21,
+          AKP22: fillerAKP22,
+          DSP: fillerDSP,
+          VOD1: fillerVOD1,
+          VOD2: fillerVOD2,
+          MNLS1: fillerCCM1,
+          MNLS2: fillerCCM2,
+        })
 
         const data: ChartItem[] = []
         Object.keys(lookup).forEach((agregate, idx) => {
@@ -87,24 +106,28 @@ export const Schedule: React.FC = () => {
             data.push({
               y: idx,
               x: Date.parse(heat["START_POINT"].substr(0, 19)) + offset,
-              x2: heat["END_POINT"]
+              x2: !!heat["END_POINT"]
                 ? Date.parse(heat["END_POINT"].substr(0, 19)) + offset
                 : new Date().getTime() + offset,
               heat: heat["HEAT_ID"],
-              agregate: ScheduleAgregateDecoder[agregate]
+              agregate: ScheduleAgregateDecoder[agregate],
+              isInProcess: !heat["END_POINT"],
+              color: heat["END_POINT"] ? ScheduleColorDecoder[agregate] : "lightcoral",
             })
           })
         })
         const categories = Object.keys(lookup).map(key => ScheduleAgregateDecoder[key])
 
         populateChart(data, categories, state.date)
+        infoRef.current?.classList.remove("blur")
         chartRef.current!.classList.remove("blur");
         controlsRef.current?.classList.remove("disabled")
-        setState(state => ({ ...state, loading: false, }))
+        setState(state => ({ ...state, scheduleInfo: lookup, loading: false, }))
       })
       .catch(error => {
         blinkAlert(error, false)
         console.log(error)
+        infoRef.current?.classList.remove("blur")
         chartRef.current!.classList.remove("blur")
         controlsRef.current?.classList.remove("disabled")
         setState(state => ({ ...state, loading: false, }))
@@ -140,5 +163,27 @@ export const Schedule: React.FC = () => {
 
     {state.loading && <Loading />}
     <div id="chart" className="main" ref={chartRef}></div>
+
+    {!!state.scheduleInfo &&
+      <div className="info" ref={infoRef}>
+        {Object.keys(state.scheduleInfo).map(agregate => {
+          if (state.scheduleInfo[agregate].length < 2) return <span key={agregate}></span>
+
+          return <div className="agregate" key={agregate}>
+            <div className="a-title">{ScheduleAgregateDecoder[agregate]}</div>
+            {state.scheduleInfo[agregate].map((item: ScheduleHeatInfo, idx: number) => {
+              const time = `${moment(item.START_POINT).format("HH:mm")} ... ${item.END_POINT ? moment(item.END_POINT).format("HH:MM") : "текущ"}`
+              const date = moment(item.START_POINT).format("DD.MM.YYYY")
+
+              if (!item.HEAT_ID || item.START_POINT < moment(state.metallurgicalDate).subtract(1, "hours").toDate()) return <span key={idx}></span>
+
+              return <div className={`heat ${item.AGREGATE}`} key={idx} title={date}>
+                <div className="hid">{!isNaN(+item.HEAT_ID) ? item.HEAT_ID : ""}</div>
+                <div className="time">{time}</div>
+              </div>
+            })}
+          </div>
+        })}
+      </div>}
   </div>
 }

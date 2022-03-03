@@ -1,0 +1,106 @@
+************************************************************
+*                                                          *
+*     Default Configuration File for EZ-File Manager       *
+*                                                          *
+************************************************************
+
+* Dot Files
+.=1
+
+* Area A Color Setting
+a=8704
+
+* Area B Color Setting
+b=8702
+
+* Area C Color Setting
+c=f404
+
+* Area D Color Setting
+d=9702
+
+* Delete Entire Structure
+de=0
+
+* Editor
+*e=vedit
+e=vp
+
+* Area F Color Setting
+f=8700
+
+* Insert File Name character
+ic=@;
+
+* Display Mode
+m=7
+
+* Mail Command
+ma=mailx
+
+* Mail Notify
+mn=1
+
+* Printer Command(s)
+p1=lp -P doc
+n1=Текст постранично
+p2=lp -P doc2
+n2=Текст постранично 2
+p3=lp -P txt
+n3=Текст без разбивки
+p4=lp -P txt2
+n4=Текст без разбивки 2
+
+* Start-up Pattern
+pa=*
+
+* Sort Value
+s=2
+
+* Tree Saving
+t=1
+
+* Tag Counter Location
+tl=2
+
+* Screen Blank Time Out Value (minutes)
+to=3
+
+* File Viewer
+v=ezv
+
+* Pause After DOS Command
+w=1
+
+* Confirm on Exit
+xc=1
+
+************************************************************
+*                                                          *
+* Example Point and Shoot Associations                     *
+*                                                          *
+************************************************************
+* Note these examples assume "ic=@" has been set previously
+x=*.[ch] vedit -o8
+x=*.a vedit -o8
+x=*.asm vedit -o8
+x=*.html lynx @
+x=*.htm lynx @
+x=[mM]akefile* make -f @;echo Make Done. Press [Enter] to continue;read A
+
+************************************************************
+*                                                          *
+* Example Function Key Assignments                         *
+*                                                          *
+************************************************************
+a1=lynx #
+s1=use
+
+s2=grep -ne"" *.[ch] >>.gr
+
+a3=biew
+s3=vedit -b
+
+s8=rm -f -r
+s9=slay
+

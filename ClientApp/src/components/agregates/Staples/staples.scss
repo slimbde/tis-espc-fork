@@ -209,6 +209,8 @@
     position: relative;
     border-radius: 0.2rem;
     overflow: hidden;
+    transition: opacity 0.5s ease-in;
+    opacity: 0;
 
     &::after {
       position: absolute;

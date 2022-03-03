@@ -1,0 +1,490 @@
+//////////////////////////////////////////////////////////
+//                                                      //
+// The "veditrc" file when VEDIT PLUS is named "vp".    //
+//                                                      //
+//////////////////////////////////////////////////////////
+//
+// Part 1 - Load environment variables and determine the
+//          VEDIT Home Directory and User Config Directory.
+//
+Get_Environment(6,"PHOTON")
+Get_Environment(7,"TERM")
+Get_Environment(8,"HOME")
+Get_Environment(9,"VEDIT_PATH")
+if (Reg_Size(9)==0) { Reg_Set(9,"/qnx4/vplus") }
+//
+// Load the global configuration and keyboard layout files from /qnx4/vplus.
+// (The optional user's config/keyboard file are loaded at the end.)
+//
+Config_Load("|@(9)/vp.cfg",NOERR)
+Key_Load("|@(9)/vp.key",NOERR)
+//
+// The User Config directory by default is $HOME/vedit, but can be changed
+// if necessary by enabling and modifying the following block of commands.
+// This sets the default directory for {CONFIG, Save config}.
+//
+// Buf_Switch(35)                 //Switch to temp buffer
+// Reg_Ins(8)                     //Insert "$HOME"
+// if (Cur_Char(-1) != '/') {     //If it doesn't end in '/'...
+//     Ins_Text("/")              //  add a '/'
+// }
+// Ins_Text(".vedit")             //Add the directory name. e.g. ".vedit"
+// Reg_Copy_Block(5,0,File_Size)  //@5 = "$HOME/.vedit"
+// Config_String(USER_CFG,@5)     //Change user's config dir
+// Buf_Quit(OK+MAINBUF)           //Quit temp buffer; back to main one
+//
+// Make sure the User Config directory exists; create it if necessary,
+//
+if (File_Exist(USER_CFG)==0) {
+    Sys("mkdir |(USER_CFG)",OK)
+    Sys("chmod 755 |(USER_CFG)",OK)
+}
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Part 2 - Configure according to terminal type. (Technical)
+//
+// The parameter Config(H_IO_OPT) controls how characters are displayed.
+// Its initial value is set by the "-o nnn" invocation option, if any.
+// On a QNX console, its value will be ORed with "4" on startup.
+// Its value can then be changed here according to TERM type or other
+// criteria. The following values (bit-masks) are defined.
+//
+//      00 - Default 7-bit terminal support
+//              Display Ctrl-chars in range 0-31 as "."
+//              Display 8-bit chars in range 128-255 as "."
+//              Display box-drawing character set as "-", "|", "+", etc.
+//     +01 - Display Ctrl-chars in range 0-31 on screen.
+//              (Does not work with Photon or serial terminals.)
+//     +02 - Unused
+//      04 - Enable QNX console mode
+//              Display 8-bit chars 
+//              Use IBM PC window-border chars in range 128-255
+//              Use IBM PC arrow chars in range 16-31
+//              Display Ctrl-chars on screen
+//              (Should normally not be combined with other values.)
+//     +08 - Display 8-bit chars in range 160-255
+//     +16 - Display 8-bit chars in range 128-159
+//              (Depending upon character set, may not work with Photon.)
+//     +32 - Use terminal's box-drawing character mode
+//              Normally, use terminfo values for box-drawing character set
+//              Use with +128 if terminal supports IBM PC character set
+//              (Should normally be used.)
+//     +64 - Override box-drawing "arrow chars" with "^", "v", "<" and ">"
+//              (Suggested for Photon.)
+//     +128 - Use IBM PC box-drawing character set in range 16-31 & 128-255
+//              Should use with +64 unless chars 16-31 are supported
+//              (Also uses shaded buttons in dialog boxes.)
+//
+// The desired options can be selected by adding (or ORing) the corresponding
+// values together. However, "04" should not be combined with other values.
+////////
+//
+// If running on the QNX console, skip TERM value checking.
+//
+if (Config(H_IO_OPT)==4) { goto TERMDONE }
+//
+// The default value for Photon is "8+32+64".
+//   +8  : Photon supports 8-bit chars in range 160-255
+//         (But 128-159 is not supported in all character sets.)
+//   +32 : Use terminfo for the box-drawing character set
+//   +64 : Use simple arrow chars since this set has no arrows
+//
+// Suggest +128 if the IBM PC character set is being used with Photon.
+//
+// Use +16 with European character sets that use 128-159 for umlauts, etc.
+// 
+if (Reg_Size(6)!=0) {               //If PHOTON ...
+//    Config(H_IO_OPT, 8|16|32)       //Default setup for PHOTON
+    Config(H_IO_OPT, 8+16+32+64+128)   //Alternate if IBM-PC char set supported
+//  Config(H_IO_OPT, 8+32+64+128)   //Alternate if IBM-PC char set supported
+//  Config(H_IO_OPT, 8+16+32+64)    //Alternate if chars 128-159 supported
+    goto TERMDONE                   //Skip other TERM tests
+}
+//
+// Most terminals have a box-drawing mode for drawing boxes and lines.
+// The terminfo database sets these characters each terminal.
+//
+Config(H_IO_OPT, Config(H_IO_OPT) | 32) //Enable box-drawing character set
+                                        //using terminfo values
+//
+// Select the TERM types (e.g. qnxt, qnxm) that have support for IBM PC 8-bit
+// graphics characters. The IBM PC graphics character set will then be used
+// to draw menu borders, window borders and dialog boxes. Otherwise the
+// characters defined in the terminfo database are used.
+//
+if (Reg_Compare(7,"qnxt")==0 || Reg_Compare(7,"qnxm")==0 ) {
+    Config(H_IO_OPT, Config(H_IO_OPT) | 64+128) //Support IBM PC 8-bit chars
+}
+//
+// Select the remaining TERM types (e.g. ansi, qansi and qansi-m) that can
+// display 8-bit text characters in the range 160-255, but don't support the
+// IBM PC graphics character set. (They support the ANSI character set).
+// Otherwise 8-bit text characters are displayed as ".".
+//
+if (Reg_Compare(7,"ansi")==0 || Reg_Compare(7,"qansi")==0 || Reg_Compare(7,"qansi-m")==0) {
+    Config(H_IO_OPT, Config(H_IO_OPT) | 08)
+}
+
+// !! Vadim Sh. 2.9.05
+Config(H_IO_OPT, 8+16+32+64+128)   //Alternate if IBM-PC char set supported
+:TERMDONE:
+//
+// If this is the QNX main console or IBM PC graphics support was selected
+// above, use an IBM PC graphic "desktop" character for the screen areas
+// where there is no editing window. Select the color for this character.
+//
+// Else, use simple spaces for the "desktop" character. The default color is
+// black, unless a different color was selected in "vp.cfg" loaded above.
+//
+if (Config(H_IO_OPT) & 04) {            //If QNX console...
+    Config(S_EMPTY_C,176)               //Use graphic "desktop" character
+    Config(C_EMPTY,113)                 //"Desktop" color
+} else {
+    Config(S_EMPTY_C,32)                //Just spaces for "desktop" character
+}
+//
+// VEDIT can optionally delay updating the "COL:" number on the status line
+// until you stop typing for a 1/2 second or longer. This reduces screen
+// flicker during fast typing on terminals over a slow serial-line connection.
+// If desired, change the following argument from 0 to "5" (1/2 second delay)
+// or "10" (1 second delay). It can be changed inside VEDIT with
+// {CONFIG, Misc, Status line update delay}.
+//
+Config(S_STAT_DLY,0)            //Status line update delay; 0=none
+//
+// For TERM=qnx, TERM=qansi or Photon, enable scroll bars and full borders.
+// Also put the status line on the bottom and the menu bar on top.
+// Also turn off any status line update delay, especially for Photon.
+// These settings would significantly slow down screen updates on a serial
+// connected CRT terminal, but are usually preferred on a fast console.
+//
+if (Reg_Compare(7,"qnx")==0 || Reg_Compare(7,"qansi")==0 || Reg_Size(6)!=0) {
+    Config(WIN_BRD,3)                   //Enable scroll bars and full border
+    Config(S_DSP_BRD,2)                 //Full borders for on-line help
+    Config(S_STAT_OPT,2)                //Status line on bottom, menu bar on top
+    Config(U_E_DIALOG,1)                //Enable full dialog boxes
+    Config(S_STAT_DLY,0)                //Turn off status line update delay
+} else {
+    Config(WIN_BRD,1)                   //Use minimal borders, no scroll bars
+    Config(S_DSP_BRD,1)                 //Minimal borders for on-line help
+    Config(S_STAT_OPT,1)                //Status line on top, hidden menu
+    Config(U_E_DIALOG,0)                //Use terse dialog boxes
+}
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Part 3 - Configure VEDIT Features
+//
+//------- Load the {USER} menu -----------------------------------------------
+//
+//      The following command adds the {USER} menu to the main menu. By
+//      default, USER.MNU contains a few macros from the"key-mac.lib" library
+//      of macros. You can place your own custom editing functions in the
+//      {USER} menu by modifying the USER.MNU file or by loading a different
+//      file. See the on-line help topic "USER" for more information.
+
+Reg_Load(124,"vp-user.mnu",EXTRA+NOERR)
+Config_String(USER_MENU,"User")
+Key_Add("Alt-U","[MENU]U",OK)           //<Alt-U> is hot-key for {USER} menu
+
+//------- Load the {Tutorial} or {Tools} menu ---------------------------------
+//
+//      By default, the {Tutorial} menu is used as the {TOOL} menu.
+//      Alternatively, the Compiler support can be loaded as a {Tools} menu.
+//      Alternatively, you can load your own custom {TOOL} menu, similar
+//      to the {USER} menu.
+//
+#120 = 0        //The setting "#120 = 0" loads the {Tutorial} menu.
+                //Change to "#120 = "1" to load the Compiler support instead.
+                //Change to "#120 = "3" to load a custom {Tools} menu instead.
+
+if (#120==0) {
+    Reg_Load(123,"vp-tutor.mnu",EXTRA+NOERR)
+    Config_String(TOOL_MENU,"Tutor")
+    Key_Add("Alt-T","[MENU]T",OK)           //<Alt-T> is hot-key for {TOOL} menu
+}
+if (#120==1 || #120==2) {
+    Call_File(Reg_Free,"compile.vdm",NOERR)
+}
+if (#120==3) {
+    Reg_Load(123,"custom.mnu",EXTRA+NOERR)      //You must create custom.mnu
+    Config_String(TOOL_MENU,"&ToolX")           //Give it the desired name
+    Key_Add("Alt-T",'[MENU]T',OK)               //Force a hot-key to the menu
+}
+
+//-------- Setup any desired keystroke macros. (Override VP.KEY) -------------
+//
+//      Key_Add() commands can set up any desired keystroke macros.
+//
+//      Note: These commands will override the keyboard layout loaded above
+//            from the global vp.key, but not the user's $HOME/vedit/vp.key.
+//
+//      To enable any function, delete the "// " preceding the Key_Add command.
+//
+//      The following example commands perform these functions:
+
+//      <Numpad/> is assigned to toggle {CONFIG, Programming, Lower/Upper case
+//      key conversion}. Useful for assembly language programming.
+//
+// Key_Add("Numpad/","[VISUAL EXIT] if(CF(PG_CASE_CONV)==0){CF(PG_CASE_CONV,2)}else{CF(PG_CASE_CONV,0)}",OK)
+
+//      <Numpad.Enter> is assigned as an alternative to [VISUAL EXIT]. Useful
+//      with WILDFILE macro. Highly recommended!
+//
+// Key_Add("Numpad.Enter","[VISUAL EXIT]",OK)
+
+//      <F12> is assigned to a "ctags" lookup of the current symbol.
+//      (See on-line help topic "CTAGS" for more information)
+//
+// Key_Add("F12",'[MENU]MMU',OK)
+
+//      Shift-F12 runs a macro which opens MYNOTES.TXT for editing personal
+//      notes. This useful hot-key is enabled by default.
+//
+Key_Add("Shft-F12",'[MENU]MMY',OK)
+
+//
+//      <Ctrl-F5> is assigned to compare two windows.
+//
+// Key_Add("Ctrl-F5",'[VISUAL EXIT] if((#100=Win_Next)!=Win_Num){ Compare(Win_Status(#100)+BUFFER) } else { Alert() }',OK)
+
+
+//------- Force any desired configuration. (Override VP.CFG) --------------
+//
+//      Config() commands can force any desired configuration settings.
+//
+//      Note: These commands will override the configuration loaded above
+//            from the global vp.cfg, but not the user's $HOME/vedit/vp.cfg.
+//
+//      To enable any function, delete the "// " preceding the Config command.
+//
+//------- Configure Safety Features:
+//
+// Config(F_BACKUP_MODE,2)      // Save backup files in a directory
+// Config_String(BACKUP,"\tmp\backup")   // Set backup directory
+//
+//------- Configure your Keyboard:
+//
+// Config(E_INS_MODE,0)         // Startup in Overstrike mode; default is Insert mode
+//                              // Note: This setting is not saved in VP.CFG;
+//                              // force the desired setting here.
+//
+//------- Configure your Printer:
+//
+// Config(P_PAPER_L,66)         // Set printer paper length to 66 lines
+// Config(P_LEFT_MARG,5)        // Set printer left margin to 5
+// Config(P_RIGHT_MARG,78)      // Set printer right margin to 78
+//
+//------- Configure Word Processing:
+//
+// Config_String(PARA_SEP,".!\") // Lines starting with ".", "!", "\" separate
+//                              // paragraphs, in addition to blank lines
+//                              // Default is ".@!\"
+// Config(W_FORMAT_O,4)         // Set format-paragraph options
+//
+// Note: Enabling the following Config() commands may interfere with any
+//       File-type specific configuration.
+//
+// Config(W_WORD_WRAP,1)        // Enable word wrap
+// Config(W_RT_MARG,78)         // Set word processing right margin to 78
+// Config(W_LF_MARG,0)          // Set word processing left margin to 0
+//
+//------- Set how VEDIT configures itself:
+//
+// Config(U_AUTO_CFG,0)         // Disable {CONFIG, Auto-save config}
+// Config(U_CFG_ALL,0)          // Disable {CONFIG, All Buffers}
+//
+//------- Misc. Config() commands:
+//
+// Config(U_E_DIALOG,0)         // Use "Terse" instead of "Full" dialog boxes
+// Config(WIN_AUTO_CRE,1)       // Create full-sized windows
+// Config(S_H_CR_LINE,1)        // Highlight entire cursor line
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Part 4 - Configure Language Specific Features
+//
+//------- Setup Color Syntax Highlighting and Template Editing ---------------
+//
+//      Language specific syntax highlighting and template editing is setup
+//      here. The following commands support C or HTML editing.
+//
+//      Load the desired syntax highlighting file. The default C.SYN supports C.
+//      Currently, only one .SYN file can be loaded at a time.
+//
+//  >>> To enable syntax highlighting for HTML, instead of C, follow these steps:
+//      1.  Disable the following `Syntax_Load("c.syn")` command by preceding it
+//          with "//".
+//      2.  Enable the following `Syntax_Load("html.syn")` command by removing the
+//          preceding "//".
+//      3.  Search for "Config(PG_E_SYNTAX,1,LOCAL)" below in the file-type
+//          specific configuration section corresponding to .C files.
+//          Disable the command by preceding it with "//".
+//      3.  Search for "Config(PG_E_SYNTAX,1,LOCAL)" below for .HTML files.
+//          Enable the command by removing the preceding "//".
+//
+Syntax_Load("c.syn")            // Setup syntax highlighting for C
+// Syntax_Load("java.syn")      // Setup syntax highlighting for Java
+// Syntax_Load("html.syn")      // -OR- Setup syntax highlighting for HTML
+//
+//      Load the desired template editing file. The default VEDIT.VTM supports
+//      both C and HTML template editing.
+//
+Reg_Load(115,"vedit.vtm",EXTRA)
+// Reg_Load(115,"java.vtm",EXTRA)
+//
+//      If desired, un-comment the following command to enable file-type
+//      auto-configuration, overriding any setting in the VP.CFG file.
+//
+// Config(PG_F_AUTO_CFG,1+2+4)  //Enable file-type configuration; values are:
+//                              //  1 - Enable filename specific configuration
+//                              // +2 - Enable template editing
+//                              // +4 - Enable color syntax highlighting
+//
+//      The following two commands ensure that template editing and syntax
+//      highlighting are OFF by default. They should only be enabled by the
+//      file-type specific configuration.
+//
+Config(PG_TEMPLAT,0)            // Default is template editing disabled
+Config(PG_E_SYNTAX,0)           // Default is syntax highlighting disabled
+
+
+//------- Setup File-type specific configuration -----------------------------
+//
+//      The "File-Open" event macro in T-Reg 110 is used to set configuration
+//      parameters according to the filename extension.
+//      It must be enabled with {CONFIG, Programming, File-type specific
+//      config} or with the Config(PG_F_AUTO_CFG) command above.
+//
+Reg_Set(110,`//File-Open event macro
+#109=Buf_Num
+Out_Reg(109) Name_Write(NOMSG+NOCR) Out_Reg(0)
+Buf_Switch(36)
+Buf_Empty(OK)
+Reg_Ins(109)
+//
+// Test if this is a ".c", ".cpp" or ".h" file...
+//
+BOF()
+if ( Search(".c|>",NOERR)==1 || Search(".cpp|>",NOERR)==1 || Search(".h|>",NOERR)==1 ) {
+Buf_Switch(#109)
+Config(PG_AUTO_IND,1,LOCAL)
+Config(PG_IND_INC,4,LOCAL)
+Config(PG_CASE_CONV,0,LOCAL)
+Config(W_LF_MARG,0,LOCAL)
+Config(W_WORD_WRAP,0,LOCAL)
+Config_Tab(4;LOCAL)             //Set tabs stops to every 4
+Config(CM_USER_P,1,LOCAL)	//Set template editing ID for C
+if (Config(PG_F_AUTO_CFG)&2) {
+    Config(PG_TEMPLAT,1,LOCAL)	//Enable template editing for C
+}
+if (Config(PG_F_AUTO_CFG)&4) {
+    Config(PG_E_SYNTAX,1,LOCAL)	//Enable syntax highlighting for C
+}
+Goto ENDMACRO
+}
+//
+// Test if this is a ".JAVA" or ".JAV" file...
+//
+BOF()
+if ( Search(".java|>",NOERR)==1 || Search(".jav|>",NOERR)==1 ) {
+Buf_Switch(#109)
+Config(PG_AUTO_IND,1,LOCAL)
+Config(PG_IND_INC,4,LOCAL)
+Config(PG_CASE_CONV,0,LOCAL)
+Config(W_LF_MARG,0,LOCAL)
+Config(W_WORD_WRAP,0,LOCAL)
+Config_Tab(4;LOCAL)             //Set tabs stops to every 4
+Config(CM_USER_P,1,LOCAL)	//Set template editing ID (not used)
+if (Config(PG_F_AUTO_CFG)&2) {
+    Config(PG_TEMPLAT,1,LOCAL)	//Enable template editing for Java
+}
+if (Config(PG_F_AUTO_CFG)&4) {
+   Config(PG_E_SYNTAX,1,LOCAL)	//Enable syntax highlighting for Java
+}
+Goto ENDMACRO
+}
+//
+// Test if this is an ".HTML", ".HTM" or ".HTL" file...
+//
+BOF()
+if ( Search(".html|>",NOERR)==1 || Search(".htm|>",NOERR)==1 || Search(".htl|>",NOERR)==1 ) {
+Buf_Switch(#109)
+Config(PG_AUTO_IND,0,LOCAL)
+Config(PG_IND_INC,4,LOCAL)
+Config(PG_CASE_CONV,0,LOCAL)
+Config(W_LF_MARG,0,LOCAL)
+Config(W_WORD_WRAP,0,LOCAL)
+Config_Tab(8;LOCAL)             //Set tabs stops to every 8
+Config(CM_USER_P,2,LOCAL)       //Set template editing ID for HTML
+if (Config(PG_F_AUTO_CFG)&2) {
+    Config(PG_TEMPLAT,1,LOCAL)	//Enable template editing for HTML
+}
+if (Config(PG_F_AUTO_CFG)&4) {
+//  Config(PG_E_SYNTAX,1,LOCAL)	//Enable syntax highlighting for HTML
+}
+Goto ENDMACRO
+}
+//
+// Test if this is an ".ASM" or ".EXT" file...
+//
+BOF()
+if ( Search(".asm|>",NOERR)==1 || Search(".ext|>",NOERR)==1 ) {
+Buf_Switch(#109)
+Config(PG_AUTO_IND,0,LOCAL)
+Config(PG_IND_INC,8,LOCAL)
+Config(PG_CASE_CONV,2,LOCAL)
+Config(PG_CONV_C,59,LOCAL)
+Config(W_LF_MARG,0,LOCAL)
+Config(W_WORD_WRAP,0,LOCAL)
+Config_Tab(8;LOCAL)             //Set tabs stops to every 8
+Goto ENDMACRO
+}
+//
+// Test if this is a ".txt" word processing file...
+//
+BOF()
+if ( Search(".txt|>",NOERR)==1 ) {
+Buf_Switch(#109)
+Config(PG_AUTO_IND,0,LOCAL)
+Config(PG_IND_INC,4,LOCAL)
+Config(W_WORD_WRAP,1,LOCAL)     //Enable word wrap
+//Config(W_RT_MARG,70,LOCAL)    //Set right margin to 70
+Config(W_LF_MARG,0,LOCAL)
+Config_Tab(4;LOCAL)             //Set tabs stops to every 4
+Goto ENDMACRO
+}
+//
+// Additional tests for other filename extensions can be added here...
+//
+//...
+//...
+//
+//
+// Finish up the File-Open event macro.
+//
+:ENDMACRO:
+Buf_Switch(36)
+Buf_Quit(OK)
+Buf_Switch(#109)
+`)                      //The end of the "Reg_Set(110..." command above
+//
+//------- Any additional startup commands can be place here ------------------
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Last - Load optional user's config/keyboard files in $HOME/vedit directory.
+//
+Config_Load("|(USER_CFG)/vp.cfg",NOERR)
+Key_Load("|(USER_CFG)/vp.key",NOERR)
+//
+//
+// DON'T PUT ANY COMMANDS AFTER Reg_Empty() BECAUSE THEY WON'T BE EXECUTED !!
+//
+Reg_Empty(100,EXTRA)            // Empty this macro (Must be last command!)

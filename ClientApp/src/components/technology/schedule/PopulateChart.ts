@@ -8,6 +8,8 @@ export type ChartItem = {
   y: number
   heat: string
   agregate: string
+  color: string
+  isInProcess: boolean
 }
 
 
@@ -58,7 +60,7 @@ export const populateChart = (data: ChartItem[], categories: string[], date: str
       name: "Агрегат",
       type: "xrange",
       borderColor: 'gray',
-      pointWidth: 30,
+      pointWidth: 23,
       data,
       dataLabels: {
         enabled: true,
@@ -68,7 +70,7 @@ export const populateChart = (data: ChartItem[], categories: string[], date: str
         padding: -15,
         x: 15,
         style: {
-          textOutline: "none",
+          //textOutline: "none",
           color: "gray",
         }
       }
@@ -77,7 +79,12 @@ export const populateChart = (data: ChartItem[], categories: string[], date: str
       animation: false,
       xDateFormat: "%H:%M:%S",
       formatter: function () {
-        return `Плавка:<b> ${(this.point as any).heat}</b><br/>Время: ${moment(this.point.x).utc().format("HH:mm:ss")}...${moment(this.point.x2!).utc().format("HH:mm:ss")}<br/>${(this.point as any).agregate}`;
+        const startPoint = moment(this.point.x).utc().format("HH:mm:ss")
+        const endPoint = (this.point as any).isInProcess ? "тек" : moment(this.point.x2!).utc().format("HH:mm:ss")
+
+        return `&nbsp;Плавка:<b> ${(this.point as any).heat}</b><br/>
+                Время: ${startPoint}...${endPoint}<br/>
+                ${(this.point as any).agregate}`;
       },
     },
     plotOptions: {

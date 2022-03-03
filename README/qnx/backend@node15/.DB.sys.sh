@@ -6,8 +6,8 @@ echo `date`:  Запуск цеховой системы >> $STDLOG
 # Сервер dbstart n_work
 	dbsrv50 -gn20 -gs96K -gp4096 -c40M -x "tcpip{MyIP=192.168.9.215},qnx" -o /dev/mqueue/Message.log /home/dbserver/n_work.db -q&
 # Сервер bot - "Кадры"
-	sleep 4
-	dbsrv50 -gs56K -c4M -x "tcpip{to=2;Broadcast=192.168.9.255;MyIp=192.168.9.215;Port=1501},qnx" -C1M /home/bot/db/bot.db -q & 
+#	sleep 4
+#	dbsrv50 -gs56K -c4M -x "tcpip{to=2;Broadcast=192.168.9.255;MyIp=192.168.9.215;Port=1501},qnx" -C1M /home/bot/db/bot.db -q & 
 	sleep 2
 # Сервер uchet - "Бухгалтерский учет"
 #	dbsrv50 -m -x "tcpip{to=2;Broadcast=192.168.9.255;MyIp=192.168.9.215;Port=1500},qnx" -c1M //15//home/uchet/db/uchet.db -q &

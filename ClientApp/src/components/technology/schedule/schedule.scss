@@ -4,16 +4,16 @@
   position: relative;
   padding: 1.5rem;
   display: grid;
-  grid-template-columns: 550px 1fr;
-  grid-template-rows: 60px 31px 1fr;
+  grid-template-columns: 600px 1fr;
+  grid-template-rows: 50px 490px 1fr;
   grid-template-areas:
     "title alert"
-    "navigation none"
-    "main main";
+    "main main"
+    "info info";
 
   .title {
     grid-area: title;
-    margin-left: 4rem;
+    margin-left: 5.5rem;
   }
 
   #alert {
@@ -22,13 +22,17 @@
   }
 
   #loading {
-    grid-area: navigation;
+    grid-area: title;
     right: 0;
+    top: -0.5rem;
   }
 
   .navigation {
-    grid-area: navigation;
-    margin-left: 4rem;
+    grid-area: alert;
+    position: absolute;
+    right: 3rem;
+    top: 0.5rem;
+    margin-left: 5.5rem;
     width: 400px;
     display: flex;
     justify-content: space-between;
@@ -41,11 +45,83 @@
   .main {
     grid-area: main;
     position: relative;
-    height: 450px;
+    max-width: 1320px;
 
     .chart-heat {
       font-weight: 500;
       font-size: 0.6rem;
+    }
+  }
+
+  .info {
+    grid-area: info;
+    display: flex;
+    flex-flow: row wrap;
+    margin-left: 5.5rem;
+    margin-top: 3rem;
+    justify-content: flex-start;
+    font-size: 0.8rem;
+
+    .agregate {
+      position: relative;
+      display: flex;
+      flex-flow: column nowrap;
+      border-radius: 0.3rem;
+      margin-bottom: 3rem;
+      margin-right: 1.5rem;
+
+      .a-title {
+        position: absolute;
+        top: -1.2rem;
+        left: -0.2rem;
+        font-size: 0.7rem;
+        font-weight: 700;
+        background-color: whitesmoke;
+        padding: 0 0.5rem;
+        border-radius: 0.3rem;
+        color: gray;
+      }
+
+      .heat {
+        display: flex;
+        justify-content: space-between;
+        width: 133px;
+
+        & + .heat {
+          border-top: 1px solid lightgray;
+        }
+
+        &:hover {
+          background-color: whitesmoke;
+        }
+
+        .hid {
+          font-weight: 500;
+        }
+
+        &.AKOS {
+          color: darken(#ffc107, 25%);
+        }
+        &.AKP21,
+        &.AKP22 {
+          color: darken(#ffe0b2, 30%);
+        }
+        &.VOD1 {
+          color: darken(#4caf50, 5%);
+        }
+        &.VOD2 {
+          color: darken(#4caf50, 10%);
+        }
+        &.DSP {
+          color: darken(#f44336, 0%);
+        }
+        &.MNLS1 {
+          color: darken(#64b5f6, 20%);
+        }
+        &.MNLS2 {
+          color: darken(lightblue, 30%);
+        }
+      }
     }
   }
 

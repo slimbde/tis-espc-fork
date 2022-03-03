@@ -60,6 +60,8 @@ class NavMenu extends Component<NavProps> {
                 <DropdownMenu right>
                   <DropdownItem><NavLink tag="a" href="http://10.2.19.215" target="_blank">Старый веб-сервер</NavLink></DropdownItem>
                   <DropdownItem><NavLink tag="a" href="http://10.2.19.223/espc6temp/app/main/index.php" target="_blank">Учет сыпучих материалов и ферросплавов</NavLink></DropdownItem>
+                  <DropdownItem><NavLink tag="a" href="http://10.2.19.235" target="_self">Краны ЭСПЦ</NavLink></DropdownItem>
+                  <DropdownItem><NavLink tag="a" href="http://10.2.19.226" target="_self">Разливка ЭСПЦ</NavLink></DropdownItem>
                 </DropdownMenu>
               </UncontrolledDropdown>
 

@@ -18,7 +18,7 @@ echo "------------------------------------------------------------------\n"
 	slay -f Sqlclient32
 	slay -f sh711
 	dbstop n_work
-	dbstop bot
+#	dbstop bot
 #	dbstop uchet
 	slay -f cron
 	slay -f Mecli

@@ -15,6 +15,7 @@ export class ProductionDbHandler {
   protected backend = (window as any).config.backendHost
   protected api = "Production"
 
+  private lastScheduleRequeust: number = 0
   private static instance: ProductionDbHandler
   private constructor() { }
 
@@ -93,19 +94,25 @@ export class ProductionDbHandler {
 
 
   async GetScheduleHeatInfoAsync(date: string): Promise<ScheduleHeatInfo[]> {
-    if (this.interimCache.has(date))
-      return this.interimCache.get(date)!
+    const requestTime = new Date().getTime()
 
-    const resp = await fetch(`${this.backend}/${this.api}/getScheduleAsync?date=${date}`, {
-      credentials: "include",
+    if (this.interimCache.has(date)) {
+      if (date !== MetallurgicalDate() ||
+        (date === MetallurgicalDate() && requestTime - this.lastScheduleRequeust < 5 * 60 * 1000)
+      )
+        return this.interimCache.get(date)!
+    }
+
+    const resp = await fetch(`${this.backend}/${this.api}/GetScheduleAsync?date=${date}`, {
+      credentials: "include"
     })
 
     if (resp.status >= 400)
       throw new Error(`[${this.api}DbHandler]: ${await resp.text()}`)
 
     const result = await resp.json();
-    if (date !== MetallurgicalDate())
-      this.interimCache.set(date, result)
+    this.interimCache.set(date, result)
+    this.lastScheduleRequeust = requestTime
 
     return result
   }

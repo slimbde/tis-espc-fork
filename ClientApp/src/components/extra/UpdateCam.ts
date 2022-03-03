@@ -6,7 +6,10 @@ export const UpdateCam = (url: string, target: HTMLImageElement) => {
   const load = () => {
     target.src = `${img.src}?tt=${Math.random()}`
 
-    const callMeOneMoreTime = () => setTimeout(() => UpdateCam(img.src, target), 5000)
+    const callMeOneMoreTime = () => {
+      target.parentElement!.style.opacity = "1"
+      setTimeout(() => UpdateCam(img.src, target), 5000)
+    }
     target.onload = callMeOneMoreTime
     target.onerror = callMeOneMoreTime
   }

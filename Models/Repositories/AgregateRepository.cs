@@ -403,7 +403,10 @@ namespace TIS_ESPC_FORK.Models.Repositories
 
         async static Task<dynamic> getNode23HeatInfoAsync()
         {
-            string now = DateTime.Now.ToString("yyyyMMdd");
+            string now = DateTime.Now.TimeOfDay > TimeSpan.FromHours(19.5) 
+                ? DateTime.Now.AddDays(1).ToString("yyyyMMdd")
+                : DateTime.Now.ToString("yyyyMMdd");
+
             string url = $"http://10.2.19.223/tis/smelt/?date={now}&agregate=akoc";
 
             WebClient client = new WebClient();

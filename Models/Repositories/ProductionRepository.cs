@@ -4,13 +4,10 @@ using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Data;
 using System.Data.Common;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using TIS_ESPC_FORK.Models.DTOs.Production;
-using TIS_ESPC_FORK.Models.Extensions;
 
 namespace TIS_ESPC_FORK.Models.Repositories
 {
@@ -22,7 +19,7 @@ namespace TIS_ESPC_FORK.Models.Repositories
         Task<IEnumerable<HeatCCMQuality>> HeatCCMQualityFor(string heatId);
         Task<int> StartCCM1Heat(string heatId);
         Task<int> StopCCM1Heat(string heatId, double avgSpeed, string time, double performance);
-        Task<IEnumerable<dynamic>> GetSchedule(string date);
+        Task<dynamic> GetSchedule(string date);
     }
 
 
@@ -32,6 +29,14 @@ namespace TIS_ESPC_FORK.Models.Repositories
     {
         readonly static string conStringLFVOD = ConfigurationManager.ConnectionStrings["oracleLFVOD"].ConnectionString;
         readonly static string conStringCCM = ConfigurationManager.ConnectionStrings["oracle"].ConnectionString;
+
+        /// <summary>
+        /// The cache for schedule info to release node 15 usage<br/>
+        /// key - date, value - the set of last access time and the info itself
+        /// </summary>
+        IDictionary<string, dynamic> ScheduleCache = new Dictionary<string, dynamic>();
+
+
 
         public async Task<IEnumerable<HeatEvent>> HeatEventsFor(string heatId, string areaId)
         {
@@ -324,59 +329,32 @@ namespace TIS_ESPC_FORK.Models.Repositories
             }
         }
 
-        public async Task<IEnumerable<dynamic>> GetSchedule(string date)
+        public async Task<dynamic> GetSchedule(string date)
         {
-            string mDate = DateTime.Parse(date).ToString("yyyyMMdd");
-            string url = $"http://10.2.19.223/tis/smelt/?date={mDate}&agregate=akoc:dsp:akoc2:vod";
+            // check cache
+            if (ScheduleCache.ContainsKey(date))
+            {
+                IDictionary<string, dynamic> cacheSet = ScheduleCache[date] as IDictionary<string, dynamic>;
+                DateTime lastAccess = cacheSet["lastAccess"];
+
+                if (DateTime.Now - lastAccess < TimeSpan.FromMinutes(5))
+                    return cacheSet["info"];
+            }
+
+            string url = $"http://10.2.19.215/api/schedule.php?date={date}";
 
             // collect staple agregates info
             WebClient client = new WebClient();
-            client.Credentials = new NetworkCredential("admin", "321876");
+            client.Credentials = CredentialCache.DefaultNetworkCredentials;
 
             string response = await client.DownloadStringTaskAsync(url);
 
             IEnumerable<dynamic> set = JsonConvert.DeserializeObject<IEnumerable<dynamic>>(response);
 
-            // collect ccm1 info
-            using (IDbConnection db = new OracleConnection(conStringCCM))
+            ScheduleCache[date] = new Dictionary<string, dynamic>()
             {
-                DateTime[] range = DateHandler.GetMetallurgicalRange(date);
-
-                string stmt = @"WITH r AS (
-                                        SELECT
-                                            TO_DATE(:begin,'YYYYMMDDHH24MISS')  begin
-                                            ,TO_DATE(:end,'YYYYMMDDHH24MISS')   end
-                                        FROM DUAL
-                                    )
-                                    SELECT
-                                      'CCM1'        AGREGATE
-                                      ,HEAT_ID
-                                      ,TO_CHAR(START_TIME,'YYYY-MM-DD HH24:MI:SS')      START_POINT
-                                      ,TO_CHAR(RECORD_TIME,'YYYY-MM-DD HH24:MI:SS')     END_POINT
-                                    FROM REP_CCM1_CASTING_SPEED, r
-                                    WHERE START_TIME >= r.begin AND START_TIME < r.end
-
-                                    UNION ALL SELECT
-                                      'CCM2'                                            AGREGATE
-                                      ,HEAT_ID
-                                      ,TO_CHAR(START_DATE,'YYYY-MM-DD HH24:MI:SS')      START_POINT
-                                      ,CASE WHEN STOP_DATE = TO_DATE('01011970000000','DDMMYYYYHH24MISS') 
-                                            THEN NULL 
-                                            ELSE TO_CHAR(STOP_DATE,'YYYY-MM-DD HH24:MI:SS')
-                                       END                                              END_POINT
-                                    FROM REPORTS, r
-                                    WHERE START_DATE >= r.begin AND START_DATE < r.end
-                                    ORDER BY AGREGATE,START_POINT";
-
-                IEnumerable<dynamic> ccmInfo = (await db.QueryAsync<dynamic>(stmt, new
-                {
-                    // we expand the range on purpose. To show heats started before shift start
-                    begin = range[0].AddHours(-5).ToString("yyyyMMddHHmmss"),
-                    end = range[1].ToString("yyyyMMddHHmmss"),
-                }));
-
-                set = set.Concat(ccmInfo);
-            }
+                {"lastAccess",DateTime.Now},{"info", set}
+            };
 
             return set;
         }
