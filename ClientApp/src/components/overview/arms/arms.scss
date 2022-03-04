@@ -10,10 +10,10 @@
     grid-template-columns: 1fr 1fr 1fr;
     grid-template-rows: repeat(4, 1fr);
     grid-template-areas:
-      "ccm-arm1 ccm-arm2 gega"
+      "ccmArm1 ccmArm2 gega"
       "fda mbps none1"
-      "akp-arm1 akp-arm2 hi-reg"
-      "vd-arm1 vd-arm2 vd-arm3";
+      "akpArm1 akpArm2 hiReg"
+      "vdArm1 vdArm2 vdArm3";
 
     .card {
       padding: 3px;
@@ -46,7 +46,7 @@
 }
 
 .arm-wrapper {
-  margin-left: 1rem;
+  margin-left: 1.55rem;
   display: grid;
   grid-template-areas: "back title" "arm arm";
   grid-template-columns: 100px 1fr;

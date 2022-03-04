@@ -24,7 +24,7 @@ export const populateChart = (data: ChartItem[], categories: string[], date: str
   Highcharts.chart('chart', {
     chart: {
       type: 'xrange',
-      marginTop: 60,
+      marginTop: 30,
     },
     title: { text: '' },
     xAxis: {

@@ -22,6 +22,7 @@ import { AKOSDetails } from "components/agregates/Staples/AKOSDetails";
 import { AKPDetails } from "components/agregates/Staples/AKPDetails";
 import { VODDetails } from "components/agregates/Staples/VODDetails";
 import { Schedule } from "components/technology/schedule";
+import { CamAkos } from "components/cams/CamAkos";
 
 
 
@@ -89,6 +90,7 @@ const App: React.FC = () => {
     <Route exact path="/diagnostic/services" component={Diagnostic} key="diagnostic" />,
     <Route exact path="/diagnostic/operator" component={Journal} key="operator1" />,
     <Route exact path="/diagnostic/operator/:AREAID/:FROM/:TO" component={Journal} key="operator2" />,
+    <Route exact path="/cams/akos" component={CamAkos} key="camakos" />,
   ]
 
   const adminRoutes = [

@@ -21,6 +21,7 @@ namespace TIS_ESPC_FORK.Models.Repositories
         Task<int> StartCCM1Heat(string heatId);
         Task<int> StopCCM1Heat(string heatId, double avgSpeed, string time, double performance);
         Task<dynamic> GetSchedule(string date);
+        Task<dynamic> GetCCM1info(string date);
     }
 
 
@@ -36,6 +37,11 @@ namespace TIS_ESPC_FORK.Models.Repositories
         /// key - date, value - the set of last access time and the info itself
         /// </summary>
         IDictionary<string, dynamic> ScheduleCache = new Dictionary<string, dynamic>();
+
+        /// <summary>
+        /// The production node15 cache
+        /// </summary>
+        IDictionary<string, dynamic> ProductionCache = new Dictionary<string, dynamic>();
 
 
 
@@ -358,6 +364,39 @@ namespace TIS_ESPC_FORK.Models.Repositories
 
             ScheduleCache[date] = new Dictionary<string, dynamic>()
             { {"lastAccess",DateTime.Now},{"info", set} };
+
+            return set;
+        }
+
+        public async Task<dynamic> GetCCM1info(string date)
+        {
+            if (ProductionCache.ContainsKey(date))
+            {
+                IDictionary<string, dynamic> cacheSet = ProductionCache[date] as IDictionary<string, dynamic>;
+
+                string metallurgicalDate = DateHandler.GetMetallurgicalDate().ToString("yyyy-MM-dd");
+                DateTime[] range = DateHandler.GetMetallurgicalRange(metallurgicalDate);
+                if (DateTime.Parse(date) < range[0]) return cacheSet["ccm1"];
+
+                // if date is not a former one
+                DateTime lastAccess = cacheSet["lastAccessCCM1"];
+                if (DateTime.Now - lastAccess < TimeSpan.FromMinutes(10))
+                    return cacheSet["ccm1"];
+            }
+            else ProductionCache[date] = new Dictionary<string, dynamic>();
+
+            string url = $"http://10.2.19.215/api/production.php?date={date}&agregate=mnls1";
+
+            // collect staple agregates info
+            WebClient client = new WebClient();
+            client.Credentials = CredentialCache.DefaultNetworkCredentials;
+
+            string response = await client.DownloadStringTaskAsync(url);
+
+            IEnumerable<dynamic> set = JsonConvert.DeserializeObject<IEnumerable<dynamic>>(response);
+
+            ProductionCache[date]["ccm1"] = set;
+            ProductionCache[date]["lastAccessCCM1"] = DateTime.Now;
 
             return set;
         }

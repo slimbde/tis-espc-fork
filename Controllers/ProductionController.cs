@@ -71,5 +71,14 @@ namespace TIS_ESPC_FORK.Controllers
             try { return Ok(await pRepo.GetSchedule(date)); }
             catch (Exception ex) { return BadRequest(ex.Message); }
         }
+
+
+        [HttpGet]
+        [Route("api/Production/GetCCM1infoAsync")]
+        public async Task<IHttpActionResult> GetCCM1infoAsync(string date)
+        {
+            try { return Ok(await pRepo.GetCCM1info(date)); }
+            catch (Exception ex) { return BadRequest(ex.Message); }
+        }
     }
 }

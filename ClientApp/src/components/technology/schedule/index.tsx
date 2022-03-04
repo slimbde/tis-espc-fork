@@ -90,14 +90,15 @@ export const Schedule: React.FC = () => {
         const fillerAKOS = [{ START_POINT: fillerTime, END_POINT: fillerTime, HEAT_ID: "", AGREGATE: "AKOS" }]
         const fillerAKP21 = [{ START_POINT: fillerTime, END_POINT: fillerTime, HEAT_ID: "", AGREGATE: "AKP21" }]
         const fillerAKP22 = [{ START_POINT: fillerTime, END_POINT: fillerTime, HEAT_ID: "", AGREGATE: "AKP22" }]
-        const fillerDSP = [{ START_POINT: fillerTime, END_POINT: fillerTime, HEAT_ID: "", AGREGATE: "DSP" }]
+        const fillerDSP = [{ START_POINT: fillerTime, END_POINT: fillerTime, HEAT_ID: "", AGREGATE: "dsp" }]
         const fillerVOD1 = [{ START_POINT: fillerTime, END_POINT: fillerTime, HEAT_ID: "", AGREGATE: "VOD1" }]
         const fillerVOD2 = [{ START_POINT: fillerTime, END_POINT: fillerTime, HEAT_ID: "", AGREGATE: "VOD2" }]
         const fillerCCM1 = [{ START_POINT: fillerTime, END_POINT: fillerTime, HEAT_ID: "", AGREGATE: "MNLS1" }]
         const fillerCCM2 = [{ START_POINT: fillerTime, END_POINT: fillerTime, HEAT_ID: "", AGREGATE: "MNLS2" }]
 
         const lookup = response.reduce((acc: any, curr: ScheduleHeatInfo) => {
-          acc[curr.AGREGATE].push(curr)
+          !(curr.AGREGATE.toUpperCase() in acc) && (acc[curr.AGREGATE.toUpperCase()] = [])
+          acc[curr.AGREGATE.toUpperCase()].push(curr)
           return acc
         }, {
           DSP: fillerDSP,
@@ -190,7 +191,7 @@ export const Schedule: React.FC = () => {
           return <div className="agregate" key={agregate}>
             <div className="a-title">{ScheduleAgregateDecoder[agregate]}</div>
             {state.scheduleInfo[agregate].map((item: ScheduleHeatInfo, idx: number) => {
-              const time = `${moment(item.START_POINT).format("HH:mm")} ... ${item.END_POINT ? moment(item.END_POINT).format("HH:MM") : "текущ"}`
+              const time = `${moment(item.START_POINT).format("HH:mm")} ... ${item.END_POINT ? moment(item.END_POINT).format("HH:mm") : "текущ"}`
               const date = moment(item.START_POINT)
 
               if (!item.HEAT_ID) return <span key={idx}></span>

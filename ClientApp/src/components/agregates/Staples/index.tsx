@@ -1,15 +1,14 @@
+import "./staples.scss"
+import moment from "moment";
 import { blinkAlert } from "components/extra/Alert";
 import { Loading } from "components/extra/Loading";
 import { setFluid } from "components/extra/SetFluid";
-import { UpdateCam } from "components/extra/UpdateCam";
-import aHandler from "models/handlers/DbHandlers/AgregatesDbHandler";
 import { StapleSummaryHandler } from "models/handlers/StapleHandlers/StapleSummaryHandler";
 import { AgregateInfo } from "models/types/Agregates/Staples/AgregateInfo";
-import moment from "moment";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Alert } from "reactstrap"
 import { Agregate } from "./Agregate";
-import "./staples.scss"
+import aHandler from "models/handlers/DbHandlers/AgregatesDbHandler";
 
 
 type State = {
@@ -30,7 +29,6 @@ type State = {
 
 
 export const Staples: React.FC = () => {
-  const camLink = useRef<HTMLImageElement>(null)
 
   const [state, setState] = useState<State>({
     loading: true,
@@ -50,9 +48,6 @@ export const Staples: React.FC = () => {
   useEffect(() => {
     document.title = "Агрегаты"
     setFluid(true)
-
-    const token = new AbortController()
-    UpdateCam("http://10.2.19.234/oneshotimage1", camLink.current!, token)
 
     const update = () => aHandler.ReadStapleSummaryAsync()
       .then(summary => {
@@ -83,12 +78,7 @@ export const Staples: React.FC = () => {
     update()
       .then(() => setState(state => ({ ...state, loading: false })))
 
-    //const interval = setInterval(() => update(), (window as any).config.agregatesUpdateInterval)
-
-    return () => {
-      token.abort()
-      setFluid()
-    }
+    return () => setFluid()
   }, [])
 
 
@@ -108,10 +98,5 @@ export const Staples: React.FC = () => {
       <Agregate {...state.vd1}></Agregate>
       <Agregate {...state.vd2}></Agregate>
     </>}
-
-    <div className="cam">
-      <img alt="AKOC" width="100%" ref={camLink}></img>
-    </div>
-
   </div >
 }

@@ -39,7 +39,7 @@
   .navigation {
     grid-area: alert;
     position: absolute;
-    right: 3rem;
+    right: 2.1rem;
     top: 0.5rem;
     margin-left: 5.5rem;
     width: 400px;
@@ -54,7 +54,7 @@
   .main {
     grid-area: main;
     position: relative;
-    max-width: 1320px;
+    max-width: 1330px;
 
     .chart-heat {
       font-weight: 500;
