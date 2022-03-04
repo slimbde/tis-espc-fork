@@ -23,7 +23,7 @@ type State = {
   mnlz1: AgregateInfo
   mnlz2: AgregateInfo
   vd1: AgregateInfo
-  vd2: AgregateInfo
+  vd2: AgregateInfo,
 }
 
 
@@ -51,7 +51,8 @@ export const Staples: React.FC = () => {
     document.title = "Агрегаты"
     setFluid(true)
 
-    UpdateCam("http://10.2.19.234/oneshotimage1", camLink.current!)
+    const token = new AbortController()
+    UpdateCam("http://10.2.19.234/oneshotimage1", camLink.current!, token)
 
     const update = () => aHandler.ReadStapleSummaryAsync()
       .then(summary => {
@@ -82,10 +83,10 @@ export const Staples: React.FC = () => {
     update()
       .then(() => setState(state => ({ ...state, loading: false })))
 
-    const interval = setInterval(() => update(), (window as any).config.agregatesUpdateInterval)
+    //const interval = setInterval(() => update(), (window as any).config.agregatesUpdateInterval)
 
     return () => {
-      clearInterval(interval)
+      token.abort()
       setFluid()
     }
   }, [])
@@ -98,14 +99,14 @@ export const Staples: React.FC = () => {
 
     {state.loading && <Loading />}
     {!state.loading && !state.loadError && <>
-      <Agregate {...state.akp1}></Agregate>
-      <Agregate {...state.akp2}></Agregate>
-      <Agregate {...state.mnlz1}></Agregate>
-      <Agregate {...state.mnlz2}></Agregate>
-      <Agregate {...state.vd1}></Agregate>
-      <Agregate {...state.vd2}></Agregate>
       <Agregate {...state.dsp}></Agregate>
       <Agregate {...state.akos}></Agregate>
+      <Agregate {...state.mnlz1}></Agregate>
+      <Agregate {...state.mnlz2}></Agregate>
+      <Agregate {...state.akp1}></Agregate>
+      <Agregate {...state.akp2}></Agregate>
+      <Agregate {...state.vd1}></Agregate>
+      <Agregate {...state.vd2}></Agregate>
     </>}
 
     <div className="cam">

@@ -17,5 +17,20 @@ namespace TIS_ESPC_FORK.Models.Extensions
 
             return result;
         }
+
+
+        /// <summary>
+        /// Calculates current metallurgical date
+        /// </summary>
+        public static DateTime GetMetallurgicalDate()
+        {
+            DateTime now = DateTime.Now.Date;
+
+            TimeSpan time = DateTime.Now.TimeOfDay;
+            if (time > TimeSpan.FromHours(19.5))
+                return now.AddDays(1);
+
+            return now;
+        }
     }
 }

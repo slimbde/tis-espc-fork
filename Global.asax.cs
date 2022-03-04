@@ -11,15 +11,13 @@ namespace TIS_ESPC_FORK
 {
     public class WebApiApplication : System.Web.HttpApplication
     {
-        CancellationTokenSource cSource;
+        CancellationTokenSource cSource = new CancellationTokenSource();
 
 
         protected void Application_Start()
         {
             GlobalConfiguration.Configure(WebApiConfig.Register);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
-
-            cSource = new CancellationTokenSource();
 
             try
             {

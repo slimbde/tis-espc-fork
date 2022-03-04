@@ -21,6 +21,9 @@ type State = {
   date: string
   metallurgicalDate: string
   scheduleInfo: any
+  lastUpdate: string
+  timeout: NodeJS.Timeout | undefined
+  token: AbortController
 }
 
 
@@ -36,40 +39,49 @@ export const Schedule: React.FC = () => {
   const [state, setState] = useState<State>({
     loading: true,
     date: moment().isAfter(moment().format("YYYY-MM-DD") + " 19:30:00") ? moment().startOf("day").add(1, "day").format("YYYY-MM-DD") : moment().startOf("day").format("YYYY-MM-DD"),
-    metallurgicalDate: moment().isAfter(moment().format("YYYY-MM-DD") + " 19:30:00") ? moment().startOf("day").add(1, "day").format("YYYY-MM-DD") : moment().startOf("day").format("YYYY-MM-DD"),
-    scheduleInfo: []
+    metallurgicalDate: MetallurgicalDate(),
+    scheduleInfo: [],
+    lastUpdate: "",
+    timeout: undefined,
+    token: new AbortController(),   // this is necessary to disable any hxr when you leave the page
   })
 
 
 
   useEffect(() => {
     setFluid(true)
-    const interval = setInterval(update, 5 * 60 * 1000)
     document.title = "График работы"
     return () => {
-      clearInterval(interval)
       setFluid()
+      clearTimeout(state.timeout!)  // this is necessary to disable any timeout when you leave the page
+      state.token.abort()           // this is necessary to disable any hxr when you leave the page
     }
     //eslint-disable-next-line
   }, [])
 
 
   useEffect(() => {
-    update(false)
+    update()
     //eslint-disable-next-line
   }, [state.date])
 
 
-  const update = (interval: Boolean = true) => {
-    if (state.date !== MetallurgicalDate() && interval) return
+  const update = () => {
+    if (state.token.signal.aborted) return // this is necessary to disable any hxr when you leave the page
+    const timeout = state.date === state.metallurgicalDate
+      ? setTimeout(update, 5 * 60 * 1000)
+      : undefined
 
-    setState(state => ({ ...state, loading: true }))
-    infoRef.current?.classList.add("blur")
-    chartRef.current!.classList.add("blur")
-    controlsRef.current?.classList.add("disabled")
+    !timeout && clearTimeout(state.timeout!)
+    setState(state => ({ ...state, timeout, loading: true }))
+
+    infoRef?.current?.classList.add("blur")
+    chartRef?.current!.classList.add("blur")
+    controlsRef?.current?.classList.add("disabled")
 
     pHandler.GetScheduleHeatInfoAsync(state.date)
       .then(response => {
+        if (state.token.signal.aborted) return  // this is necessary to disable any hxr when you leave the page
         if (response.length === 0) throw new Error("Нет данных")
 
         // when highcharts draws the chart there must be at least one point to draw the device to make it visible
@@ -88,10 +100,10 @@ export const Schedule: React.FC = () => {
           acc[curr.AGREGATE].push(curr)
           return acc
         }, {
+          DSP: fillerDSP,
           AKOS: fillerAKOS,
           AKP21: fillerAKP21,
           AKP22: fillerAKP22,
-          DSP: fillerDSP,
           VOD1: fillerVOD1,
           VOD2: fillerVOD2,
           MNLS1: fillerCCM1,
@@ -122,7 +134,12 @@ export const Schedule: React.FC = () => {
         infoRef.current?.classList.remove("blur")
         chartRef.current!.classList.remove("blur");
         controlsRef.current?.classList.remove("disabled")
-        setState(state => ({ ...state, scheduleInfo: lookup, loading: false, }))
+        setState(state => ({
+          ...state,
+          lastUpdate: state.date === state.metallurgicalDate ? moment().format("HH:mm:ss") : "",
+          scheduleInfo: lookup,
+          loading: false,
+        }))
       })
       .catch(error => {
         blinkAlert(error, false)
@@ -151,6 +168,7 @@ export const Schedule: React.FC = () => {
   return <div className="schedule-wrapper">
     <Alert id="alert">Hello</Alert>
     <div className="title display-5">График работы ЭСПЦ-6</div>
+    <div className="update-time">{state.lastUpdate}</div>
 
     <Controls
       innerRef={controlsRef}
@@ -173,11 +191,11 @@ export const Schedule: React.FC = () => {
             <div className="a-title">{ScheduleAgregateDecoder[agregate]}</div>
             {state.scheduleInfo[agregate].map((item: ScheduleHeatInfo, idx: number) => {
               const time = `${moment(item.START_POINT).format("HH:mm")} ... ${item.END_POINT ? moment(item.END_POINT).format("HH:MM") : "текущ"}`
-              const date = moment(item.START_POINT).format("DD.MM.YYYY")
+              const date = moment(item.START_POINT)
 
-              if (!item.HEAT_ID || item.START_POINT < moment(state.metallurgicalDate).subtract(1, "hours").toDate()) return <span key={idx}></span>
+              if (!item.HEAT_ID) return <span key={idx}></span>
 
-              return <div className={`heat ${item.AGREGATE}`} key={idx} title={date}>
+              return <div className={`heat ${item.AGREGATE} ${date > moment(state.date).subtract(9, "hours") ? "current" : ""}`} key={idx} title={date.format("DD.MM.YYYY")}>
                 <div className="hid">{!isNaN(+item.HEAT_ID) ? item.HEAT_ID : ""}</div>
                 <div className="time">{time}</div>
               </div>

@@ -1,19 +1,13 @@
 
-export const UpdateCam = (url: string, target: HTMLImageElement) => {
-  const img = new Image()
-  img.src = url
+export const UpdateCam = (url: string, target: HTMLImageElement, token: AbortController) => {
+  target.src = `${url}?t=${Math.random()}`
 
-  const load = () => {
-    target.src = `${img.src}?tt=${Math.random()}`
-
-    const callMeOneMoreTime = () => {
-      target.parentElement!.style.opacity = "1"
-      setTimeout(() => UpdateCam(img.src, target), 5000)
-    }
-    target.onload = callMeOneMoreTime
-    target.onerror = callMeOneMoreTime
+  const callMeOneMoreTime = () => {
+    !token.signal.aborted && setTimeout(() => UpdateCam(url, target, token), 5000)
+    target.parentElement!.style.opacity = "1"
   }
 
-  img.onload = load
-  img.onerror = load
+  target.onload = callMeOneMoreTime
+  target.onerror = callMeOneMoreTime
+
 }

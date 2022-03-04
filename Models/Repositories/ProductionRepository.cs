@@ -8,6 +8,7 @@ using System.Data.Common;
 using System.Net;
 using System.Threading.Tasks;
 using TIS_ESPC_FORK.Models.DTOs.Production;
+using TIS_ESPC_FORK.Models.Extensions;
 
 namespace TIS_ESPC_FORK.Models.Repositories
 {
@@ -331,12 +332,16 @@ namespace TIS_ESPC_FORK.Models.Repositories
 
         public async Task<dynamic> GetSchedule(string date)
         {
-            // check cache
             if (ScheduleCache.ContainsKey(date))
             {
                 IDictionary<string, dynamic> cacheSet = ScheduleCache[date] as IDictionary<string, dynamic>;
-                DateTime lastAccess = cacheSet["lastAccess"];
 
+                string metallurgicalDate = DateHandler.GetMetallurgicalDate().ToString("yyyy-MM-dd");
+                DateTime[] range = DateHandler.GetMetallurgicalRange(metallurgicalDate);
+                if (DateTime.Parse(date) < range[0]) return cacheSet["info"];
+
+                // if date is not a former one
+                DateTime lastAccess = cacheSet["lastAccess"];
                 if (DateTime.Now - lastAccess < TimeSpan.FromMinutes(5))
                     return cacheSet["info"];
             }
@@ -352,9 +357,7 @@ namespace TIS_ESPC_FORK.Models.Repositories
             IEnumerable<dynamic> set = JsonConvert.DeserializeObject<IEnumerable<dynamic>>(response);
 
             ScheduleCache[date] = new Dictionary<string, dynamic>()
-            {
-                {"lastAccess",DateTime.Now},{"info", set}
-            };
+            { {"lastAccess",DateTime.Now},{"info", set} };
 
             return set;
         }

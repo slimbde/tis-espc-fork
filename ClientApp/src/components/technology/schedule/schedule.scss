@@ -16,6 +16,15 @@
     margin-left: 5.5rem;
   }
 
+  .update-time {
+    position: absolute;
+    grid-area: title;
+    margin-left: 5.55rem;
+    bottom: -4px;
+    font-size: 0.7rem;
+    color: gray;
+  }
+
   #alert {
     grid-area: alert;
     margin-bottom: 0;
@@ -86,6 +95,7 @@
         display: flex;
         justify-content: space-between;
         width: 133px;
+        opacity: 0.5;
 
         & + .heat {
           border-top: 1px solid lightgray;
@@ -99,6 +109,11 @@
           font-weight: 500;
         }
 
+        &.current {
+          filter: brightness(95%);
+          opacity: 1;
+        }
+
         &.AKOS {
           color: darken(#ffc107, 25%);
         }
@@ -106,11 +121,9 @@
         &.AKP22 {
           color: darken(#ffe0b2, 30%);
         }
-        &.VOD1 {
-          color: darken(#4caf50, 5%);
-        }
+        &.VOD1,
         &.VOD2 {
-          color: darken(#4caf50, 10%);
+          color: darken(#4caf50, 5%);
         }
         &.DSP {
           color: darken(#f44336, 0%);
