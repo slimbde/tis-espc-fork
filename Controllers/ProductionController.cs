@@ -20,7 +20,7 @@ namespace TIS_ESPC_FORK.Controllers
         public async Task<IHttpActionResult> ReadForAsync()
         {
             try
-            {
+            { 
                 ProductionFilter filter = JsonConvert.DeserializeObject<ProductionFilter>(Request.Content.ReadAsStringAsync().Result);
                 return Ok(await pRepo.ListFor(filter));
             }
@@ -69,15 +69,6 @@ namespace TIS_ESPC_FORK.Controllers
         public async Task<IHttpActionResult> GetScheduleAsync(string date)
         {
             try { return Ok(await pRepo.GetSchedule(date)); }
-            catch (Exception ex) { return BadRequest(ex.Message); }
-        }
-
-
-        [HttpGet]
-        [Route("api/Production/GetCCM1infoAsync")]
-        public async Task<IHttpActionResult> GetCCM1infoAsync(string date)
-        {
-            try { return Ok(await pRepo.GetCCM1info(date)); }
             catch (Exception ex) { return BadRequest(ex.Message); }
         }
     }

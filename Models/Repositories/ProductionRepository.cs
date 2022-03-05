@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data.Common;
 using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 using TIS_ESPC_FORK.Models.DTOs.Production;
 using TIS_ESPC_FORK.Models.Extensions;
@@ -21,7 +22,6 @@ namespace TIS_ESPC_FORK.Models.Repositories
         Task<int> StartCCM1Heat(string heatId);
         Task<int> StopCCM1Heat(string heatId, double avgSpeed, string time, double performance);
         Task<dynamic> GetSchedule(string date);
-        Task<dynamic> GetCCM1info(string date);
     }
 
 
@@ -130,6 +130,8 @@ namespace TIS_ESPC_FORK.Models.Repositories
             if (filter is ProductionFilter)
             {
                 ProductionFilter flt = filter as ProductionFilter;
+
+                if (flt.AreaId == "1") return await GetCCM1info(flt.eDate);
 
                 string conString = flt.AreaId == "600" || flt.AreaId == "800"
                     ? conStringLFVOD
@@ -368,8 +370,13 @@ namespace TIS_ESPC_FORK.Models.Repositories
             return set;
         }
 
-        public async Task<dynamic> GetCCM1info(string date)
+
+
+
+        async Task<dynamic> GetCCM1info(string end)
         {
+            string date = end.Split(' ')[0]; 
+
             if (ProductionCache.ContainsKey(date))
             {
                 IDictionary<string, dynamic> cacheSet = ProductionCache[date] as IDictionary<string, dynamic>;

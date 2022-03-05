@@ -52,7 +52,7 @@ export const Controls: React.FC<Props> = ({
       <option key="3" value="hmi_sets">Изменение уставок на ЧМИ</option>,
     ]
 
-    if (areaId === AreaId.CCM_DIAG)
+    if (areaId === AreaId.CCM2_DIAG)
       options.push(<option key="4" value="airpump_msg">Компрессорная</option>)
 
     return options

@@ -1,4 +1,4 @@
-import { AreaId } from "models/types/Technology/Production/AreaId";
+import { AreaId, getAreaName } from "models/types/Technology/Production/AreaId";
 import React from "react";
 import { Button, ButtonGroup, Input, InputGroup, InputGroupAddon } from "reactstrap";
 
@@ -13,6 +13,7 @@ type Props = {
   reset: () => void
   back: () => void
   forth: () => void
+  loading: boolean
 }
 
 
@@ -26,10 +27,11 @@ const Controls: React.FC<Props> = ({
   reset,
   back,
   forth,
+  loading,
 }) => {
 
   return <>
-    <div className="navigation">
+    <div className={`navigation ${loading ? "disabled" : ""}`}>
       <span style={{ gridArea: "date-title" }}>Дата:</span>
       <span style={{ gridArea: "shift-title" }}>Смена:</span>
 
@@ -68,9 +70,11 @@ const Controls: React.FC<Props> = ({
     <div className="filter">
       <span>Агрегат:</span>
       <ButtonGroup size="sm">
-        <Button outline color="info" active={areaId === AreaId.LF_DIAG} onClick={() => areaIdChange(AreaId.LF_DIAG)}>АКП-2</Button>
-        <Button outline color="info" active={areaId === AreaId.VOD_DIAG} onClick={() => areaIdChange(AreaId.VOD_DIAG)}>ВАКУУМАТОР</Button>
-        <Button outline color="info" active={areaId === AreaId.CCM_DIAG} onClick={() => areaIdChange(AreaId.CCM_DIAG)}>МНЛЗ-2</Button>
+        {Object.keys(AreaId).map(area => {
+          return isNaN(+area)
+            ? <span key={area}></span>
+            : <Button key={area} outline color="info" active={areaId === +area} onClick={() => areaIdChange(+area)}>{getAreaName(+area)}</Button>
+        })}
       </ButtonGroup>
     </div>
   </>

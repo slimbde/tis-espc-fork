@@ -13,14 +13,17 @@ import { setFluid } from "components/extra/SetFluid"
 import { blinkAlert } from "components/extra/Alert"
 import { ProductionFilter } from "models/types/Technology/Production/ProductionFilter"
 import { VODHeat } from "models/types/Technology/Production/VODHeat"
-import { CCMHeat } from "models/types/Technology/Production/CCMHeat"
+import { CCM2Heat } from "models/types/Technology/Production/CCM2Heat"
 import { VODTable } from "./VODTable"
-import { CCMTable } from "./CCMTable"
+import { CCM2Table } from "./CCM2Table"
+import { CCM1Heat } from "models/types/Technology/Production/CCM1Heat"
+import { CCM1Table } from "./CCM1Table"
+import { MetallurgicalRange } from "components/extra/MetallurgicalDate"
 
 
 type State = {
   areaId: AreaId
-  heats: LFHeat[] | VODHeat[] | CCMHeat[]
+  heats: LFHeat[] | VODHeat[] | CCM2Heat[] | CCM1Heat[] | undefined
   shift: number
   datePoint: string
   title: string
@@ -41,20 +44,20 @@ export const Production: React.FC = () => {
     const hour = moment().hour()
 
     return calculateShift() === 2
-      ? moment().toISOString(true).slice(0, 10)
+      ? moment().format("YYYY-MM-DD")
       : hour <= 23 && hour >= 19
-        ? moment().add(1, "day").toISOString(true).slice(0, 10)
-        : moment().toISOString(true).slice(0, 10)
+        ? moment().add(1, "day").format("YYYY-MM-DD")
+        : moment().format("YYYY-MM-DD")
   }
 
   const fetchState = (filter: ProductionFilter, shift: number = state.shift, datePoint: string = state.datePoint,) => {
-
+    setState({ ...state, loading: true })
     pHandler.GetListForAsync(filter)
       .then(heats => setState({
         ...state,
         shift,
         datePoint,
-        heats,
+        heats: heats || [],
         title: `${moment(filter.bDate).format("DD.MM.YYYY HH:mm")} ... ${moment(filter.eDate).format("DD.MM.YYYY HH:mm")}`,
         loading: false,
       }))
@@ -82,7 +85,6 @@ export const Production: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    setState({ ...state, loading: true })
     const [bDate, eDate] = calculatePoints(state.shift, state.datePoint)
 
     fetchState({ bDate, eDate, areaId: state.areaId })
@@ -90,19 +92,18 @@ export const Production: React.FC = () => {
   }, [state.shift, state.datePoint, state.areaId])
 
   const calculatePoints = (shift: number, datePoint: string) => {
-    const bDate1 = `${moment(datePoint).subtract(1, "day").toISOString(true).slice(0, 10)} 19:30`
-    const eDate1 = `${moment(datePoint).toISOString(true).slice(0, 10)} 07:30`
-    const bDate2 = `${moment(datePoint).toISOString(true).slice(0, 10)} 07:30`
-    const eDate2 = `${moment(datePoint).toISOString(true).slice(0, 10)} 19:30`
+    const [start, middle, end] = MetallurgicalRange(datePoint)
+    const b = shift === 1 ? start : middle
+    const e = shift === 1 ? middle : end
+    const bDate = b.format("YYYY-MM-DD HH:mm:ss")
+    const eDate = e.format("YYYY-MM-DD HH:mm:ss")
 
-    return shift === 1
-      ? [bDate1, eDate1]
-      : [bDate2, eDate2]
+    return [bDate, eDate]
   }
 
-  const areaIdChange = (areaId: AreaId) => setState({ ...state, areaId })
-  const shiftChange = (e: React.ChangeEvent<HTMLInputElement>) => setState({ ...state, shift: +e.target.value })
-  const dateChange = (e: React.ChangeEvent<HTMLInputElement>) => setState({ ...state, datePoint: e.target.value })
+  const areaIdChange = (areaId: AreaId) => setState({ ...state, areaId, heats: undefined, loading: true })
+  const shiftChange = (e: React.ChangeEvent<HTMLInputElement>) => setState({ ...state, shift: +e.target.value, heats: undefined, loading: true })
+  const dateChange = (e: React.ChangeEvent<HTMLInputElement>) => setState({ ...state, datePoint: e.target.value, heats: undefined, loading: true })
 
   const reset = () => {
     const shift = calculateShift()
@@ -114,12 +115,14 @@ export const Production: React.FC = () => {
   const back = () => setState({
     ...state,
     datePoint: state.shift === 2 ? state.datePoint : moment(state.datePoint).subtract(1, "day").toISOString(true).slice(0, 10),
-    shift: state.shift === 2 ? 1 : 2
+    shift: state.shift === 2 ? 1 : 2,
+    loading: true,
   })
   const forth = () => setState({
     ...state,
     datePoint: state.shift === 2 ? moment(state.datePoint).add(1, "day").toISOString(true).slice(0, 10) : state.datePoint,
-    shift: state.shift === 2 ? 1 : 2
+    shift: state.shift === 2 ? 1 : 2,
+    loading: true,
   })
 
 
@@ -138,6 +141,7 @@ export const Production: React.FC = () => {
       reset,
       back,
       forth,
+      loading: state.loading,
     }} />
 
     <div className="main">
@@ -148,7 +152,7 @@ export const Production: React.FC = () => {
           shift: state.shift,
           heatDate: state.datePoint,
           heats: state.heats as LFHeat[],
-          areaId: state.areaId
+          areaId: state.areaId,
         }} />}
 
       {state.areaId === AreaId.VOD_DIAG &&
@@ -156,18 +160,25 @@ export const Production: React.FC = () => {
           shift: state.shift,
           heatDate: state.datePoint,
           heats: state.heats as VODHeat[],
-          areaId: state.areaId
+          areaId: state.areaId,
         }} />}
 
-      {state.areaId === AreaId.CCM_DIAG &&
-        <CCMTable {...{
+      {state.areaId === AreaId.CCM2_DIAG &&
+        <CCM2Table {...{
           shift: state.shift,
           heatDate: state.datePoint,
-          heats: state.heats as CCMHeat[],
-          areaId: state.areaId
+          heats: state.heats as CCM2Heat[],
+          areaId: state.areaId,
         }} />}
 
-      {state.heats.length === 0 && state.title !== "" && <NoData />}
+      {state.areaId === AreaId.CCM1_DIAG &&
+        <CCM1Table {...{
+          shift: state.shift,
+          heatDate: state.datePoint,
+          heats: state.heats as CCM1Heat[],
+        }} />}
+
+      {(state.heats?.length === 0 && state.title !== "") && !state.loading && <NoData />}
       {state.loading && <Loading />}
     </div>
   </div>

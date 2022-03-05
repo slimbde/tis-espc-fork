@@ -11,7 +11,7 @@ import { HeatVODProcessModal } from "./HeatVODProcessModal";
 type Props = {
   shift: number
   heatDate: string
-  heats: VODHeat[]
+  heats: VODHeat[] | null
   areaId: AreaId
 }
 
@@ -86,7 +86,7 @@ export const VODTable: React.FC<Props> = ({
         </tr>
       </thead>
       <tbody>
-        {heats.length > 0 && heats.map(h => {
+        {heats && heats.length > 0 && heats.map(h => {
           const correctStart = getCorrectDate(h.START_POINT)
           const correctStop = getCorrectDate(h.STOP_POINT)
 

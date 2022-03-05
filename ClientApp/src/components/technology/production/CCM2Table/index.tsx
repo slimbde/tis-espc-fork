@@ -5,14 +5,14 @@ import moment from "moment";
 import { useState } from "react";
 import { HeatEventModal } from "../HeatEventModal";
 import { AreaId } from "models/types/Technology/Production/AreaId";
-import { CCMHeat } from "models/types/Technology/Production/CCMHeat";
+import { CCM2Heat } from "models/types/Technology/Production/CCM2Heat";
 import { HeatCCMProcessModal } from "./HeatCCMProcessModal";
 import { HeatCCMQualityModal } from "./HeatCCMQualityModal";
 
 type Props = {
   shift: number
   heatDate: string
-  heats: CCMHeat[]
+  heats: CCM2Heat[]
   areaId: AreaId
 }
 
@@ -24,7 +24,7 @@ type ModalState = {
 }
 
 
-export const CCMTable: React.FC<Props> = ({
+export const CCM2Table: React.FC<Props> = ({
   shift,
   heatDate,
   heats,
@@ -78,7 +78,7 @@ export const CCMTable: React.FC<Props> = ({
         </tr>
       </thead>
       <tbody>
-        {heats.length > 0 && heats.map(h => {
+        {heats && heats.length > 0 && heats.map(h => {
           const correctStart = getCorrectDate(h.START_POINT)
           const correctStop = getCorrectDate(h.STOP_POINT)
 

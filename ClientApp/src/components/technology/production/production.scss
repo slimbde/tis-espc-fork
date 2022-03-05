@@ -50,6 +50,7 @@
     grid-template-areas:
       "date-title shift-title none none none"
       "date shift none1 controls none2";
+    transition: opacity 0.5s ease;
   }
 
   .filter {

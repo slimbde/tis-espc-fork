@@ -1,5 +1,5 @@
 import { MetallurgicalDate } from "components/extra/MetallurgicalDate"
-import { CCMHeat } from "models/types/Technology/Production/CCMHeat"
+import { CCM2Heat } from "models/types/Technology/Production/CCM2Heat"
 import { HeatCCMProcess } from "models/types/Technology/Production/HeatCCMProcess"
 import { HeatCCMQuality } from "models/types/Technology/Production/HeatCCMQuality"
 import { HeatEvent } from "models/types/Technology/Production/HeatEvent"
@@ -31,7 +31,7 @@ export class ProductionDbHandler {
 
 
 
-  async GetListForAsync(filter: ProductionFilter): Promise<LFHeat[] | VODHeat[] | CCMHeat[]> {
+  async GetListForAsync(filter: ProductionFilter): Promise<LFHeat[] | VODHeat[] | CCM2Heat[]> {
     const resp = await fetch(`${this.backend}/${this.api}/ReadForAsync`, {
       method: "POST",
       headers: {

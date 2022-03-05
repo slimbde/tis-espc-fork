@@ -25,7 +25,7 @@ export const Journal: React.FC = () => {
   const match = useRouteMatch<{ AREAID: string, FROM: string, TO: string }>()
 
   const [state, setState] = useState<State>({
-    areaId: +match.params.AREAID || AreaId.CCM_DIAG,
+    areaId: +match.params.AREAID || AreaId.CCM2_DIAG,
     loading: false,
     operatorInfo: [],
   })
@@ -34,10 +34,10 @@ export const Journal: React.FC = () => {
     const eventPrioritySet = EventPriorityProvider(state.areaId)
 
     switch (filter.operation) {
-      case "buttons": filter.eventPriority = eventPrioritySet.prioBtn; break;
-      case "hmi_sets": filter.eventPriority = eventPrioritySet.prioHmiSets; break;
-      case "hmi_cmds": filter.eventPriority = eventPrioritySet.prioHmiCmds; break;
-      case "airpump_msg": filter.eventPriority = eventPrioritySet.prioAirpump as string; break;
+      case "buttons": filter.eventPriority = eventPrioritySet?.prioBtn; break;
+      case "hmi_sets": filter.eventPriority = eventPrioritySet?.prioHmiSets; break;
+      case "hmi_cmds": filter.eventPriority = eventPrioritySet?.prioHmiCmds; break;
+      case "airpump_msg": filter.eventPriority = eventPrioritySet?.prioAirpump as string; break;
     }
 
     try {
@@ -60,7 +60,7 @@ export const Journal: React.FC = () => {
       <ButtonGroup size="sm">
         <Button color="info" outline active={state.areaId === AreaId.LF_DIAG} onClick={() => setState({ ...state, areaId: AreaId.LF_DIAG })}>АКП-2</Button>
         <Button color="info" outline active={state.areaId === AreaId.VOD_DIAG} onClick={() => setState({ ...state, areaId: AreaId.VOD_DIAG })}>ВКД</Button>
-        <Button color="info" outline active={state.areaId === AreaId.CCM_DIAG} onClick={() => setState({ ...state, areaId: AreaId.CCM_DIAG })}>МНЛЗ-2</Button>
+        <Button color="info" outline active={state.areaId === AreaId.CCM2_DIAG} onClick={() => setState({ ...state, areaId: AreaId.CCM2_DIAG })}>МНЛЗ-2</Button>
       </ButtonGroup>
     </div>
     <div className="controls">

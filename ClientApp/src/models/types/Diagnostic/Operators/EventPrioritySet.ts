@@ -29,7 +29,7 @@ const VODPrioritySet: EventPrioritySet = {
 
 export const EventPriorityProvider = (areaId: AreaId) => {
   switch (areaId) {
-    case AreaId.CCM_DIAG: return CCMPrioritySet
+    case AreaId.CCM2_DIAG: return CCMPrioritySet
     case AreaId.LF_DIAG: return LFPrioritySet
     case AreaId.VOD_DIAG: return VODPrioritySet
   }

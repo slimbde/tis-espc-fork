@@ -90,7 +90,7 @@ export const Schedule: React.FC = () => {
         const fillerAKOS = [{ START_POINT: fillerTime, END_POINT: fillerTime, HEAT_ID: "", AGREGATE: "AKOS" }]
         const fillerAKP21 = [{ START_POINT: fillerTime, END_POINT: fillerTime, HEAT_ID: "", AGREGATE: "AKP21" }]
         const fillerAKP22 = [{ START_POINT: fillerTime, END_POINT: fillerTime, HEAT_ID: "", AGREGATE: "AKP22" }]
-        const fillerDSP = [{ START_POINT: fillerTime, END_POINT: fillerTime, HEAT_ID: "", AGREGATE: "dsp" }]
+        const fillerDSP = [{ START_POINT: fillerTime, END_POINT: fillerTime, HEAT_ID: "", AGREGATE: "DSP" }]
         const fillerVOD1 = [{ START_POINT: fillerTime, END_POINT: fillerTime, HEAT_ID: "", AGREGATE: "VOD1" }]
         const fillerVOD2 = [{ START_POINT: fillerTime, END_POINT: fillerTime, HEAT_ID: "", AGREGATE: "VOD2" }]
         const fillerCCM1 = [{ START_POINT: fillerTime, END_POINT: fillerTime, HEAT_ID: "", AGREGATE: "MNLS1" }]

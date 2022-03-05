@@ -1,5 +1,5 @@
 
-export type CCMHeat = {
+export type CCM2Heat = {
   START_POINT: string
   STOP_POINT: string
   HEAT_ID: string
