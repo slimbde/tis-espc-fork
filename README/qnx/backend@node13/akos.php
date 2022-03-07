@@ -139,23 +139,26 @@
             $values['STEAM_PIPE_VACUUM'] = round($this->read_file("//14/dd/funnel",0,4,"f"),1);
             
             $elparVuSumWorktime = intval($this->read_file("//14/dd/elpar_vu",33,2,"s"));
-            $akosProcessFlowProc = intval($this->read_file("//14/dd/akos_process",0,1,"c"));
-            $akosProcessCurrentProc = intval($this->read_file("//14/dd/akos_process",1,1,"c"));
+            $akosProcessFlow = intval($this->read_file("//14/dd/akos_process",0,1,"c"));
+            $akosProcessCurrent = intval($this->read_file("//14/dd/akos_process",1,1,"c"));
             
-            $values['ARGON_ON'] = $akosProcessFlowProc;
-            $values['ENERGY_ARC_ON'] = $akosProcessCurrentProc;
+            $values['ARGON_ON'] = $akosProcessFlow;
+            $values['ENERGY_ARC_ON'] = $akosProcessCurrent;
             $values['HEAT_CURRENT_TIME'] = $this->minToTime($elparVuSumWorktime);
             
             $i=1;
-            if($elparVuSumWorktime + $akosProcessFlowProc + $akosProcessCurrentProc === 0) $i=0;
+            if($elparVuSumWorktime + $akosProcessFlow + $akosProcessCurrent === 0) $i=0;
             
-            $processCode = $i*100 + $akosProcessFlowProc*10 + $akosProcessCurrentProc;
+            $processCode = $i*100 + $akosProcessFlow*10 + $akosProcessCurrent;
             
             $values["STATE"] = 0;
             if($processCode == 100) $values["STATE"] = 1;
             if($processCode == 110) $values["STATE"] = 2;
             if($processCode == 101) $values["STATE"] = 3;
             if($processCode == 111) $values["STATE"] = 4;
+            
+            if($values["STATE"] === 0 && $values['SVOD_VERTICAL'] === 2 && $values['SVOD_HORIZONTAL'] === 2)
+                $values["STATE"] = 1;
             
             $values['SAMPLES'] = $this->getAKOStemps();
             $values = $this->appendAKOSChemicals($values);

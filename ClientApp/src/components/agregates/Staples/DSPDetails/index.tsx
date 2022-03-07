@@ -1,7 +1,7 @@
 import "./dspDetails.scss"
-import { blinkAlert } from "components/extra/Alert"
+import { Alert, blinkAlert } from "components/extra/Alert"
 import { useEffect, useState } from "react"
-import { Alert, ListGroup, ListGroupItem } from "reactstrap"
+import { ListGroup, ListGroupItem } from "reactstrap"
 import { StapleSummaryHandler } from "models/handlers/StapleHandlers/StapleSummaryHandler"
 import { Loading } from "components/extra/Loading"
 import { DSPInstantEnergyDecoder, DSPInstantEnergyInfo, DSPInstantHeatDecoder, DSPInstantHeatInfo } from "models/types/Agregates/Staples/DSPInstantInfo"
@@ -91,7 +91,7 @@ export const DSPDetails: React.FC = () => {
 
 
   return <div className="dsp-details-wrapper">
-    <Alert id="alert">Hello</Alert>
+    <Alert>Hello</Alert>
     <div className={`title display-5 ${state.mysql?.state}`} style={{ gridArea: "title" }}>
       ДСП
       <div className="last-update">{state.lastUpdate}</div>

@@ -3,9 +3,9 @@ import moment from "moment"
 import Highcharts from "highcharts"
 import xrange from "highcharts/modules/xrange"
 import { useEffect, useRef, useState } from "react"
-import { Alert } from "reactstrap"
+import { Alert } from "components/extra/Alert"
 import { Loading } from "components/extra/Loading"
-import { ScheduleAgregateDecoder, ScheduleColorDecoder, ScheduleHeatInfo } from "models/types/Technology/Schedule/ScheduleHeatInfo"
+import { ScheduleAgregateDecoder, ScheduleColorDecoder, ScheduleHeatInfo, ScheduleTitleAgregateDecoder } from "models/types/Technology/Schedule/ScheduleHeatInfo"
 import pHandler from "models/handlers/DbHandlers/ProductionDbHandler"
 import Controls from "./Controls"
 import { blinkAlert } from "components/extra/Alert"
@@ -69,17 +69,17 @@ export const Schedule: React.FC = () => {
   const update = () => {
     if (state.token.signal.aborted) return // this is necessary to disable any hxr when you leave the page
     const timeout = state.date === state.metallurgicalDate
-      ? setTimeout(update, 5 * 60 * 1000)
+      ? setTimeout(update, 3 * 60 * 1000)
       : undefined
 
     !timeout && clearTimeout(state.timeout!)
     setState(state => ({ ...state, timeout, loading: true }))
 
-    infoRef?.current?.classList.add("blur")
-    chartRef?.current!.classList.add("blur")
+    //infoRef?.current?.classList.add("blur")
+    //chartRef?.current!.classList.add("blur")
     controlsRef?.current?.classList.add("disabled")
 
-    pHandler.GetScheduleHeatInfoAsync(state.date)
+    pHandler.GetScheduleHeatInfoAsync(state.date, state.token)
       .then(response => {
         if (state.token.signal.aborted) return  // this is necessary to disable any hxr when you leave the page
         if (response.length === 0) throw new Error("Нет данных")
@@ -132,8 +132,8 @@ export const Schedule: React.FC = () => {
         const categories = Object.keys(lookup).map(key => ScheduleAgregateDecoder[key])
 
         populateChart(data, categories, state.date)
-        infoRef.current?.classList.remove("blur")
-        chartRef.current!.classList.remove("blur");
+        //infoRef.current?.classList.remove("blur")
+        //chartRef.current!.classList.remove("blur");
         controlsRef.current?.classList.remove("disabled")
         setState(state => ({
           ...state,
@@ -143,10 +143,11 @@ export const Schedule: React.FC = () => {
         }))
       })
       .catch(error => {
+        if (error.message.indexOf("abort") > -1) return
         blinkAlert(error, false)
         console.log(error)
-        infoRef.current?.classList.remove("blur")
-        chartRef.current!.classList.remove("blur")
+        //infoRef.current?.classList.remove("blur")
+        //chartRef.current!.classList.remove("blur")
         controlsRef.current?.classList.remove("disabled")
         setState(state => ({ ...state, loading: false, }))
       })
@@ -167,7 +168,7 @@ export const Schedule: React.FC = () => {
 
 
   return <div className="schedule-wrapper">
-    <Alert id="alert">Hello</Alert>
+    <Alert>Hello</Alert>
     <div className="title display-5">График работы ЭСПЦ-6</div>
     <div className="update-time">{state.lastUpdate}</div>
 
@@ -189,16 +190,32 @@ export const Schedule: React.FC = () => {
           if (state.scheduleInfo[agregate].length < 2) return <span key={agregate}></span>
 
           return <div className="agregate" key={agregate}>
-            <div className="a-title">{ScheduleAgregateDecoder[agregate]}</div>
+            <div className="a-title">
+              <span>{ScheduleAgregateDecoder[agregate]}</span>
+              <span>{agregate === "DSP" ? "Завалка" : "Начало"}</span>
+              <span>{agregate === "DSP" ? "Слив" : "Конец"}</span>
+              <span>{ScheduleTitleAgregateDecoder[agregate]}</span>
+              <span>Марка</span>
+            </div>
             {state.scheduleInfo[agregate].map((item: ScheduleHeatInfo, idx: number) => {
-              const time = `${moment(item.START_POINT).format("HH:mm")} ... ${item.END_POINT ? moment(item.END_POINT).format("HH:mm") : "текущ"}`
+              const start = moment(item.START_POINT).format("HH:mm")
+              const middle = item.MIDDLE_POINT
+                ? agregate.indexOf("MNL") === -1
+                  ? moment(item.MIDDLE_POINT.slice(0, 19)).format("HH:mm")
+                  : (Math.round(+item.MIDDLE_POINT * 100) / 100)
+                : "н/д"
+
+              const end = `${item.END_POINT ? moment(item.END_POINT).format("HH:mm") : "тек."}`
               const date = moment(item.START_POINT)
 
               if (!item.HEAT_ID) return <span key={idx}></span>
 
               return <div className={`heat ${item.AGREGATE} ${date > moment(state.date).subtract(9, "hours") ? "current" : ""}`} key={idx} title={date.format("DD.MM.YYYY")}>
                 <div className="hid">{!isNaN(+item.HEAT_ID) ? item.HEAT_ID : ""}</div>
-                <div className="time">{time}</div>
+                <div>{start}</div>
+                <div>{end}</div>
+                <div>{middle}</div>
+                <div>{item.STEEL_GRADE.split(" ")[0]}</div>
               </div>
             })}
           </div>

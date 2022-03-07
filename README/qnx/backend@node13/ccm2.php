@@ -36,12 +36,14 @@
             if($processCode == 113) $values["STATE"] = 4;
             
             $values['HEAT_ID'] = $this->trimReplace($this->read_file("//16/dd/CCM_mnlz72",266,6,"A6"));
+            $values['SEQ_NO'] = $this->read_file("//16/dd/CCM_mnlz72",42,2,"s");
             $values['STEEL_GRADE'] = $this->trimReplace($this->read_file("//16/dd/CCM_mnlz72",276,10,"A10"));
             $values['SLAB_WIDTH'] = floor($this->read_file("//16/dd/CCM_str_product",36,4,"f"));
             $values['SLAB_THICKNESS'] = floor($this->read_file("//16/dd/CCM_str_product",28,4,"f"));
             $values['CURRENT_TEMP'] = $this->read_file("//16/dd/CCM_mnlz72",228,2,"s");
             $values['HEAT_WEIGHT'] = round($this->read_file("//16/dd/CCM_mnlz72",254,2,"s")/10,1);
             $values['LADLE_RESIDUE'] = round($this->read_file("//16/dd/CCM_mnlz72",224,2,"s")/10,1);
+            $values['CASTING_SPEED'] = round($this->read_file("//16/dd/CCM_mnlz72",236,2,"s")/100,2);
             
             $lob = $this->read_file("//16/dd/CCM_mnlz72",462,4,"l");
             $lser = $this->read_file("//16/dd/CCM_mnlz72",466,4,"l");

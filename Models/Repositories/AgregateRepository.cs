@@ -375,9 +375,6 @@ namespace TIS_ESPC_FORK.Models.Repositories
                 using (IDbConnection db = new OracleConnection(oraString))
                     endTimeToUpdate.AddRange(await db.QueryAsync<dynamic>(stmt, new { ccm }));
 
-                // get node23 current heat end time for DSP, AKOS
-                endTimeToUpdate.AddRange(await getNode23HeatInfoAsync());
-
                 // send heat end time back to mysql
                 using (DbConnection db = new MySqlConnection(conString))
                 {
@@ -401,6 +398,10 @@ namespace TIS_ESPC_FORK.Models.Repositories
 
 
 
+        /// <summary>
+        /// an obsolete method to get Heat start and end point from 23 node
+        /// remains here just in case
+        /// </summary>
         async static Task<dynamic> getNode23HeatInfoAsync()
         {
             string now = DateTime.Now.TimeOfDay > TimeSpan.FromHours(19.5) 

@@ -5,12 +5,11 @@ import React, { useEffect, useState } from "react"
 import pHandler from "models/handlers/DbHandlers/ProductionDbHandler"
 import Controls from "./Controls"
 import { LFTable } from "./LFTable"
-import { Alert } from "reactstrap"
 import { LFHeat } from "models/types/Technology/Production/LFHeat"
 import { Loading } from "components/extra/Loading"
 import { AreaId, getAreaName } from "models/types/Technology/Production/AreaId"
 import { setFluid } from "components/extra/SetFluid"
-import { blinkAlert } from "components/extra/Alert"
+import { Alert, blinkAlert } from "components/extra/Alert"
 import { ProductionFilter } from "models/types/Technology/Production/ProductionFilter"
 import { VODHeat } from "models/types/Technology/Production/VODHeat"
 import { CCM2Heat } from "models/types/Technology/Production/CCM2Heat"
@@ -19,15 +18,20 @@ import { CCM2Table } from "./CCM2Table"
 import { CCM1Heat } from "models/types/Technology/Production/CCM1Heat"
 import { CCM1Table } from "./CCM1Table"
 import { MetallurgicalRange } from "components/extra/MetallurgicalDate"
+import { AKOSHeat } from "models/types/Technology/Production/AKOSHeat"
+import { AKOSTable } from "./AKOSTable"
+import { DSPHeat } from "models/types/Technology/Production/DSPHeat"
+import { DSPTable } from "./DSPTable"
 
 
 type State = {
   areaId: AreaId
-  heats: LFHeat[] | VODHeat[] | CCM2Heat[] | CCM1Heat[] | undefined
+  heats: LFHeat[] | VODHeat[] | CCM2Heat[] | CCM1Heat[] | AKOSHeat[] | DSPHeat[] | undefined
   shift: number
   datePoint: string
   title: string
   loading: boolean
+  token: AbortController
 }
 
 
@@ -50,18 +54,33 @@ export const Production: React.FC = () => {
         : moment().format("YYYY-MM-DD")
   }
 
-  const fetchState = (filter: ProductionFilter, shift: number = state.shift, datePoint: string = state.datePoint,) => {
-    setState({ ...state, loading: true })
-    pHandler.GetListForAsync(filter)
-      .then(heats => setState({
-        ...state,
-        shift,
-        datePoint,
-        heats: heats || [],
-        title: `${moment(filter.bDate).format("DD.MM.YYYY HH:mm")} ... ${moment(filter.eDate).format("DD.MM.YYYY HH:mm")}`,
-        loading: false,
-      }))
+  const fetchState = (filter: ProductionFilter, shift = state.shift, datePoint = state.datePoint,) => {
+    setState(state => ({ ...state, loading: true }))
+
+    pHandler.GetListForAsync(filter, state.token)
+      .then(heats => {
+        const { middle } = MetallurgicalRange(datePoint)
+        const shiftFilteredHeats: any = []
+
+        if ([1, 73, 80].some(area => area === state.areaId)) {
+          heats && heats.forEach(h => {
+            const heatShift = moment(h.START_POINT).isAfter(middle) ? 2 : 1;
+            heatShift === state.shift && shiftFilteredHeats.push(h)
+          })
+        }
+        else shiftFilteredHeats.push(...heats)
+
+        setState(state => ({
+          ...state,
+          shift,
+          datePoint,
+          heats: shiftFilteredHeats,
+          title: `${moment(filter.bDate).format("DD.MM.YYYY HH:mm")} ... ${moment(filter.eDate).format("DD.MM.YYYY HH:mm")}`,
+          loading: false,
+        }))
+      })
       .catch(error => {
+        if (error.message.indexOf("abort") > -1) return
         blinkAlert((error as any).message, false)
         console.log(error)
         setState({ ...state, loading: false })
@@ -76,12 +95,17 @@ export const Production: React.FC = () => {
     datePoint: calculateDate(),
     title: "",
     loading: false,
+    token: new AbortController()
   })
 
   useEffect(() => {
     document.title = "Производство"
     setFluid(true)
-    return setFluid
+    return () => {
+      state.token.abort()
+      setFluid()
+    }
+    //eslint-disable-next-line
   }, [])
 
   useEffect(() => {
@@ -92,7 +116,7 @@ export const Production: React.FC = () => {
   }, [state.shift, state.datePoint, state.areaId])
 
   const calculatePoints = (shift: number, datePoint: string) => {
-    const [start, middle, end] = MetallurgicalRange(datePoint)
+    const { start, middle, end } = MetallurgicalRange(datePoint)
     const b = shift === 1 ? start : middle
     const e = shift === 1 ? middle : end
     const bDate = b.format("YYYY-MM-DD HH:mm:ss")
@@ -114,13 +138,13 @@ export const Production: React.FC = () => {
   }
   const back = () => setState({
     ...state,
-    datePoint: state.shift === 2 ? state.datePoint : moment(state.datePoint).subtract(1, "day").toISOString(true).slice(0, 10),
+    datePoint: state.shift === 2 ? state.datePoint : moment(state.datePoint).subtract(1, "day").format("YYYY-MM-DD"),
     shift: state.shift === 2 ? 1 : 2,
     loading: true,
   })
   const forth = () => setState({
     ...state,
-    datePoint: state.shift === 2 ? moment(state.datePoint).add(1, "day").toISOString(true).slice(0, 10) : state.datePoint,
+    datePoint: state.shift === 2 ? moment(state.datePoint).add(1, "day").format("YYYY-MM-DD") : state.datePoint,
     shift: state.shift === 2 ? 1 : 2,
     loading: true,
   })
@@ -128,8 +152,9 @@ export const Production: React.FC = () => {
 
 
   return <div className="production-wrapper jumbotron">
-    <Alert id="alert">Hello</Alert>
+    <Alert>Hello</Alert>
     <div className="title display-5">отчет по работе {getAreaName(state.areaId)}</div>
+    {state.loading && <Loading />}
 
     <Controls {...{
       areaId: state.areaId,
@@ -144,7 +169,7 @@ export const Production: React.FC = () => {
       loading: state.loading,
     }} />
 
-    <div className="main">
+    <div className={`main ${state.loading ? "blur" : ""}`}>
       <div className="subtitle">{state.title}</div>
 
       {state.areaId === AreaId.LF_DIAG &&
@@ -172,14 +197,15 @@ export const Production: React.FC = () => {
         }} />}
 
       {state.areaId === AreaId.CCM1_DIAG &&
-        <CCM1Table {...{
-          shift: state.shift,
-          heatDate: state.datePoint,
-          heats: state.heats as CCM1Heat[],
-        }} />}
+        <CCM1Table {...{ heats: state.heats as CCM1Heat[], }} />}
 
-      {(state.heats?.length === 0 && state.title !== "") && !state.loading && <NoData />}
-      {state.loading && <Loading />}
+      {state.areaId === AreaId.AKOS_DIAG &&
+        <AKOSTable {...{ heats: state.heats as AKOSHeat[], }} />}
+
+      {state.areaId === AreaId.DSP_DIAG &&
+        <DSPTable {...{ heats: state.heats as DSPHeat[], }} />}
+
+      {(state.heats?.length === 0 && state.title !== "") && <NoData />}
     </div>
   </div>
 }

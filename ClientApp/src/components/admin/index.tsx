@@ -1,8 +1,8 @@
 import "./admin.scss"
 import { useEffect, useRef, useState } from "react"
-import { Alert, Button, Input, InputGroup, InputGroupAddon, Label, Table } from "reactstrap"
+import { Button, Input, InputGroup, InputGroupAddon, Label, Table } from "reactstrap"
 import aHandler from "models/handlers/DbHandlers/AuthDbHandler"
-import { blinkAlert } from "components/extra/Alert"
+import { Alert, blinkAlert } from "components/extra/Alert"
 
 
 type State = {
@@ -70,7 +70,7 @@ export const Admin: React.FC = () => {
 
 
   return <div className="admin-wrapper jumbotron">
-    <Alert id="alert">Hello</Alert>
+    <Alert>Hello</Alert>
     <div className="title display-5">Администрирование пользователей</div>
 
     <div className="role">

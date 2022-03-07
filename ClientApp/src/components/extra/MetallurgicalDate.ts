@@ -9,5 +9,5 @@ export const MetallurgicalRange = (date: string) => {
   const middle = moment(dt).startOf("day").add(7.5, "hours")
   const end = moment(dt).startOf("day").add(19.5, "hours")
 
-  return [start, middle, end]
+  return { start, middle, end }
 }

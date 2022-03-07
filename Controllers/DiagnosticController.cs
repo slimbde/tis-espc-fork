@@ -25,10 +25,13 @@ namespace TIS_ESPC_FORK.Controllers
                 Dictionary<string, bool> result = new Dictionary<string, bool>();
 
                 //result["MNLZ5_sqlite"] = ServiceStatusProvider.GetSqliteStatus();
-                result["MNLZ2_dcaDispatcher"] = ServiceStatusProvider.GetDispatcherStatus();
-                result["MNLZ2_oracle"] = ServiceStatusProvider.GetOracleStatus();
-                result["MNLZ2_castingSpeedSvc"] = ServiceStatusProvider.GetCastingSpeedStatus();
-                result["MNLZ2_tagFlowSvc"] = ServiceStatusProvider.GetTagFlowStatus();
+                result["oracle"] = ServiceStatusProvider.GetOracleStatus();
+                result["dcaDispatcherSvc"] = ServiceStatusProvider.CheckService("dcadispatcher", Workstations.L2);
+                result["castingSpeedSvc"] = ServiceStatusProvider.CheckService("CastingSpeedSvc", Workstations.L2);
+                result["plcSteelFlowSvc"] = ServiceStatusProvider.CheckService("PLC_STEEL_FLOW", Workstations.L2);
+                result["sitDataPusherSvc"] = ServiceStatusProvider.CheckService("SITDataPusher", Workstations.L2);
+                result["dryPlcSvc"] = ServiceStatusProvider.CheckLocalService("FromDryPLC");
+                result["heaterPlcSvc"] = ServiceStatusProvider.CheckLocalService("FromHeaterPLC");
                 return Ok(await Task.FromResult(result));
             }
             catch (Exception ex) { return BadRequest(ex.Message); }

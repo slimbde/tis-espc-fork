@@ -20,7 +20,7 @@ namespace TIS_ESPC_FORK.Controllers
         public async Task<IHttpActionResult> ReadForAsync()
         {
             try
-            { 
+            {
                 ProductionFilter filter = JsonConvert.DeserializeObject<ProductionFilter>(Request.Content.ReadAsStringAsync().Result);
                 return Ok(await pRepo.ListFor(filter));
             }
@@ -69,6 +69,20 @@ namespace TIS_ESPC_FORK.Controllers
         public async Task<IHttpActionResult> GetScheduleAsync(string date)
         {
             try { return Ok(await pRepo.GetSchedule(date)); }
+            catch (Exception ex) { return BadRequest(ex.Message); }
+        }
+
+
+        [HttpGet]
+        [Route("api/Production/ClearCacheAsync")]
+        public async Task<IHttpActionResult> ClearCacheAsync()
+        {
+            try
+            {
+                await Task.Yield();
+                pRepo.ClearCache();
+                return Ok();
+            }
             catch (Exception ex) { return BadRequest(ex.Message); }
         }
     }

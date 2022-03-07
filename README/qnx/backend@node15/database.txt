@@ -3,6 +3,7 @@ n_work
 ip          10.2.19.215
 server      n_work
 db          n_work
+
 user        dsp
 pass        sql
 
@@ -15,6 +16,7 @@ bot (auxiliary database ala old 1c system)
 ip          10.2.19.215
 server      bot
 db          bot
+
 user        dba
 pass        26102
 

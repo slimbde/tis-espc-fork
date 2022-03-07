@@ -1,0 +1,7 @@
+.dsp {
+  tr {
+    display: grid;
+    grid-template-columns: repeat(11, 1fr);
+    text-align: center;
+  }
+}

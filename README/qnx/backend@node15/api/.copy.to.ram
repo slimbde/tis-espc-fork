@@ -2,3 +2,4 @@
 RAM=//15/ram/home/tis
 
 cp schedule.php $RAM/schedule.php
+cp production.php $RAM/production.php

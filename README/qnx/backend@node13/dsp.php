@@ -159,27 +159,7 @@
         
         
         
-        
-        //
-        // fills target array with heat end point
-        //
-        function checkHeatEnd($values,$procSmStat) {
-            $stash = $this->fileReadParams($this->fileToStash,$stash);
-            
-            if($procSmStat !== 0) {
-                $stash["HEAT_END"] = "";
-            }
-            else if($stash["HEAT_END"] === "" || !isset($stash["HEAT_END"])) {
-                $stash["HEAT_END"] = date("H:i:s");
-            }
-            
-            $this->fileWriteParams($this->fileToStash,$stash);
-            
-            $values["HEAT_END"] = $stash["HEAT_END"];
-            return $values;
-        }
-        
-        
+
         
         //
         // sending dsp instant data to the dispatcher db
@@ -223,7 +203,6 @@
             if($processCode > 0 && $procEeInput === 0) $processCode = 5;
             
             $values['STATE'] = $processCode;
-            $values = $this->checkHeatEnd($values,$procSmStat);
             
             $values['ENERGY_ON']  = $procEeInput;
             $values['EE_HEAT_ACTIVE'] = $eenergData02;

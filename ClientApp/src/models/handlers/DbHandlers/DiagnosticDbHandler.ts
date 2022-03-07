@@ -57,6 +57,15 @@ class DiagnosticDbHandler {
 
     return await resp.json()
   }
+
+  async ClearCacheAsync(): Promise<void> {
+    const resp = await fetch(`${this.backend}/Production/ClearCacheAsync`, {
+      credentials: "include"
+    })
+
+    if (resp.status >= 400)
+      throw new Error(`[DiagnosticDbHandler ClearCacheAsync]: ${await resp.text()}`)
+  }
 }
 
 export default DiagnosticDbHandler.GetInstance()

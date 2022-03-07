@@ -17,9 +17,9 @@ namespace TIS_ESPC_FORK.Models.Diagnostics
         WindowsImpersonationContext impersonationContext;
 
         [DllImport("advapi32.dll")]
-        public static extern int LogonUserA(String lpszUserName,
-        String lpszDomain,
-        String lpszPassword,
+        public static extern int LogonUserA(string lpszUserName,
+        string lpszDomain,
+        string lpszPassword,
         int dwLogonType,
         int dwLogonProvider,
         ref IntPtr phToken);
@@ -37,7 +37,7 @@ namespace TIS_ESPC_FORK.Models.Diagnostics
         [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
         public static extern int GetLastError();
 
-        private bool impersonateValidUser(String userName, String domain, String password)
+        private bool impersonateValidUser(string userName, string domain, string password)
         {
             WindowsIdentity tempWindowsIdentity;
 
@@ -65,7 +65,7 @@ namespace TIS_ESPC_FORK.Models.Diagnostics
             return false;
         }
 
-        public object doImpersonateJob(String userName, String domain, String password, Func<object> toDo)
+        public object doImpersonateJob(string userName, string domain, string password, Func<object> toDo)
         {
             object result;
             if (impersonateValidUser(userName, domain, password))
@@ -74,16 +74,12 @@ namespace TIS_ESPC_FORK.Models.Diagnostics
                 undoImpersonation();
             }
             else
-            {
                 throw new Exception("Authentication failed");
-            }
+
             return result;
         }
 
-        private void undoImpersonation()
-        {
-            impersonationContext.Undo();
-        }
+        private void undoImpersonation() => impersonationContext.Undo();
 
         public void Dispose()
         {

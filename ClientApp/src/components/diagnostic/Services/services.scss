@@ -5,8 +5,12 @@
   display: grid;
   grid-column-gap: 2rem;
   grid-template-columns: 1.52fr 1fr 1fr;
-  grid-template-rows: 70px 1fr;
-  grid-template-areas: "title title title" "localhost service controls";
+  grid-template-rows: 70px 300px 60px 100px;
+  grid-template-areas:
+    "title title title"
+    "localhost service controls"
+    "title2 title2 title2"
+    "clear none none";
   font-weight: 400;
   color: gray;
 
@@ -26,6 +30,16 @@
 
   .title {
     grid-area: title;
+  }
+
+  .title2 {
+    grid-area: title2;
+  }
+
+  .clear {
+    grid-area: clear;
+    height: fit-content;
+    width: fit-content;
   }
 
   table {

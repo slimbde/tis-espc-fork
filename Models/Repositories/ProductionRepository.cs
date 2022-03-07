@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data.Common;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 using TIS_ESPC_FORK.Models.DTOs.Production;
 using TIS_ESPC_FORK.Models.Extensions;
@@ -22,6 +21,7 @@ namespace TIS_ESPC_FORK.Models.Repositories
         Task<int> StartCCM1Heat(string heatId);
         Task<int> StopCCM1Heat(string heatId, double avgSpeed, string time, double performance);
         Task<dynamic> GetSchedule(string date);
+        void ClearCache();
     }
 
 
@@ -131,7 +131,9 @@ namespace TIS_ESPC_FORK.Models.Repositories
             {
                 ProductionFilter flt = filter as ProductionFilter;
 
-                if (flt.AreaId == "1") return await GetCCM1info(flt.eDate);
+                if (flt.AreaId == "1") return await GetNode15HeatInfo(flt.eDate, "mnls1");
+                if (flt.AreaId == "73") return await GetNode15HeatInfo(flt.eDate, "akos");
+                if (flt.AreaId == "80") return await GetNode15HeatInfo(flt.eDate, "dsp");
 
                 string conString = flt.AreaId == "600" || flt.AreaId == "800"
                     ? conStringLFVOD
@@ -350,7 +352,7 @@ namespace TIS_ESPC_FORK.Models.Repositories
 
                 // if date is not a former one
                 DateTime lastAccess = cacheSet["lastAccess"];
-                if (DateTime.Now - lastAccess < TimeSpan.FromMinutes(5))
+                if (DateTime.Now - lastAccess < TimeSpan.FromMinutes(3))
                     return cacheSet["info"];
             }
 
@@ -370,40 +372,50 @@ namespace TIS_ESPC_FORK.Models.Repositories
             return set;
         }
 
-
-
-
-        async Task<dynamic> GetCCM1info(string end)
+        public void ClearCache()
         {
-            string date = end.Split(' ')[0]; 
+            ScheduleCache.Clear();
+            ProductionCache.Clear();
+        }
+
+
+
+
+        async Task<dynamic> GetNode15HeatInfo(string end, string agregate)
+        {
+            string date = end.Split(' ')[0];
 
             if (ProductionCache.ContainsKey(date))
             {
                 IDictionary<string, dynamic> cacheSet = ProductionCache[date] as IDictionary<string, dynamic>;
+                if (cacheSet.ContainsKey(agregate))
+                {
+                    string metallurgicalDate = DateHandler.GetMetallurgicalDate().ToString("yyyy-MM-dd");
+                    DateTime[] range = DateHandler.GetMetallurgicalRange(metallurgicalDate);
 
-                string metallurgicalDate = DateHandler.GetMetallurgicalDate().ToString("yyyy-MM-dd");
-                DateTime[] range = DateHandler.GetMetallurgicalRange(metallurgicalDate);
-                if (DateTime.Parse(date) < range[0]) return cacheSet["ccm1"];
+                    if (DateTime.Parse(date) < range[0]) return cacheSet[agregate];
 
-                // if date is not a former one
-                DateTime lastAccess = cacheSet["lastAccessCCM1"];
-                if (DateTime.Now - lastAccess < TimeSpan.FromMinutes(10))
-                    return cacheSet["ccm1"];
+                    // if date is not a former one
+                    DateTime lastAccess = cacheSet[$"lastAccess{agregate}"];
+                    if (DateTime.Now - lastAccess < TimeSpan.FromMinutes(3)) return cacheSet[agregate];
+                }
             }
             else ProductionCache[date] = new Dictionary<string, dynamic>();
 
-            string url = $"http://10.2.19.215/api/production.php?date={date}&agregate=mnls1";
+            string url = $"http://10.2.19.215/api/production.php?date={date}&agregate={agregate}";
 
             // collect staple agregates info
             WebClient client = new WebClient();
             client.Credentials = CredentialCache.DefaultNetworkCredentials;
 
             string response = await client.DownloadStringTaskAsync(url);
+            if (response.Contains("odbc"))
+                throw new Exception(response);
 
             IEnumerable<dynamic> set = JsonConvert.DeserializeObject<IEnumerable<dynamic>>(response);
 
-            ProductionCache[date]["ccm1"] = set;
-            ProductionCache[date]["lastAccessCCM1"] = DateTime.Now;
+            ProductionCache[date][agregate] = set;
+            ProductionCache[date][$"lastAccess{agregate}"] = DateTime.Now;
 
             return set;
         }

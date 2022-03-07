@@ -67,7 +67,7 @@ const Controls: React.FC<Props> = ({
       </ButtonGroup>
     </div>
 
-    <div className="filter">
+    <div className={`filter ${loading ? "disabled" : ""}`}>
       <span>Агрегат:</span>
       <ButtonGroup size="sm">
         {Object.keys(AreaId).map(area => {

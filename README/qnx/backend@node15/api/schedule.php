@@ -27,7 +27,7 @@
         }
         
         $stmt = "SELECT
-                    isnull(owner,'undefined')                       AGREGATE
+                    UPPER(isnull(owner,'undefined'))                AGREGATE
                     ,IF LENGTH(n_pl)<6 THEN null ELSE n_pl ENDIF    HEAT_ID
                     ,isnull(bgn,now())                              START_POINT
                     ,nd                                             END_POINT

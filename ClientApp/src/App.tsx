@@ -69,12 +69,6 @@ const App: React.FC = () => {
     <Route exact path="/overview/arms" component={ARMOverview} key="arms-overview" />,
     <Route path="/overview/compressor" component={Compressor} key="compressor" />,
     <Route exact path="/overview/:ARM_ID" component={ARM} key="arm-overview" />,
-  ]
-
-  const technologistRoutes = [
-    ...userRoutes,
-    <Route path="/technology/production" component={Production} key="production" />,
-    <Route path="/technology/schedule/" component={Schedule} key="schedule" />,
     <Route exact path="/agregates/dryers/:ID/:VIEW" component={Dryers} key="dryer" />,
     <Route exact path="/agregates/staple" component={Staples} key="staple" />,
     <Route exact path="/agregates/staple/ccm1" component={CCM1Details} key="ccm1details" />,
@@ -83,6 +77,12 @@ const App: React.FC = () => {
     <Route exact path="/agregates/staple/akos" component={AKOSDetails} key="akosdetails" />,
     <Route exact path="/agregates/staple/akp/:TankId/:HeatId" component={AKPDetails} key="akpdetails" />,
     <Route exact path="/agregates/staple/vd/:TankId/:HeatId" component={VODDetails} key="vddetails" />,
+  ]
+
+  const technologistRoutes = [
+    ...userRoutes,
+    <Route path="/technology/production" component={Production} key="production" />,
+    <Route path="/technology/schedule/" component={Schedule} key="schedule" />,
   ]
 
   const programmerRoutes = [

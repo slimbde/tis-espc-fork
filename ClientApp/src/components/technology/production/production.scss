@@ -3,7 +3,7 @@
 .production-wrapper {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(400px, 1fr) 1fr;
+  grid-template-columns: 480px 1fr;
   grid-template-rows: 50px 52px 1fr;
   grid-template-areas:
     "title alert"
@@ -20,7 +20,8 @@
   }
 
   #loading {
-    top: inherit;
+    grid-area: title;
+    top: -0.5rem;
     right: 0;
   }
 
@@ -35,6 +36,7 @@
     grid-template-rows: 1.5rem 1fr;
     grid-gap: 0.5rem;
     position: relative;
+    transition: filter 0.5s ease;
 
     .subtitle {
       font-size: 1.2rem;

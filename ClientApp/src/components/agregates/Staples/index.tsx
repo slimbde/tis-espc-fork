@@ -1,12 +1,11 @@
 import "./staples.scss"
 import moment from "moment";
-import { blinkAlert } from "components/extra/Alert";
+import { Alert, blinkAlert } from "components/extra/Alert";
 import { Loading } from "components/extra/Loading";
 import { setFluid } from "components/extra/SetFluid";
 import { StapleSummaryHandler } from "models/handlers/StapleHandlers/StapleSummaryHandler";
 import { AgregateInfo } from "models/types/Agregates/Staples/AgregateInfo";
 import { useEffect, useState } from "react";
-import { Alert } from "reactstrap"
 import { Agregate } from "./Agregate";
 import aHandler from "models/handlers/DbHandlers/AgregatesDbHandler";
 
@@ -78,13 +77,18 @@ export const Staples: React.FC = () => {
     update()
       .then(() => setState(state => ({ ...state, loading: false })))
 
-    return () => setFluid()
+    const interval = setInterval(() => update(), (window as any).config.agregatesUpdateInterval)
+
+    return () => {
+      setFluid()
+      clearInterval(interval)
+    }
   }, [])
 
 
 
   return <div className="staples-wrapper">
-    <Alert id="alert">Hello</Alert>
+    <Alert>Hello</Alert>
     <div className="title display-5" style={{ gridArea: "title" }}>{state.title}<small></small></div>
 
     {state.loading && <Loading />}

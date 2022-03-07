@@ -9,7 +9,7 @@ using TIS_ESPC_FORK.Models.Repositories;
 namespace TIS_ESPC_FORK.Controllers
 {
     [RoutePrefix("api/Agregates")]
-    [Authorize(Roles = "Администратор,Программист,Технолог")]
+    [Authorize(Roles = "Администратор,Программист,Технолог,Пользователь")]
     public class AgregatesController : ApiController
     {
         static readonly IRepository<DryerRuntime> drRepo = new DryerRuntimeRepository();

@@ -1,9 +1,9 @@
 import "./ccm1Details.scss"
-import { blinkAlert } from "components/extra/Alert"
+import { Alert, blinkAlert } from "components/extra/Alert"
 import { AgregateInfo } from "models/types/Agregates/Staples/AgregateInfo"
 import { CCMInstantCrystDecoder, CCMInstantCrystInfo, CCMInstantHeatDecoder, CCMInstantHeatInfo, CCMInstantPhysDecoder, CCMInstantPhysInfo } from "models/types/Agregates/Staples/CCMInstantInfo"
 import { useEffect, useState } from "react"
-import { Alert, ListGroup, ListGroupItem } from "reactstrap"
+import { ListGroup, ListGroupItem } from "reactstrap"
 import { CCMView } from "../views/ccm12"
 import { StapleSummaryHandler } from "models/handlers/StapleHandlers/StapleSummaryHandler"
 import aHandler from "models/handlers/DbHandlers/AgregatesDbHandler"
@@ -97,7 +97,7 @@ export const CCM1Details: React.FC = () => {
 
 
   return <div className="ccm1-details-wrapper">
-    <Alert id="alert">Hello</Alert>
+    <Alert>Hello</Alert>
     <div className={`title display-5 ${state.agregateState}`} style={{ gridArea: "title" }}>
       МНЛЗ-1
       <div className="last-update">{state.lastUpdate}</div>

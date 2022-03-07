@@ -1,12 +1,12 @@
 import "./compressor.scss"
 import { Route, Switch } from "react-router-dom"
-import { Alert } from "reactstrap"
 import { Main } from "./main"
 import { KipElectro } from "./kipelectro"
 import { useState } from "react"
 import { Air } from "./air"
 import { Dryer } from "./dryer"
 import { Details } from "./details"
+import { Alert } from "components/extra/Alert"
 
 
 export const Compressor: React.FC = () => {
@@ -14,7 +14,7 @@ export const Compressor: React.FC = () => {
   const [title, setTitle] = useState("Компрессорная")
 
   return <div className="compressor-wrapper jumbotron">
-    <Alert id="alert">Hello</Alert>
+    <Alert>Hello</Alert>
     <div className="title display-5">{title}</div>
 
     <Switch>

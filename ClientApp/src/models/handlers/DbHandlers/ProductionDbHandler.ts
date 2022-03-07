@@ -1,5 +1,7 @@
-import { MetallurgicalDate } from "components/extra/MetallurgicalDate"
+import { AKOSHeat } from "models/types/Technology/Production/AKOSHeat"
+import { CCM1Heat } from "models/types/Technology/Production/CCM1Heat"
 import { CCM2Heat } from "models/types/Technology/Production/CCM2Heat"
+import { DSPHeat } from "models/types/Technology/Production/DSPHeat"
 import { HeatCCMProcess } from "models/types/Technology/Production/HeatCCMProcess"
 import { HeatCCMQuality } from "models/types/Technology/Production/HeatCCMQuality"
 import { HeatEvent } from "models/types/Technology/Production/HeatEvent"
@@ -15,7 +17,6 @@ export class ProductionDbHandler {
   protected backend = (window as any).config.backendHost
   protected api = "Production"
 
-  private lastScheduleRequeust: number = 0
   private static instance: ProductionDbHandler
   private constructor() { }
 
@@ -27,11 +28,10 @@ export class ProductionDbHandler {
   }
 
 
-  private interimCache: Map<string, ScheduleHeatInfo[]> = new Map()
 
 
 
-  async GetListForAsync(filter: ProductionFilter): Promise<LFHeat[] | VODHeat[] | CCM2Heat[]> {
+  async GetListForAsync(filter: ProductionFilter, token: AbortController): Promise<LFHeat[] | VODHeat[] | CCM2Heat[] | CCM1Heat[] | AKOSHeat[] | DSPHeat[]> {
     const resp = await fetch(`${this.backend}/${this.api}/ReadForAsync`, {
       method: "POST",
       headers: {
@@ -39,7 +39,8 @@ export class ProductionDbHandler {
         "Content-Type": "text/plain",
       },
       body: JSON.stringify(filter),
-      credentials: "include"
+      credentials: "include",
+      signal: token.signal
     })
 
     if (resp.status >= 400)
@@ -93,27 +94,16 @@ export class ProductionDbHandler {
   }
 
 
-  async GetScheduleHeatInfoAsync(date: string): Promise<ScheduleHeatInfo[]> {
-    const requestTime = new Date().getTime()
-
-    if (this.interimCache.has(date)) {
-      if (date !== MetallurgicalDate() ||
-        (date === MetallurgicalDate() && requestTime - this.lastScheduleRequeust < 5 * 60 * 1000)
-      )
-        return this.interimCache.get(date)!
-    }
-
+  async GetScheduleHeatInfoAsync(date: string, token: AbortController): Promise<ScheduleHeatInfo[]> {
     const resp = await fetch(`${this.backend}/${this.api}/GetScheduleAsync?date=${date}`, {
-      credentials: "include"
+      credentials: "include",
+      signal: token.signal
     })
 
     if (resp.status >= 400)
       throw new Error(`[${this.api}DbHandler]: ${await resp.text()}`)
 
     const result = await resp.json();
-    this.interimCache.set(date, result)
-    this.lastScheduleRequeust = requestTime
-
     return result
   }
 }

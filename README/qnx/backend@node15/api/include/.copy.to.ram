@@ -1,0 +1,5 @@
+# this is a convenient tool to move your stuff to the /ram
+RAM=//15/ram/home/tis/include
+
+cp dbase.class.php $RAM/dbase.class.php
+cp production.class.php $RAM/production.class.php

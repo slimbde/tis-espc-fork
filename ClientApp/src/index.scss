@@ -64,6 +64,19 @@ h4 {
 
 #alert {
   opacity: 0;
+  padding: 1rem;
+  color: #155724;
+  background-color: #d4edda;
+  border: 1px solid #c3e6cb;
+  border-radius: 0.4rem;
+  height: max-content !important;
+  transition: opacity 0.2s ease !important;
+}
+
+.bad-alert {
+  color: #721c24 !important;
+  background-color: #f8d7da !important;
+  border-color: #f5c6cb !important;
 }
 
 .no-data {
@@ -87,4 +100,8 @@ button {
 .disabled {
   pointer-events: none;
   opacity: 0.6;
+}
+
+.blur {
+  filter: blur(2.5px);
 }

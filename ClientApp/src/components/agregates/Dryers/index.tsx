@@ -1,12 +1,13 @@
 import "./dryers.scss"
 import { useState } from "react"
 import classnames from 'classnames';
-import { Alert, Button, ButtonGroup, Nav, NavItem, NavLink } from "reactstrap"
+import { Button, ButtonGroup, Nav, NavItem, NavLink } from "reactstrap"
 import { NavLink as Link, Route, Switch, useHistory, useRouteMatch } from "react-router-dom"
 import { DryerSummary } from "./Summary"
 import { DryerChart } from "./Chart";
 import { DryerProtocol } from "./Protocol";
 import { DryerGas } from "./Gas";
+import { Alert } from "components/extra/Alert";
 
 
 
@@ -23,7 +24,7 @@ export const Dryers: React.FC = () => {
 
 
   return <div className="dryers-wrapper jumbotron">
-    <Alert id="alert">Hello</Alert>
+    <Alert>Hello</Alert>
     <div className="title display-5" style={{ gridArea: "title" }} >{state.title}</div>
 
     <Nav tabs style={{ gridArea: "tabs" }}>

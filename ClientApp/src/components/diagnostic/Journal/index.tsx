@@ -1,13 +1,13 @@
 import "./journal.scss"
 import { useState } from "react"
-import { Alert, Button, ButtonGroup, Table } from "reactstrap"
+import { Button, ButtonGroup, Table } from "reactstrap"
 import { Controls } from "components/diagnostic/Journal/Controls"
 import { OperatorFilter } from "models/types/Diagnostic/Operators/OperatorFilter"
 import { AreaId, getAreaName } from "models/types/Technology/Production/AreaId"
 import { EventPriorityProvider } from "models/types/Diagnostic/Operators/EventPrioritySet"
 import { OperatorInfo } from "models/types/Diagnostic/Operators/OperatorInfo"
 import dHandler from "models/handlers/DbHandlers/DiagnosticDbHandler"
-import { blinkAlert } from "components/extra/Alert"
+import { Alert, blinkAlert } from "components/extra/Alert"
 import { Loading } from "components/extra/Loading"
 import NoData from "components/extra/NoData"
 import moment from "moment"
@@ -53,7 +53,7 @@ export const Journal: React.FC = () => {
 
 
   return <div className="journal-wrapper jumbotron">
-    <Alert id="alert">Hello</Alert>
+    <Alert>Hello</Alert>
     <div className="title display-5">Журнал действий оператора {getAreaName(state.areaId)}</div>
     <div className="subtitle">
       Отчеты из системы протоколирования
