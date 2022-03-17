@@ -4,7 +4,9 @@ using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data;
 using System.Data.Common;
+using System.Data.SqlClient;
 using System.Net;
 using System.Threading.Tasks;
 using TIS_ESPC_FORK.Models.DTOs.Production;
@@ -31,6 +33,7 @@ namespace TIS_ESPC_FORK.Models.Repositories
     {
         readonly static string conStringLFVOD = ConfigurationManager.ConnectionStrings["oracleLFVOD"].ConnectionString;
         readonly static string conStringCCM = ConfigurationManager.ConnectionStrings["oracle"].ConnectionString;
+        readonly static string conStringTIS = ConfigurationManager.ConnectionStrings["sqlTisHistory"].ConnectionString;
 
         /// <summary>
         /// The cache for schedule info to release node 15 usage<br/>
@@ -342,34 +345,8 @@ namespace TIS_ESPC_FORK.Models.Repositories
 
         public async Task<dynamic> GetSchedule(string date)
         {
-            if (ScheduleCache.ContainsKey(date))
-            {
-                IDictionary<string, dynamic> cacheSet = ScheduleCache[date] as IDictionary<string, dynamic>;
-
-                string metallurgicalDate = DateHandler.GetMetallurgicalDate().ToString("yyyy-MM-dd");
-                DateTime[] range = DateHandler.GetMetallurgicalRange(metallurgicalDate);
-                if (DateTime.Parse(date) < range[0]) return cacheSet["info"];
-
-                // if date is not a former one
-                DateTime lastAccess = cacheSet["lastAccess"];
-                if (DateTime.Now - lastAccess < TimeSpan.FromMinutes(3))
-                    return cacheSet["info"];
-            }
-
-            string url = $"http://10.2.19.215/api/schedule.php?date={date}";
-
-            // collect staple agregates info
-            WebClient client = new WebClient();
-            client.Credentials = CredentialCache.DefaultNetworkCredentials;
-
-            string response = await client.DownloadStringTaskAsync(url);
-
-            IEnumerable<dynamic> set = JsonConvert.DeserializeObject<IEnumerable<dynamic>>(response);
-
-            ScheduleCache[date] = new Dictionary<string, dynamic>()
-            { {"lastAccess",DateTime.Now},{"info", set} };
-
-            return set;
+            //return await GetNode15schedule(date);
+            return await GetLocalSchedule(date);
         }
 
         public void ClearCache()
@@ -416,6 +393,94 @@ namespace TIS_ESPC_FORK.Models.Repositories
 
             ProductionCache[date][agregate] = set;
             ProductionCache[date][$"lastAccess{agregate}"] = DateTime.Now;
+
+            return set;
+        }
+
+        async Task<dynamic> GetNode15schedule(string date)
+        {
+            if (ScheduleCache.ContainsKey(date))
+            {
+                IDictionary<string, dynamic> cacheSet = ScheduleCache[date] as IDictionary<string, dynamic>;
+
+                string metallurgicalDate = DateHandler.GetMetallurgicalDate().ToString("yyyy-MM-dd");
+                DateTime[] range = DateHandler.GetMetallurgicalRange(metallurgicalDate);
+                if (DateTime.Parse(date) < range[0]) return cacheSet["info"];
+
+                // if date is not a former one
+                DateTime lastAccess = cacheSet["lastAccess"];
+                if (DateTime.Now - lastAccess < TimeSpan.FromMinutes(3))
+                    return cacheSet["info"];
+            }
+
+            string url = $"http://10.2.19.215/api/schedule.php?date={date}";
+
+            // collect staple agregates info
+            WebClient client = new WebClient();
+            client.Credentials = CredentialCache.DefaultNetworkCredentials;
+
+            string response = await client.DownloadStringTaskAsync(url);
+
+            IEnumerable<dynamic> set = JsonConvert.DeserializeObject<IEnumerable<dynamic>>(response);
+
+            ScheduleCache[date] = new Dictionary<string, dynamic>()
+            { {"lastAccess",DateTime.Now},{"info", set} };
+
+            return set;
+        }
+
+        async Task<dynamic> GetLocalSchedule(string date)
+        {
+            DateTime[] dates = DateHandler.GetMetallurgicalRange(date);
+
+            object pars = new
+            {
+                begin = dates[0].Subtract(TimeSpan.FromHours(5)),
+                end = dates[1],
+            };
+
+            // retrieve CCM1, DSP, AKOS schedule
+            string stmt = @"SELECT
+	                            a.AgregateName		AGREGATE
+                                ,h.HeatId           HEAT_ID
+	                            ,h.StartPoint		START_POINT
+	                            ,h.EndPoint			END_POINT
+	                            ,h.SteelGrade		STEEL_GRADE
+                            FROM Heats h
+                            JOIN Agregates a ON h.AgregateId = a.Id
+                            WHERE h.StartPoint BETWEEN @begin AND @end
+                            ORDER BY 1";
+
+            List<dynamic> set;
+            using (IDbConnection db = new SqlConnection(conStringTIS))
+                set = await db.QueryAsync<dynamic>(stmt, pars) as List<dynamic>;
+
+
+            stmt = @"SELECT
+                        'CCM2'            AGREGATE
+                        ,HEAT_ID
+                        ,START_DATE       START_POINT
+                        ,STOP_DATE        END_POINT
+                        ,STEEL_GRADE_ID   STEEL_GRADE
+                    FROM REPORTS
+                    WHERE START_DATE BETWEEN :begin AND :end
+                    ORDER BY START_POINT";
+
+            using (IDbConnection db = new OracleConnection(conStringCCM))
+                set.AddRange(await db.QueryAsync<dynamic>(stmt, pars));
+
+            stmt = @"SELECT
+                        DECODE(STATION_CODE,11,'AKP21',12,'AKP22',1,'VD21',2,'VD22','UNDEFINED')    AGREGATE
+                        ,CUSTOM_HEAT_ID                                                             HEAT_ID
+                        ,START_DATE                                                                 START_POINT
+                        ,STOP_DATE                                                                  END_POINT
+                        ,STEEL_GRADE_ID                                                             STEEL_GRADE
+                    FROM REPORTS
+                    WHERE START_DATE BETWEEN :begin AND :end
+                    ORDER BY AGREGATE,START_POINT";
+
+            using (IDbConnection db = new OracleConnection(conStringLFVOD))
+                set.AddRange(await db.QueryAsync<dynamic>(stmt, pars));
 
             return set;
         }

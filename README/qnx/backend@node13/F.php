@@ -2,6 +2,41 @@
 
     Class F {
         
+        function sendToTisHistory($str) {
+            $host="10.2.10.84";
+            $port=83;
+            $stime = date('Y-m-d H:i:s');
+            
+            echo "~ SEND TO TIS HISTORY ~ [$stime host: $host]\n";
+            
+            $fp	= fsockopen( $host, $port, $errno, $errstr, 30 ) or die("$errno ($errstr)\n");
+
+            echo "Open socket: ok\n";
+            
+            $out	= "GET /api/Data/ExecTisHistory?request=$str HTTP/1.1\r\n";
+            $out	.= "Host: ".$host."\r\n";
+            $out	.= "Content-Type: text/html; charset=UTF-8\r\n";
+            $out	.= "Connection: Close\r\n\r\n";
+            
+            echo "HTML to send:\n$out\n";
+            
+            fwrite( $fp, $out );
+            
+            
+            $reply = array();
+            while( !feof( $fp ) )
+                array_push($reply, fgets($fp,255));
+            
+            fclose( $fp );
+            
+            echo "Received:\n";
+            print_r($reply);
+            
+            $split = explode(" ",trim($reply[0]));
+            return intval($split[1]);                   // status code
+        }
+        
+        
         function send($str) {
             $host="10.2.59.150";
             $stime = date('Y-m-d H:i:s');
@@ -154,6 +189,35 @@
             $fp = fopen($filename, "a");
             fwrite($fp, "$value\n");
             fclose($fp);
+        }
+
+
+        function filePrepend($filename, $value) {
+            if(file_exists($filename)) {
+                $fp = fopen($filename, "r+");
+				
+				$chunk = 4;
+				while(!feof($fp))
+					$contents .= fread($fp, $chunk);
+				
+				$contents = "$value\n$contents";
+				
+				rewind($fp);
+                fwrite($fp, $contents);
+            }
+            else {
+                $fp = fopen($filename, "w");
+                fwrite($fp, "$value\n");
+            }
+			
+			fflush($fp);            
+            fclose($fp);
+        }
+
+
+        function trace($fileName,$message) {
+            $dateTime = date( "Y-m-d H:i:s" );
+            $this->filePrepend($fileName, "$dateTime: $message");
         }
 
 

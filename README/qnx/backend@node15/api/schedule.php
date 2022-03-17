@@ -5,7 +5,13 @@
     
     require_once("./include/dbase.class.php");
 
-    //http://10.2.19.215/api/schedule.php?date=2022-03-01&agregate=dsp
+    
+    //
+    // Provides TIS schedule info
+    // Written by Grigoriy Dolgiy 2022
+    //
+    
+    //http://10.2.19.215/api/schedule.php?date=2022-03-01
     
     
     if(isset($_GET["date"])) {
@@ -21,22 +27,46 @@
         $trim = str_replace("-","",$date);
         $endPoint = "$trim 19:30:00";
         
-        if(isset($params["agregate"])) {
-            $agregate = split(":",strtolower($_GET["agregate"]));
-            $agregate = implode("','",$agregate);
-        }
-        
-        $stmt = "SELECT
-                    UPPER(isnull(owner,'undefined'))                AGREGATE
-                    ,IF LENGTH(n_pl)<6 THEN null ELSE n_pl ENDIF    HEAT_ID
-                    ,isnull(bgn,now())                              START_POINT
-                    ,nd                                             END_POINT
-                FROM DBA.a_basic
-                WHERE (bgn >= '$startPoint' AND bgn < '$endPoint')";
+        // middle point is a dynamic field to fit extra data
+        $stmt = "SELECT -- DSP
+                    'DSP'                                                   AGREGATE
+                    ,IF LENGTH(a.n_pl)<6 THEN null ELSE a.n_pl ENDIF        HEAT_ID
+                    ,isnull(d.t_bgn,a.bgn)                                  START_POINT
+                    ,CONVERT(CHAR(20),d.nwe,121)                            MIDDLE_POINT
+                    ,isnull(d.t_nd,a.nd)                                    END_POINT
+                    ,s.marka                                                STEEL_GRADE
+                FROM DBA.a_basic a
+                LEFT OUTER JOIN DBA.d_basic d ON a.id = d.id
+                LEFT OUTER JOIN DBA.spr_stal s ON a.kod_m = s.kod_komb
+                WHERE START_POINT > '$startPoint' and START_POINT < '$endPoint' AND a.owner IN ('dsp')
+                                
+                UNION ALL -- CCMs
+                SELECT 
+                    UPPER(isnull(a.owner,'undefined'))                      AGREGATE
+                    ,IF LENGTH(a.n_pl)<6 THEN null ELSE a.n_pl ENDIF        HEAT_ID
+                    ,isnull(a.bgn,now())                                    START_POINT
+                    ,CONVERT(CHAR(20), m.god)                               MIDDLE_POINT
+                    ,a.nd                                                   END_POINT
+                    ,s.marka                                                STEEL_GRADE
+                FROM DBA.a_basic a
+                LEFT OUTER JOIN DBA.m_mnls m ON m.id = a.id
+                LEFT OUTER JOIN DBA.spr_stal s ON a.kod_m = s.kod_komb
+                WHERE a.bgn > '$startPoint' and a.bgn < '$endPoint' AND a.owner IN ('mnls1','mnls2')
+                                        
+                UNION ALL -- REST
+                SELECT 
+                    UPPER(isnull(a.owner,'undefined'))                      AGREGATE
+                    ,IF LENGTH(a.n_pl)<6 THEN null ELSE a.n_pl ENDIF        HEAT_ID
+                    ,isnull(a.bgn,now())                                    START_POINT
+                    ,CONVERT(CHAR(20), akp.t_bgn, 121)                      MIDDLE_POINT
+                    ,a.nd                                                   END_POINT
+                    ,s.marka                                                STEEL_GRADE
+                FROM DBA.a_basic a
+                LEFT OUTER JOIN DBA.as_basic akp ON akp.id = a.id
+                LEFT OUTER JOIN DBA.spr_stal s ON a.kod_m = s.kod_komb
+                WHERE a.bgn > '$startPoint' and a.bgn < '$endPoint' AND a.owner NOT IN ('dsp','mnls1','mnls2')
                                     
-        if(isset($agregate)) $stmt .= " AND LOWER(a.owner) IN ('$agregate')";
-        
-        $stmt .= " ORDER BY AGREGATE, START_POINT;";
+                ORDER BY 1,3";
         
         $db = new DBase();
         $result = $db->query($stmt);

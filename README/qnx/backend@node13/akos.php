@@ -13,14 +13,16 @@
           4 "Под током и продувка",
         */
         
+        var $stashPath = "akosStash.dat";
+        var $traceFile = "logs/akos.trace";
         
         
         //
         // assembles AKOS temperatures
         //
-        function getAKOStemps() {
+        function appendAKOStemps($values) {
             $times = array();
-            $values = array();
+            $elvalues = array();
             
             for($i=0; $i<10; ++$i) {
                 $offset = $i*10;
@@ -28,7 +30,7 @@
                 $val = intval($this->read_file("//14/dd/tsteel",$offset+2,4,"l"));
                 if($val == 0) break;
                 
-                array_push($values, $val);
+                array_push($elvalues, $val);
                 
                 $hour = $this->read_file("//14/dd/tsteel",$offset,1,"c");
                 $minute = $this->read_file("//14/dd/tsteel",$offset+1,1,"c");
@@ -36,13 +38,13 @@
             }
             
             $result = array();
-            for($j=0; $j<count($values); ++$j) {
-                $pair = "$times[$j]=$values[$j]";
+            for($j=0; $j<count($elvalues); ++$j) {
+                $pair = "$times[$j]=$elvalues[$j]";
                 array_push($result, $pair);
             }
             
-            $result = implode(";",$result);
-            return $result;
+            $values["SAMPLES"] = implode(";",$result);
+            return $values;
         }
 
 
@@ -75,14 +77,14 @@
                 $chemValues[$i/90] = implode(";",$vals);
             }
             
-            $stash = $this->fileReadParams("akosChemStash.dat",$stash);
+            $stash = $this->fileReadParams($this->stashPath,$stash);
             
             if(count($nums) > 0) {
                 // stash first probe to make it available any time
                 $stash['CHEMICAL_NUMS'] = $nums[0];
                 $stash['CHEMICAL_TIMES'] = $times[0];
                 $stash['CHEMICAL_0'] = $chemValues[0];
-                $this->fileWriteParams("akosChemStash.dat", $stash);
+                $this->fileWriteParams($this->stashPath, $stash);
                 
                 $values['CHEMICAL_NUMS'] = implode(";",$nums);
                 $values['CHEMICAL_TIMES'] = implode(";",$times);
@@ -105,6 +107,59 @@
             return $values;
         }
         
+        
+        
+        
+        
+        //
+        // fills target array with current heat start and heat end points
+        //
+        function appendHeatRange($values) {
+            $stash = $this->fileReadParams($this->stashPath,$stash);
+            
+            $prevState = intval($stash["STATE"]);
+            $state = intval($values["STATE"]);
+
+            $prevHeatId = intval($stash["HEAT_ID"]);
+            $newHeatId = intval($values["HEAT_ID"]);
+            
+            // opening heat at tis_history
+            if($prevHeatId !== $newHeatId && $state > 0) {
+                $stash["HEAT_START"] = date( "H:i:s" );
+                $stash["HEAT_END"] = "";
+                $stash["HEAT_ID"] = $newHeatId;
+                
+                $steelGrade = $this->utf($values['STEEL_GRADE']);
+                $reply = $this->sendToTisHistory("sp_OpenHeat%20$newHeatId,akos,'$steelGrade'");
+                $this->trace($this->traceFile, "opened heat $newHeatId at tis_history >> $reply");
+            }
+
+            // closing heat at tis_history
+            if($prevState > 0 && $state === 0) {
+                $startOffset = strtotime($stash["HEAT_START"]) + 10*60;    // extra delay 5 minutes
+                $now = strtotime( date("H:i:s") );
+                
+                // there is a trouble when brand new heat closes after 2-3 minutes
+                // to prevent this behaviour we check if 5 minutes left from start point
+                if($now > $startOffset) {
+                    $stash["HEAT_END"] = date( "H:i:s" );
+                    
+                    $reply = $this->sendToTisHistory("sp_CloseHeat%20$prevHeatId,akos");
+                    $this->trace($this->traceFile, "closed heat $prevHeatId at tis_history >> $reply");
+                }
+                else {
+                    $state = 1;
+                    $values["STATE"] = $state;
+                }
+            }
+            
+            $stash["STATE"] = $state;
+            $this->fileWriteParams($this->stashPath, $stash);
+            
+            $values["HEAT_START"] = $stash["HEAT_START"];
+            $values["HEAT_END"] = $stash["HEAT_END"];
+            return $values;
+        }
         
         
         
@@ -160,8 +215,9 @@
             if($values["STATE"] === 0 && $values['SVOD_VERTICAL'] === 2 && $values['SVOD_HORIZONTAL'] === 2)
                 $values["STATE"] = 1;
             
-            $values['SAMPLES'] = $this->getAKOStemps();
+            $values = $this->appendAKOStemps($values);
             $values = $this->appendAKOSChemicals($values);
+            $values = $this->appendHeatRange($values);
             
             $str = $this->assembleQuery("EAKP-2", $values);
             

@@ -3,7 +3,11 @@
     include_once("dbase.class.php");
 
 
-    class Production extends DBase
+    //
+	// Provides production info from n_work database
+	// Written by Grigoriy Dolgiy 2022
+	//
+	class Production extends DBase
     {
         var $startPoint;
         var $endPoint;
@@ -37,9 +41,9 @@
                                 ,mn.god                                             GOOD
                                 ,mn.sk                                              STOIK_CRYST
                             FROM DBA.a_basic a
-                            KEY JOIN DBA.m_mnls mn
-                            LEFT OUTER JOIN DBA.marka1 mk ON mk.id=(IF LENGTH(a.kod_m)=6 THEN SUBSTR(a.kod_m,4,6) ELSE a.kod_m ENDIF)
+                            LEFT OUTER JOIN DBA.m_mnls mn ON a.id = mn.id
                             LEFT OUTER JOIN DBA.s_m_sech s ON mn.sech = s.sech
+                            LEFT OUTER JOIN DBA.spr_stal mk ON a.kod_m = mk.kod_komb
                             WHERE (a.bgn >= '$this->startPoint' AND a.bgn < '$this->endPoint') AND a.owner = 'mnls1'
                             ORDER BY a.id;";
                     return $this->query($stmt);
@@ -58,8 +62,8 @@
                                 ,asb.ttok       CURRENT_TIME
                                 ,asb.el         ENERGY_EXPENSE
                             FROM DBA.a_basic a
-                            KEY JOIN DBA.as_basic asb
-                            LEFT OUTER JOIN DBA.marka1 mk ON mk.id=(IF LENGTH(a.kod_m)=6 THEN SUBSTR(a.kod_m,4,6) ELSE a.kod_m ENDIF)
+                            LEFT OUTER JOIN DBA.as_basic asb ON a.id = asb.id
+                            LEFT OUTER JOIN DBA.spr_stal mk ON a.kod_m = mk.kod_komb
                             WHERE (a.bgn > '$this->startPoint' AND a.bgn < '$this->endPoint') AND a.owner = 'akos'
                             ORDER BY a.id;";
                     return $this->query($stmt);
@@ -79,9 +83,9 @@
                                 ,d.n_sk		    LADLE_ID
                             FROM DBA.a_basic a
                             LEFT OUTER JOIN DBA.d_basic d ON a.id=d.id
-                            LEFT OUTER JOIN DBA.marka1 mk ON mk.id=IF LENGTH(a.kod_m)=6 THEN SUBSTR(a.kod_m,4,6) ELSE a.kod_m ENDIF
+                            LEFT OUTER JOIN DBA.spr_stal mk ON a.kod_m = mk.kod_komb
                             WHERE (a.bgn > '$this->startPoint' AND a.bgn < '$this->endPoint') AND a.owner = 'dsp'
-                            ORDER BY a.id;";
+                            ORDER BY a.id;"; 
                     return $this->query($stmt);
                     
                 default: die("unknown agregate");

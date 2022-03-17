@@ -10,13 +10,7 @@
     //
     class SpeedCCM1 extends F {
 
-        //
-        // writes service log to the file
-        //
-        function trace($message) {
-            $dateTime = date( "Y-m-d H:i:s" );
-            $this->fileWrite("logs/speedCCM1.log", "$dateTime: $message");
-        }
+        var $traceFile = "logs/speedCCM1.trace";
         
         
         
@@ -27,7 +21,11 @@
             $heatId = $params["HEAT_ID"];
             $speed = doubleval($params["AVG_SPEED"]);
             $newSpeed = doubleval($this->read_file("//20/dd/fusion_isa_1",30,4,"f"));
-            $params["AVG_SPEED"] = ($speed + $newSpeed)/2.;
+        
+            $params["AVG_SPEED"] = $newSpeed < 2     // huge values filter
+                ? ($speed + $newSpeed)/2.
+                : $speed;
+                
             $params["LAST_MSG"] = "observe heat: $heatId";
             return $params;
         }
@@ -41,11 +39,16 @@
             $newHeatId = $this->read_file("//20/dd/fusion_isa_1",62,4,"l");
             
             if($newHeatId !== $params["HEAT_ID"]) {
+                $params["LAST_2ND_OPENED_HEAT_ID"] = $params["HEAT_ID"];
                 $params["HEAT_ID"] = $newHeatId;
                 $params["START_POINT"] = date("Y-m-d H:i:s");
                 $params["END_POINT"] = "";
                 $params["AVG_SPEED"] = 0;
                 $this->sendToTis($params);
+                
+                $steelGrade = $this->utf($this->trimReplace($this->read_file("//20/dd/fusion_struct_1",74,10,"A10")));
+                $this->sendToTisHistory("sp_OpenHeat%20$newHeatId,ccm1,'$steelGrade'");
+                $this->trace($this->traceFile, "open heat $newHeatId at tis_history");
             }
             
             $params['SLAB_WIDTH'] = $this->read_file("//20/dd/fusion_struct_1",822,4,"l");
@@ -61,9 +64,6 @@
         //
         function save($params) {
             $this->sendToTis($params);
-            
-            $heatId = $params["HEAT_ID"];
-            $avgSpeed = $params["AVG_SPEED"];
             
             $params["END_POINT"] = date( "Y-m-d H:i:s" );
             return $params;
@@ -117,7 +117,7 @@
             
             $transition = "$prevProcessCode-$processCode";
             $action = $transitions[$transition];
-
+            
             return $action;
         }
         
@@ -144,7 +144,7 @@
                 ? "StartCCM1Heat?heatId=$heatId"
                 : "StopCCM1Heat?heatId=$heatId&avgSpeed=$avgSpeed&time=$duration&performance=$performance";
                 
-            $this->trace($data);
+            $this->trace($this->traceFile, $data);
             
             $host="10.2.10.84";
             $fp = fsockopen( $host, 83, $errno, $errstr, 30 ) or die("$errno ($errstr)\n");
@@ -166,6 +166,47 @@
             
             fclose( $fp );
         }
+    
+    
+    
+        //
+        // closes last heat in series
+        //
+        function closeHeat($params,$src) {
+            $heatId = $params["HEAT_ID"];
+            $this->sendToTisHistory("sp_CloseHeat%20$heatId,ccm1");
+            $this->trace($this->traceFile, "<$src> close heat $heatId at tis_history");
+            return $params;
+        }
+    
+    
+    
+        //
+        // 
+        //
+        function checkStoppedHeat($params,$processCode) {
+            // when current heat stopped
+            if(intval($params["PROCESS_CODE"]) > 0 && $processCode === 0)
+                $params = $this->closeHeat($params,"proc-code");
+            // when 2nd last heat stopped
+            else if ($processCode > 0) {
+                $last2ndHeatId = intval($this->read_file("//20/dd/fusion_isa_1",262,4,"l"));
+                $last2ndOpenedHeatId = intval($params["LAST_2ND_OPENED_HEAT_ID"]);
+                
+                $last2ndHeatTime = $params["LAST_2ND_HEAT_TIME"];
+                
+                $last2ndHeatMinute = intval($this->read_file("//20/dd/fusion_isa_1",323,1,"C"));
+                $last2ndHeatSecond = intval($this->read_file("//20/dd/fusion_isa_1",324,1,"C"));
+                $newLast2ndHeatTime = "$last2ndHeatMinute:$last2ndHeatSecond";
+                
+                if($newLast2ndHeatTime === $last2ndHeatTime && $last2ndOpenedHeatId === $last2ndHeatId)
+                    $params = $this->closeHeat($params,"last2ndHeatTime");
+                
+                $params["LAST_2ND_HEAT_TIME"] = $newLast2ndHeatTime;
+            }
+
+            return $params;
+        }
     }
 
     
@@ -182,6 +223,8 @@
     $params = $inst->fileReadParams($stashFilename, $params);
     
     if(count($params) !== 0) {
+        $params = $inst->checkStoppedHeat($params,$processCode);    // catching old heat stop point
+        
         $action = $inst->resolve($params["PROCESS_CODE"],$processCode);
         
         if($action === "start")     $params = $inst->start($params);
@@ -196,5 +239,4 @@
     }
     
     $inst->fileWriteParams($stashFilename, $params);
-    
 ?>

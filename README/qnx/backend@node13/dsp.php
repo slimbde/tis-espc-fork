@@ -16,8 +16,9 @@
         
         
         var $fileToStash = "dspStash.dat";
+        var $traceFile = "logs/dsp.trace";
         
-        
+
         
         //
         // assembles DSP gas info
@@ -159,6 +160,62 @@
         
         
         
+        //
+        // watches over heat start stop events
+        //
+        function handleHeatRange($values) {
+            $stash = $this->fileReadParams($this->fileToStash,$stash);
+            
+            $steelGrade = $this->utf($values['STEEL_GRADE']);
+            
+            $prevHeatId = intval($stash["HEAT_ID"]);
+            $newHeatId = intval($values["HEAT_ID"]);
+
+            // handle heat
+            if($prevHeatId !== $newHeatId) {
+                $stash["HEAT_START"] = date( "H:i:s" );
+                $stash["HEAT_ID"] = $newHeatId;
+                
+                $this->sendToTisHistory("sp_CloseHeat%20$prevHeatId,dsp");
+                $reply = $this->sendToTisHistory("sp_OpenHeat%20$newHeatId,dsp,'$steelGrade'");
+                $this->trace($this->traceFile, "save-start at heat tis_history: $prevHeatId > $newHeatId - $reply");
+            }
+            
+            // handle heat params
+            $prevFlushTime = $stash["PREV_FLUSH_TIME"];
+            
+            $newFlushHH = intval($this->read_file("//10/dds/oper",8,1,"C"));
+            $newFlushMM = intval($this->read_file("//10/dds/oper",9,1,"C"));
+            $newFlushSS = intval($this->read_file("//10/dds/oper",10,1,"C"));
+            $newFlushTime = "$newFlushHH:$newFlushMM:$newFlushSS";
+            
+            if($prevFlushTime !== $newFlushTime) {
+                $flushPoint = date( "H:i:s" );
+                $reply = $this->sendToTisHistory("sp_AddHeatDetails%20$newHeatId,dsp,'FLUSH_POINT=$flushPoint'");
+                $this->trace($this->traceFile, "flush point at tis_history: $newHeatId - $reply");
+            }
+            
+            $prevEE = intval($stash["EE_HEAT_ACTIVE"]);
+            $newEE = intval($values["EE_HEAT_ACTIVE"]);
+            
+            if($prevEE !== $newEE && $prevEE === 0 && $newEE > 0) {
+                $energyInput = date( "H:i:s" );
+                $reply = $this->sendToTisHistory("sp_AddHeatDetails%20$newHeatId,dsp,'ENERGY_INPUT=$energyInput'");
+                $this->trace($this->traceFile, "energy point at tis_history: $newHeatId - $reply");
+            }
+            
+            
+            $stash["PREV_FLUSH_TIME"] = $newFlushTime;
+            $stash["EE_HEAT_ACTIVE"] = $newEE;
+            $stash["STATE"] = intval($values["STATE"]);
+            
+            $this->fileWriteParams($this->fileToStash, $stash);
+            
+            $values["HEAT_START"] = $stash["HEAT_START"];
+            $values["HEAT_END"] = "";
+            return $values;
+        }
+        
 
         
         //
@@ -175,7 +232,7 @@
             $values['LADLE_ID'] = $this->read_file("//10/dds/fusion",24,2,"s");
             $values['PSN'] = $this->read_file("//10/dds/hveqan",0,4,"l") - 1;
             $values['STEEL_GRADE'] = $this->trimReplace($this->read_file("//10/dds/steel",14,16,"A16"));
-            $values['HEAT_START'] = gmdate("H:i:s", $this->read_file("//10/dds/smelt_start",14,4,"l"));
+            //$values['HEAT_START'] = gmdate("H:i:s", $this->read_file("//10/dds/smelt_start",14,4,"l"));
             $values['HEAT_TIME'] = gmdate("H:i:s", $this->read_file("//10/dds/eenerg",0,4,"l"));
             $values['HEAT_CURRENT_TIME'] = gmdate("H:i:s", $this->read_file("//10/dds/eenerg",4,4,"l"));
             $values['EE_HEAT_REACTIVE'] = $this->read_file("//10/dds/eenerg",56,4,"l");
@@ -202,14 +259,16 @@
             if($procSmStat > 0) $processCode = round($eenergData02/15000. + 1);
             if($processCode > 0 && $procEeInput === 0) $processCode = 5;
             
+            if($procEeInput > 0 && $processCode > 4) $processCode = 4;
+            
             $values['STATE'] = $processCode;
             
             $values['ENERGY_ON']  = $procEeInput;
             $values['EE_HEAT_ACTIVE'] = $eenergData02;
             
             $values = $this->appendDSPgas($values);
-            
             $values = $this->appendDSPchemicals($values);
+            $values = $this->handleHeatRange($values);
             
             $str = $this->assembleQuery("AF", $values);
             

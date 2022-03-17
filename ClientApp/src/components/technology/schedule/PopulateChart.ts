@@ -59,7 +59,6 @@ export const populateChart = (data: ChartItem[], categories: string[], date: str
     series: [{
       name: "Агрегат",
       type: "xrange",
-      borderColor: 'gray',
       pointWidth: 23,
       data,
       dataLabels: {
@@ -89,10 +88,10 @@ export const populateChart = (data: ChartItem[], categories: string[], date: str
     },
     plotOptions: {
       series: {
-        //cursor: 'pointer',
         animation: false,
-        //marker: { lineWidth: 1 }
-      }
+        borderColor: "gray",
+        borderWidth: 1,
+      },
     },
     legend: { enabled: false },
     credits: { enabled: false }

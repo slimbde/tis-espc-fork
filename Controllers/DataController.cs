@@ -1,4 +1,8 @@
-﻿using System;
+﻿using Dapper;
+using System;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
 using System.Threading.Tasks;
 using System.Web.Http;
 using TIS_ESPC_FORK.Models.Repositories;
@@ -10,9 +14,12 @@ namespace TIS_ESPC_FORK.Controllers
     public class DataController : ApiController
     {
         IProductionRepository pRepo = new ProductionRepository();
+        string tisHistoryConString = ConfigurationManager.ConnectionStrings["sqlTisHistory"].ConnectionString;
 
 
-
+        /// <summary>
+        /// The method is used by qnx to start CCM1 heat. At the moment, the qnx handlers live at<br />//13/home/ftp/tis/SpeedCCM1.php
+        /// </summary>
         [HttpGet]
         [Route("StartCCM1Heat")]
         public async Task<IHttpActionResult> StartCCM1Heat(string heatId)
@@ -30,6 +37,9 @@ namespace TIS_ESPC_FORK.Controllers
         }
 
 
+        /// <summary>
+        /// The method is used by qnx to stop CCM1 heat. At the moment, the qnx handlers live at<br />//13/home/ftp/tis/SpeedCCM1.php
+        /// </summary>
         [HttpGet]
         [Route("StopCCM1Heat")]
         public async Task<IHttpActionResult> StopCCM1Heat(string heatId, double avgSpeed, string time, double performance)
@@ -42,6 +52,27 @@ namespace TIS_ESPC_FORK.Controllers
                     return Ok($"StopCCM1Heat {heatId} success");
 
                 throw new Exception($"StopCCM1Heat: heat {heatId} close fail");
+            }
+            catch (Exception ex) { return BadRequest(ex.Message); }
+        }
+
+
+        /// <summary>
+        /// Executes a database procedure
+        /// </summary>
+        /// <param name="request">e.g. sp_OpenHeat dsp,333444,C355</param>
+        /// <returns>Whatever you want but single value</returns>
+        [HttpGet]
+        [Route("ExecTisHistory")]
+        public async Task<IHttpActionResult> ExecTisHistory(string request)
+        {
+            try
+            {
+                using (IDbConnection db = new SqlConnection(tisHistoryConString))
+                {
+                    object reply = await db.ExecuteScalarAsync<object>($"exec {request}");
+                    return Ok(reply);
+                }
             }
             catch (Exception ex) { return BadRequest(ex.Message); }
         }
